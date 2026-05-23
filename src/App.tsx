@@ -1,14 +1,14 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { PageShell } from "./components/PageShell";
-import { DiscoveryPage } from "./pages/DiscoveryPage";
+import { ExplorePage } from "./pages/ExplorePage";
 import { LandingPage } from "./pages/LandingPage";
 
 export function App() {
   return (
     <Routes>
       <Route index element={<LandingPage />} />
-      <Route path="explore" element={<DiscoveryPage />} />
+      <Route path="explore" element={<ExplorePage />} />
       <Route element={<AppShell />}>
 
         <Route

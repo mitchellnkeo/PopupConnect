@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { IconCalendar, IconGlobe, LogoMarkLight } from "./icons";
-import { LandingNavPill } from "./LandingNavPill";
+import { HeroSearchNav } from "./HeroSearchNav";
 
 type LandingHeaderProps = {
   /** Hero uses transparent overlay; inner pages can use solid header later */
@@ -20,8 +20,8 @@ export function LandingHeader({ overlay = true }: LandingHeaderProps) {
           <span className="font-semibold text-sm uppercase tracking-widest">PopupConnect</span>
         </Link>
 
-        <div className="hidden sm:block">
-          <LandingNavPill variant="light" />
+        <div className="hidden flex-1 justify-center sm:flex">
+          <HeroSearchNav />
         </div>
 
         <div className={`flex shrink-0 items-center gap-3 ${textClass}`}>
@@ -38,8 +38,8 @@ export function LandingHeader({ overlay = true }: LandingHeaderProps) {
         </div>
       </div>
 
-      <div className="px-4 pb-4 sm:hidden">
-        <LandingNavPill variant="light" />
+      <div className="flex justify-center px-4 pb-4 sm:hidden">
+        <HeroSearchNav />
       </div>
     </header>
   );
