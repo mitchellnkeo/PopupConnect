@@ -2,11 +2,13 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { PageShell } from "./components/PageShell";
 import { DiscoveryPage } from "./pages/DiscoveryPage";
+import { LandingPage } from "./pages/LandingPage";
 
 export function App() {
   return (
     <Routes>
-      <Route index element={<DiscoveryPage />} />
+      <Route index element={<LandingPage />} />
+      <Route path="explore" element={<DiscoveryPage />} />
       <Route element={<AppShell />}>
 
         <Route
@@ -32,10 +34,6 @@ export function App() {
           }
         />
 
-        <Route
-          path="explore"
-          element={<PageShell title="Explore" description="Browse vendors and offerings." />}
-        />
         <Route
           path="explore/results"
           element={<PageShell title="Explore results" description="Discovery results." />}

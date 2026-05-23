@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { DatePickerPopover } from "../components/discovery/DatePickerPopover";
 import { LocationDropdown } from "../components/discovery/LocationDropdown";
 import { VendorSection } from "../components/discovery/VendorSection";
@@ -83,16 +84,13 @@ export function DiscoveryPage() {
 
           <div className="relative flex min-w-0 flex-1 justify-center">
             <div className="flex max-w-full divide-x divide-neutral-200 overflow-x-auto rounded-full border border-neutral-200 bg-neutral-50/80 shadow-sm">
-              <button
-                type="button"
-                onClick={() => {
-                  closePanels();
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
+              <Link
+                to="/"
+                onClick={closePanels}
                 className="shrink-0 px-4 py-2.5 text-left text-midnight text-sm lowercase transition hover:bg-starlight/40"
               >
                 home
-              </button>
+              </Link>
 
               <button
                 type="button"
