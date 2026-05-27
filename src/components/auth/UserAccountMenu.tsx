@@ -152,9 +152,6 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
               >
                 Create account
               </Link>
-              <Link role="menuitem" to="/sign-in" className={itemClass} onClick={() => setOpen(false)}>
-                Log in
-              </Link>
             </>
           )}
         </div>
