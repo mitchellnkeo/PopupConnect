@@ -7,6 +7,7 @@ import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
 import { SignInPage } from "./pages/auth/SignInPage";
 import { SignUpPage } from "./pages/auth/SignUpPage";
+import { WelcomePage } from "./pages/auth/WelcomePage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { LandingPage } from "./pages/LandingPage";
 
@@ -18,6 +19,7 @@ export function App() {
 
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
+      <Route path="welcome" element={<WelcomePage />} />
 
       <Route
         path="account"

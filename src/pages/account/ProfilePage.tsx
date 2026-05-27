@@ -5,9 +5,9 @@ import { setProfileRoles, updateProfile } from "../../services/profileService";
 import type { AppRole } from "../../types/database";
 
 const roleOptions: { value: AppRole; label: string }[] = [
-  { value: "vendor", label: "Vendor or artist" },
-  { value: "host", label: "Space owner (host)" },
-  { value: "organizer", label: "Organizer" },
+  { value: "vendor", label: "Creative vendor" },
+  { value: "host", label: "Space vendor" },
+  { value: "organizer", label: "Event planner/coordinator" },
 ];
 
 export function ProfilePage() {

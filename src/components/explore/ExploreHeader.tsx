@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { UserAccountButton } from "../auth/UserAccountButton";
+import { UserAccountMenu } from "../auth/UserAccountMenu";
 import type { ExploreFilters } from "../../lib/exploreSearch";
 import { ExploreSearchBar } from "./ExploreSearchBar";
 import { IconCalendar, IconGlobe, LogoMarkPrimary } from "./icons";
@@ -37,7 +37,7 @@ export function ExploreHeader({ filters, onFiltersChange }: ExploreHeaderProps) 
           >
             <IconCalendar className="size-5" />
           </Link>
-          <UserAccountButton />
+          <UserAccountMenu />
         </div>
       </div>
 

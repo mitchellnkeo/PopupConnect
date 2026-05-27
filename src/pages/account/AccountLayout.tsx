@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { LogoMark } from "../../components/discovery/icons";
@@ -19,7 +20,14 @@ function navClassName({ isActive }: { isActive: boolean }) {
 }
 
 export function AccountLayout() {
-  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
+  const { user, profile, signOut, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && profile && !profile.onboarding_completed) {
+      navigate("/welcome", { replace: true });
+    }
+  }, [loading, profile, navigate]);
 
   return (
     <div className="min-h-dvh bg-neutral-50">

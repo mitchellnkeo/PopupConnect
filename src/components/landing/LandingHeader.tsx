@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { UserAccountMenu } from "../auth/UserAccountMenu";
 import { IconCalendar, IconGlobe, LogoMarkLight } from "./icons";
 import { HeroSearchNav } from "./HeroSearchNav";
 
@@ -35,6 +36,7 @@ export function LandingHeader({ overlay = true }: LandingHeaderProps) {
           >
             <IconCalendar className="size-5" />
           </Link>
+          <UserAccountMenu variant="overlay" />
         </div>
       </div>
 
