@@ -1,6 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AppShell } from "./components/AppShell";
 import { PageShell } from "./components/PageShell";
+import { AccountLayout } from "./pages/account/AccountLayout";
+import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
+import { ProfilePage } from "./pages/account/ProfilePage";
+import { SignInPage } from "./pages/auth/SignInPage";
+import { SignUpPage } from "./pages/auth/SignUpPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { LandingPage } from "./pages/LandingPage";
 
@@ -9,8 +15,59 @@ export function App() {
     <Routes>
       <Route index element={<LandingPage />} />
       <Route path="explore" element={<ExplorePage />} />
-      <Route element={<AppShell />}>
 
+      <Route path="sign-in" element={<SignInPage />} />
+      <Route path="sign-up" element={<SignUpPage />} />
+
+      <Route
+        path="account"
+        element={
+          <ProtectedRoute>
+            <AccountLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="profile" replace />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route
+          path="events"
+          element={
+            <AccountPlaceholderPage
+              title="My events"
+              description="Your booked and hosted events will appear here once reservations are connected to Supabase."
+            />
+          }
+        />
+        <Route
+          path="privacy"
+          element={
+            <AccountPlaceholderPage
+              title="Privacy and security"
+              description="Password reset, email preferences, and data export will be managed here."
+            />
+          }
+        />
+        <Route
+          path="messages"
+          element={
+            <AccountPlaceholderPage
+              title="Messages"
+              description="Inbox and chat threads will sync here when messaging is implemented."
+            />
+          }
+        />
+        <Route
+          path="docs"
+          element={
+            <AccountPlaceholderPage
+              title="My docs"
+              description="Uploaded documents will be stored in Supabase Storage and listed here."
+            />
+          }
+        />
+      </Route>
+
+      <Route element={<AppShell />}>
         <Route
           path="where"
           element={<PageShell title="Where" description="Search and filter by location." />}
@@ -41,11 +98,18 @@ export function App() {
 
         <Route
           path="location/:locationId"
-          element={<PageShell title="Location details" description="Venue detail — shared by Where / When paths." />}
+          element={
+            <PageShell
+              title="Location details"
+              description="Venue detail — shared by Where / When paths."
+            />
+          }
         />
         <Route
           path="vendor/:vendorId"
-          element={<PageShell title="Vendor details" description="Vendor detail — from Explore path." />}
+          element={
+            <PageShell title="Vendor details" description="Vendor detail — from Explore path." />
+          }
         />
 
         <Route path="booking" element={<PageShell title="Booking" />} />
@@ -59,13 +123,6 @@ export function App() {
         <Route path="about" element={<PageShell title="About" />} />
         <Route path="about/contact" element={<PageShell title="Contact us" />} />
         <Route path="about/social" element={<PageShell title="Social media" />} />
-
-        <Route path="account" element={<PageShell title="Account" />} />
-        <Route path="account/profile" element={<PageShell title="My profile" />} />
-        <Route path="account/events" element={<PageShell title="My events" />} />
-        <Route path="account/privacy" element={<PageShell title="Privacy and security" />} />
-        <Route path="account/messages" element={<PageShell title="Messages (account)" />} />
-        <Route path="account/docs" element={<PageShell title="My docs" />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

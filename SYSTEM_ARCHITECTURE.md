@@ -180,8 +180,8 @@ See `.env.example` for a template. Configure the same variables in the Vercel pr
 | Phase | Scope | Status |
 |-------|--------|--------|
 | **0** | UI skeleton (landing, explore, placeholders) | Done |
-| **1** | Supabase project, Auth, `profiles`, session in SPA | Planned |
-| **2** | Role onboarding (vendor / host / organizer), RLS for profiles | Planned |
+| **1** | Supabase project, Auth, `profiles`, session in SPA | In progress — client SDK, auth pages, `profiles` + `profile_roles` migration |
+| **2** | Role onboarding (vendor / host / organizer), RLS for profiles | Partial — roles on sign-up + profile edit |
 | **3** | Vendor & venue profiles, gallery Storage | Planned |
 | **4** | Reservations + availability | Planned |
 | **5** | Messaging, notifications, automations | Planned |

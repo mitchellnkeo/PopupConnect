@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { landingImages } from "../../config/landingImages";
 import { BackgroundImage } from "./BackgroundImage";
-import { Button } from "../ui/Button";
 
 const COMMUNITY_IMAGE_SRC = landingImages.community;
 
@@ -25,9 +24,9 @@ export function CommunityWaitingSection() {
           <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 px-4 py-12 md:min-h-[480px] md:flex-row md:gap-8 md:px-8">
             <div className="flex w-full max-w-xs flex-col items-center rounded-2xl border border-white/40 bg-white/70 px-8 py-8 text-center shadow-lg backdrop-blur-md">
               <p className="font-semibold text-lg text-primary">Join as vendor or host</p>
-              <Button className="mt-6 w-full" variant="primary">
+              <Link to="/sign-up" className={ctaLinkClass}>
                 I am a vendor
-              </Button>
+              </Link>
             </div>
 
             <div className="flex w-full max-w-xs flex-col items-center rounded-2xl border border-white/40 bg-white/70 px-8 py-8 text-center shadow-lg backdrop-blur-md">
