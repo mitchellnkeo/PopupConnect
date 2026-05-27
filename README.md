@@ -48,6 +48,61 @@ Open the URL shown in the terminal (typically `http://localhost:5173`).
 - [ProjectDeliverables.md](./ProjectDeliverables.md) — Product scope
 - [CodingFundamentals.md](./CodingFundamentals.md) — Team coding standards
 
-## Deploy
+## Deploy on Vercel
 
-Connect the repo to Vercel. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the Vercel project environment when Supabase is connected.
+### Environment variables (dashboard)
+
+In Vercel → **Project → Settings → Environment Variables**, add:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY` (your Supabase **Publishable** key)
+
+Redeploy after changing env vars. Configure Supabase **Authentication → URL configuration** with your production URL (see team notes or prior setup).
+
+### Vercel CLI (`command not found: vercel`)
+
+The Vercel CLI is not installed by default. Use one of:
+
+**Global install (Homebrew):**
+
+```bash
+brew install vercel-cli
+vercel --version
+```
+
+**Global install (npm):**
+
+```bash
+npm install -g vercel
+vercel --version
+```
+
+**No install — use npx:**
+
+```bash
+npx vercel login
+npx vercel link
+npx vercel env add VITE_SUPABASE_URL
+npx vercel env add VITE_SUPABASE_ANON_KEY
+```
+
+### CLI workflow (from project root)
+
+```bash
+cd /path/to/PopupConnect
+vercel login
+vercel link          # pick existing Vercel project if prompted
+vercel env add VITE_SUPABASE_URL production preview development
+vercel env add VITE_SUPABASE_ANON_KEY production preview development
+vercel --prod        # optional: deploy production from CLI
+```
+
+When `vercel env add` prompts for the value, paste the same values as in `.env.local`. Select **Production**, **Preview**, and **Development** so all deployments work.
+
+Pull env vars locally (optional):
+
+```bash
+vercel env pull .env.local
+```
+
+Note: `vercel env pull` may overwrite `.env.local` — back it up first if needed.
