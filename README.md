@@ -92,12 +92,20 @@ npx vercel env add VITE_SUPABASE_ANON_KEY
 cd /path/to/PopupConnect
 vercel login
 vercel link          # pick existing Vercel project if prompted
-vercel env add VITE_SUPABASE_URL production preview development
-vercel env add VITE_SUPABASE_ANON_KEY production preview development
+vercel env add VITE_SUPABASE_URL    # select Production + Preview only
+vercel env add VITE_SUPABASE_ANON_KEY
+
+# Development must be added in a second run (or skip — use .env.local for npm run dev):
+vercel env add VITE_SUPABASE_URL    # select Development only
+vercel env add VITE_SUPABASE_ANON_KEY
 vercel --prod        # optional: deploy production from CLI
 ```
 
-When `vercel env add` prompts for the value, paste the same values as in `.env.local`. Select **Production**, **Preview**, and **Development** so all deployments work.
+When `vercel env add` prompts for the value, paste the same values as in `.env.local`.
+
+**Important:** You cannot select Development together with Production/Preview in one command. Either:
+- Run twice: first **Production + Preview**, then **Development** only; or
+- Skip **Development** on Vercel — local `npm run dev` uses `.env.local` anyway. Development on Vercel only applies to `vercel dev`.
 
 Pull env vars locally (optional):
 
