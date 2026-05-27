@@ -141,16 +141,26 @@ Use interfaces/abstractions to enable mocking
 
 Code Organization
 Project Structure
+
+PopupConnect system architecture (Supabase Auth, Postgres, RLS) is defined in **SYSTEM_ARCHITECTURE.md** at the repo root. Read it before implementing accounts, profiles, or bookings.
+
 /src
   /components      # Reusable UI components
-  /features        # Feature-based modules
-  /hooks           # Custom React hooks (or equivalent)
-  /utils           # Pure utility functions
-  /services        # API calls, external services
-  /types           # TypeScript types/interfaces
+  /features        # Feature-based modules (auth, account, vendor, venue)
+  /hooks           # Custom React hooks (e.g. useSession, useProfile)
+  /lib             # Supabase client, shared utilities
+  /services        # Supabase query wrappers — keep UI thin
+  /types           # TypeScript types (include generated database types)
   /constants       # App-wide constants
   /config          # Configuration files
   /tests           # Test files (or colocated with source)
+
+Supabase-specific rules
+- Access data through @supabase/supabase-js or services/ wrappers; do not embed raw SQL in components.
+- Never use SUPABASE_SERVICE_ROLE_KEY in client code or VITE_ env vars.
+- Assume RLS is the source of truth for authorization; UI route guards are not sufficient alone.
+- Regenerate src/types/database.ts after schema migrations (supabase gen types).
+- Document new tables and policies in SYSTEM_ARCHITECTURE.md or supabase/migrations/.
 
 File Organization Principles
 Group related files together
@@ -161,8 +171,9 @@ Separate concerns (presentation vs logic)
 Documentation
 Code Documentation
 README: Project setup, dependencies, and getting started
+SYSTEM_ARCHITECTURE.md: Stack, Supabase model, auth flow, RLS, env vars, phases
 JSDoc/TSDoc: Document public APIs and complex functions
-Architecture Decisions: Document why, not just what
+Architecture Decisions: Document why, not just what — update SYSTEM_ARCHITECTURE.md decision log when direction changes
 Inline Comments: Explain complex algorithms and non-obvious code
 Keep Documentation Updated
 Update docs when changing functionality
