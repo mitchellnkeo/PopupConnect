@@ -22,6 +22,9 @@
   --color-neutral-500: #78716c;
   --color-neutral-700: #44403c;
   --color-neutral-900: #1c1917;
+
+  --text-hero-sub: clamp(1rem, 1.5vw, 1.25rem);
+  --text-hero: clamp(3.25rem, 8.2vw, 8rem);
 }
 
 @layer base {

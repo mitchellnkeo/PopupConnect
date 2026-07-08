@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { searchLocations } from "../../data/searchLocations";
 import { IconPin, IconSearch } from "../discovery/icons";
 
@@ -9,6 +10,16 @@ type LocationDropdownProps = {
 };
 
 export function LocationDropdown({ query, onQueryChange, onPick, className = "" }: LocationDropdownProps) {
+  const filteredLocations = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return searchLocations;
+    return searchLocations.filter(
+      (opt) =>
+        opt.primary.toLowerCase().includes(q) ||
+        opt.secondary.toLowerCase().includes(q),
+    );
+  }, [query]);
+
   return (
     <div
       className={`w-[min(100vw-2rem,380px)] rounded-2xl border border-neutral-200 bg-white p-3 shadow-lg ${className}`.trim()}
@@ -28,7 +39,7 @@ export function LocationDropdown({ query, onQueryChange, onPick, className = "" 
         />
       </div>
       <ul className="mt-3 max-h-64 overflow-auto">
-        {searchLocations.map((opt) => (
+        {filteredLocations.map((opt) => (
           <li key={opt.id}>
             <button
               type="button"

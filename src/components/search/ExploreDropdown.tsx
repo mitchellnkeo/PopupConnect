@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { exploreCategories } from "../../data/exploreCategories";
 import { IconSearch } from "../discovery/icons";
@@ -6,18 +6,27 @@ import { Button } from "../ui/Button";
 
 type ExploreDropdownProps = {
   areaLabel?: string;
+  initialQuery?: string;
+  initialCategoryId?: string | null;
   onSearch?: (query: string, categoryId: string | null) => void;
   className?: string;
 };
 
 export function ExploreDropdown({
   areaLabel = "popular in the Seattle, WA area",
+  initialQuery = "",
+  initialCategoryId = null,
   onSearch,
   className = "",
 }: ExploreDropdownProps) {
   const navigate = useNavigate();
-  const [query, setQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [query, setQuery] = useState(initialQuery);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategoryId);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+    setSelectedCategory(initialCategoryId);
+  }, [initialQuery, initialCategoryId]);
 
   function handleSearch() {
     if (onSearch) {
@@ -46,6 +55,9 @@ export function ExploreDropdown({
           placeholder="search..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSearch();
+          }}
           className="w-full rounded-full border border-neutral-300 bg-white py-2.5 pr-3 pl-10 text-sm text-neutral-900 outline-none ring-primary/30 placeholder:text-neutral-400 focus:ring-2"
         />
       </div>

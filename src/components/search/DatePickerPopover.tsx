@@ -12,16 +12,18 @@ type DatePickerPopoverProps = {
   rangeStart: number;
   rangeEnd: number;
   onRangeChange: (start: number, end: number) => void;
+  monthIndex: number;
+  onMonthChange: (monthIndex: number) => void;
+  endMonthIndex?: number;
+  onEndMonthChange?: (monthIndex: number) => void;
+  year?: number;
   onClear: () => void;
   onApply: () => void;
   className?: string;
 };
 
-const YEAR = 2026;
-const MONTH_INDEX = 4; // May
-
-function formatMonthDay(day: number) {
-  const d = new Date(YEAR, MONTH_INDEX, day);
+function formatMonthDay(year: number, monthIndex: number, day: number) {
+  const d = new Date(year, monthIndex, day);
   return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
@@ -33,17 +35,23 @@ export function DatePickerPopover({
   rangeStart,
   rangeEnd,
   onRangeChange,
+  monthIndex,
+  onMonthChange,
+  endMonthIndex,
+  onEndMonthChange,
+  year = 2026,
   onClear,
   onApply,
   className = "",
 }: DatePickerPopoverProps) {
-  const cells = useMemo(() => daysMatrix(YEAR, MONTH_INDEX), []);
+  const cells = useMemo(() => daysMatrix(year, monthIndex), [year, monthIndex]);
   const weekdays = weekdayLabels();
   const [rangeAnchor, setRangeAnchor] = useState<number | null>(null);
   const radioName = useId();
 
   const lo = Math.min(rangeStart, rangeEnd);
   const hi = Math.max(rangeStart, rangeEnd);
+  const rangeEndMonth = endMonthIndex ?? monthIndex;
 
   function dayCellClasses(day: number) {
     const inRange = mode === "range" && day >= lo && day <= hi;
@@ -83,7 +91,15 @@ export function DatePickerPopover({
     onClear();
   }
 
-  const summarySingle = formatMonthDay(singleDay);
+  function shiftMonth(delta: number) {
+    const next = Math.min(11, Math.max(0, monthIndex + delta));
+    onMonthChange(next);
+    if (mode === "range" && onEndMonthChange) {
+      onEndMonthChange(next);
+    }
+  }
+
+  const summarySingle = formatMonthDay(year, monthIndex, singleDay);
 
   return (
     <div
@@ -100,12 +116,12 @@ export function DatePickerPopover({
           <div className="grid grid-cols-2 gap-2">
             <input
               readOnly
-              value={formatMonthDay(lo)}
+              value={formatMonthDay(year, monthIndex, lo)}
               className="rounded-lg border border-neutral-900 px-2 py-2 text-neutral-900 text-xs lowercase"
             />
             <input
               readOnly
-              value={formatMonthDay(hi)}
+              value={formatMonthDay(year, rangeEndMonth, hi)}
               className="rounded-lg border border-neutral-900 px-2 py-2 text-neutral-900 text-xs lowercase"
             />
           </div>
@@ -145,20 +161,24 @@ export function DatePickerPopover({
       <div className="mt-4 flex items-center justify-between">
         <button
           type="button"
-          className="rounded-full p-1 text-midnight hover:bg-neutral-100"
+          onClick={() => shiftMonth(-1)}
+          disabled={monthIndex <= 0}
+          className="rounded-full p-1 text-midnight hover:bg-neutral-100 disabled:opacity-30"
           aria-label="Previous month"
         >
           ‹
         </button>
         <span className="font-medium text-midnight text-sm lowercase">
-          {new Date(YEAR, MONTH_INDEX, 1).toLocaleDateString("en-US", {
+          {new Date(year, monthIndex, 1).toLocaleDateString("en-US", {
             month: "long",
             year: "numeric",
           })}
         </span>
         <button
           type="button"
-          className="rounded-full p-1 text-midnight hover:bg-neutral-100"
+          onClick={() => shiftMonth(1)}
+          disabled={monthIndex >= 11}
+          className="rounded-full p-1 text-midnight hover:bg-neutral-100 disabled:opacity-30"
           aria-label="Next month"
         >
           ›

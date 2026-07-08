@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppHeader } from "../components/layout/AppHeader";
 import { ResultCard } from "../components/explore/ResultCard";
@@ -9,7 +9,9 @@ import { exploreResults } from "../data/exploreResults";
 import { getVendorById } from "../data/vendors";
 import { filterExploreResults } from "../lib/vendorResults";
 import {
+  defaultExploreFilters,
   filtersToSearchParams,
+  hasExploreSearchParams,
   parseExploreFilters,
   resultsHeading,
   type ExploreFilters,
@@ -19,6 +21,12 @@ export function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [previewVendorId, setPreviewVendorId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!hasExploreSearchParams(searchParams)) {
+      setSearchParams(filtersToSearchParams(defaultExploreFilters), { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const filters = useMemo(() => parseExploreFilters(searchParams), [searchParams]);
   const results = useMemo(() => filterExploreResults(exploreResults, filters), [filters]);

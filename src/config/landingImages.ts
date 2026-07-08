@@ -6,5 +6,5 @@ export const landingImages = {
   hero: "/images/landing/hero.png",
   weHelpConnect: "/images/landing/we-help-connect.png",
   community: "/images/landing/community.png",
-  makeItHappen: "/images/landing/make-it-happen.png",
+  makeItHappen: "/images/landing/make-it-happen.svg",
 } as const;

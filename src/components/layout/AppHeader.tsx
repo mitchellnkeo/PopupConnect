@@ -12,7 +12,7 @@ type AppHeaderProps = {
 
 export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppHeaderProps) {
   return (
-    <header className="sticky top-0 z-30 border-border border-b bg-white">
+    <header className="sticky top-0 z-30 overflow-visible border-border border-b bg-white">
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-5 md:px-[60px]">
         <Link to="/" className="flex shrink-0 items-center gap-3">
           <LogoMarkPrimary className="size-8" />
@@ -22,7 +22,7 @@ export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppH
         </Link>
 
         {showSearch && filters && onFiltersChange ? (
-          <div className="hidden min-w-0 flex-1 justify-center lg:flex">
+          <div className="hidden min-w-0 flex-1 justify-center overflow-visible lg:flex">
             <ExploreSearchBar filters={filters} onFiltersChange={onFiltersChange} variant="compact" />
           </div>
         ) : (
@@ -49,7 +49,7 @@ export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppH
       </div>
 
       {showSearch && filters && onFiltersChange ? (
-        <div className="border-border border-t px-4 pb-4 lg:hidden">
+        <div className="overflow-visible border-border border-t px-4 pb-4 lg:hidden">
           <ExploreSearchBar filters={filters} onFiltersChange={onFiltersChange} variant="compact" />
         </div>
       ) : null}
