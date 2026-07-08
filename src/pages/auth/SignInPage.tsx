@@ -22,7 +22,7 @@ export function SignInPage() {
     setError(null);
 
     if (!isSupabaseConfigured) {
-      setError("Supabase is not configured. See supabase/README.md.");
+      setError("Supabase is not configured. See docs/SUPABASE.md.");
       return;
     }
 

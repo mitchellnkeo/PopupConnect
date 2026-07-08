@@ -34,8 +34,8 @@ function Segment({ label, active, onClick, children }: SegmentProps) {
         type="button"
         onClick={onClick}
         aria-expanded={active}
-        className={`w-full rounded-full px-4 py-2.5 font-medium text-midnight text-sm lowercase transition ${
-          active ? "bg-starlight" : "hover:bg-starlight/40"
+        className={`flex h-16 min-w-[140px] items-center justify-center rounded-full px-6 font-normal text-body text-[length:var(--text-nav,22px)] lowercase transition md:h-20 md:min-w-[200px] lg:min-w-[240px] lg:px-8 ${
+          active ? "bg-starlight" : "bg-white hover:bg-starlight/40"
         }`}
       >
         {label}
@@ -122,7 +122,7 @@ export function HeroSearchNav() {
 
       <nav
         aria-label="Search"
-        className="relative z-50 flex min-w-[280px] divide-x divide-neutral-200/80 rounded-full bg-white/95 shadow-md backdrop-blur-sm sm:min-w-[340px]"
+        className="relative z-50 flex min-h-[72px] items-center gap-3 rounded-full bg-white px-2 py-1.5 shadow-[0_0_12px_12px_rgba(255,255,255,0.18)] md:min-h-[100px] md:gap-6 md:px-2.5 md:py-1.5"
       >
         <Segment label="where" active={panel === "where"} onClick={() => toggle("where")}>
           {panel === "where" ? (
@@ -166,7 +166,6 @@ export function HeroSearchNav() {
         </Segment>
       </nav>
 
-      {/* Screen-reader summary of current filters */}
       <p className="sr-only">
         Location: {whereLabel}. Dates: {whenSummary}.
       </p>

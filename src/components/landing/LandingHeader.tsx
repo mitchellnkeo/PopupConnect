@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { UserAccountMenu } from "../auth/UserAccountMenu";
-import { IconCalendar, IconGlobe, LogoMarkLight } from "./icons";
+import { IconCalendar, IconComment, LogoMarkLight } from "./icons";
 import { HeroSearchNav } from "./HeroSearchNav";
 
 type LandingHeaderProps = {
@@ -15,32 +15,40 @@ export function LandingHeader({ overlay = true }: LandingHeaderProps) {
     <header
       className={`absolute inset-x-0 top-0 z-20 ${overlay ? "bg-transparent" : "border-neutral-200 border-b bg-white"}`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-5 md:px-6">
-        <Link to="/" className={`flex shrink-0 items-center gap-2 ${textClass}`}>
-          <LogoMarkLight className={`h-7 w-11 ${overlay ? "" : "[&_circle]:stroke-midnight [&_circle]:fill-midnight/10"}`} />
-          <span className="font-semibold text-sm uppercase tracking-widest">PopupConnect</span>
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-5 md:px-[60px]">
+        <Link to="/" className={`flex shrink-0 items-center gap-3 ${textClass}`}>
+          <LogoMarkLight
+            className={`size-8 ${overlay ? "" : "[&_circle]:stroke-midnight [&_circle]:fill-midnight/10"}`}
+          />
+          <span className="font-bold text-[length:var(--text-logo,28px)] uppercase tracking-wide">
+            PopupConnect
+          </span>
         </Link>
 
-        <div className="hidden flex-1 justify-center sm:flex">
+        <div className="hidden flex-1 justify-center lg:flex">
           <HeroSearchNav />
         </div>
 
-        <div className={`flex shrink-0 items-center gap-3 ${textClass}`}>
-          <button type="button" className="rounded-full p-2 transition hover:bg-white/15" aria-label="Language">
-            <IconGlobe className="size-5" />
-          </button>
+        <div className={`flex shrink-0 items-center gap-2.5 pl-0 md:pl-[60px] ${textClass}`}>
+          <Link
+            to="/messages"
+            className="rounded p-2.5 transition hover:bg-white/10"
+            aria-label="Messages"
+          >
+            <IconComment className="size-[18px]" />
+          </Link>
           <Link
             to="/when"
-            className="rounded-full p-2 transition hover:bg-white/15"
+            className="rounded p-2.5 transition hover:bg-white/10"
             aria-label="Calendar"
           >
-            <IconCalendar className="size-5" />
+            <IconCalendar className="size-[18px]" />
           </Link>
           <UserAccountMenu variant="overlay" />
         </div>
       </div>
 
-      <div className="flex justify-center px-4 pb-4 sm:hidden">
+      <div className="flex justify-center px-4 pb-4 lg:hidden">
         <HeroSearchNav />
       </div>
     </header>

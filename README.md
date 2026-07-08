@@ -10,7 +10,7 @@ A website that connects local enterprises with venues that can host them.
 | Hosting | [Vercel](https://vercel.com) |
 | Accounts & data | [Supabase](https://supabase.com) (Auth + Postgres + Storage) |
 
-System design, auth model, and planned database layout are documented in **[SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)**.
+System design, auth model, and planned database layout are documented in **[docs/SYSTEM_ARCHITECTURE.md](./docs/SYSTEM_ARCHITECTURE.md)**.
 
 ## Getting started
 
@@ -30,7 +30,7 @@ npm run db:link
 npm run db:push
 ```
 
-See [supabase/README.md](./supabase/README.md) if you see `command not found: supabase`.
+See [docs/SUPABASE.md](./docs/SUPABASE.md) if you see `command not found: supabase`.
 
 Open the URL shown in the terminal (typically `http://localhost:5173`).
 
@@ -44,9 +44,13 @@ Open the URL shown in the terminal (typically `http://localhost:5173`).
 
 ## Project docs
 
-- [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) — Supabase, auth, RLS, deployment
-- [ProjectDeliverables.md](./ProjectDeliverables.md) — Product scope
-- [CodingFundamentals.md](./CodingFundamentals.md) — Team coding standards
+All documentation lives in **[docs/](./docs/)**. Start here for new sessions:
+
+- [docs/HANDOFF.md](./docs/HANDOFF.md) — Onboarding handoff (start here)
+- [docs/SYSTEM_ARCHITECTURE.md](./docs/SYSTEM_ARCHITECTURE.md) — Supabase, auth, RLS, deployment
+- [docs/ProjectDeliverables.md](./docs/ProjectDeliverables.md) — Product scope
+- [docs/CodingFundamentals.md](./docs/CodingFundamentals.md) — Team coding standards
+- [docs/SUPABASE.md](./docs/SUPABASE.md) — CLI + migration steps
 
 ## Deploy on Vercel
 
@@ -57,7 +61,7 @@ In Vercel → **Project → Settings → Environment Variables**, add:
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY` (your Supabase **Publishable** key)
 
-Redeploy after changing env vars. Configure Supabase **Authentication → URL configuration** with your production URL (see team notes or prior setup).
+Redeploy after changing env vars. Configure Supabase **Authentication → URL configuration** with your production URL (see [docs/SUPABASE.md](./docs/SUPABASE.md) or [docs/HANDOFF.md](./docs/HANDOFF.md)).
 
 ### Vercel CLI (`command not found: vercel`)
 

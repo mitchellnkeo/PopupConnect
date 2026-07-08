@@ -3,7 +3,8 @@
  * and set paths here, e.g. `/images/hero.jpg`.
  */
 export const landingImages = {
-  hero: undefined as string | undefined,
-  weHelpConnect: undefined as string | undefined,
-  community: undefined as string | undefined,
+  hero: "/images/landing/hero.png",
+  weHelpConnect: "/images/landing/we-help-connect.png",
+  community: "/images/landing/community.png",
+  makeItHappen: "/images/landing/make-it-happen.png",
 } as const;

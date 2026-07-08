@@ -24,7 +24,7 @@ export function SignUpPage() {
     setMessage(null);
 
     if (!isSupabaseConfigured) {
-      setError("Supabase is not configured. See supabase/README.md.");
+      setError("Supabase is not configured. See docs/SUPABASE.md.");
       return;
     }
 

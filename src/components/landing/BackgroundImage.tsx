@@ -30,7 +30,7 @@ export function BackgroundImage({
         <img
           src={src}
           alt={alt}
-          className={`absolute inset-0 size-full object-cover ${imageClassName}`.trim()}
+          className={`absolute ${imageClassName || "inset-0 size-full object-cover"}`.trim()}
         />
       ) : (
         <div
@@ -60,7 +60,7 @@ export function ContentImage({ src, alt, className = "" }: ContentImageProps) {
       <img
         src={src}
         alt={alt}
-        className={`size-full rounded-2xl object-cover ${className}`.trim()}
+        className={`size-full rounded-[20px] object-cover ${className}`.trim()}
       />
     );
   }

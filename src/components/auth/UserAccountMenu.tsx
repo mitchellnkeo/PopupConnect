@@ -60,12 +60,12 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
   }
 
   const triggerClass = [
-    "flex size-9 items-center justify-center rounded-full font-semibold text-xs transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+    "flex items-center justify-center rounded-full font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+    isOverlay ? "size-10 text-base" : "size-9 font-semibold text-xs",
     isOverlay
       ? "bg-midnight text-white hover:bg-midnight/90 focus-visible:outline-white"
       : "bg-midnight text-white hover:bg-midnight/90 focus-visible:outline-primary",
     open && (isOverlay ? "ring-2 ring-white/80" : "ring-2 ring-primary/40"),
-    className,
   ]
     .filter(Boolean)
     .join(" ");

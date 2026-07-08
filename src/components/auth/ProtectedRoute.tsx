@@ -16,7 +16,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         <p className="mt-3 text-neutral-600 text-sm leading-relaxed">
           Add <code className="text-primary">VITE_SUPABASE_URL</code> and{" "}
           <code className="text-primary">VITE_SUPABASE_ANON_KEY</code> to{" "}
-          <code>.env.local</code>. See <code>supabase/README.md</code>.
+          <code>.env.local</code>. See <code>docs/SUPABASE.md</code>.
         </p>
       </div>
     );
