@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { APP_VERSION } from "../../config/version";
 import { LogoMarkLight } from "./icons";
 
 const footerLinks = [
@@ -29,7 +30,9 @@ export function LandingFooter() {
           ))}
         </nav>
 
-        <p className="text-[length:var(--text-footer,18px)]">2026</p>
+        <p className="text-[length:var(--text-footer,18px)]">
+          2026 · v{APP_VERSION}
+        </p>
       </div>
     </footer>
   );

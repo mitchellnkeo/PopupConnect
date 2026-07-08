@@ -1,5 +1,7 @@
 # PopupConnect
 
+**Version 1.0.0**
+
 A website that connects local enterprises with venues that can host them.
 
 ## Stack

@@ -12,6 +12,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-07-08 | **v1.0.0** — First review release: landing, explore, vendor detail, booking quote flow, hero/search UX polish. Version in footer + `src/config/version.ts`. |
 | 2026-07-07 | Consolidated all project docs into **`docs/`** (`HANDOFF`, architecture, deliverables, coding standards, Supabase setup). Root `README.md` remains the setup entry point; `supabase/README.md` is a short pointer to `docs/SUPABASE.md`. |
 | 2026-05 | Phase 1 auth shipped: Supabase client, sign-in/sign-up/welcome, profiles + roles migration, account profile page, Vercel deploy with env vars. |
 
