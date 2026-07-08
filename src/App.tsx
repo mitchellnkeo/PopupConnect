@@ -5,17 +5,25 @@ import { PageShell } from "./components/PageShell";
 import { AccountLayout } from "./pages/account/AccountLayout";
 import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
+import { VendorAccountPage } from "./pages/account/VendorAccountPage";
 import { SignInPage } from "./pages/auth/SignInPage";
 import { SignUpPage } from "./pages/auth/SignUpPage";
 import { WelcomePage } from "./pages/auth/WelcomePage";
+import { QuoteConfirmationPage } from "./pages/booking/QuoteConfirmationPage";
+import { QuoteRequestPage } from "./pages/booking/QuoteRequestPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { LandingPage } from "./pages/LandingPage";
+import { VendorDetailPage } from "./pages/VendorDetailPage";
 
 export function App() {
   return (
     <Routes>
       <Route index element={<LandingPage />} />
       <Route path="explore" element={<ExplorePage />} />
+      <Route path="vendor/:vendorId" element={<VendorDetailPage />} />
+
+      <Route path="booking/quote" element={<QuoteRequestPage />} />
+      <Route path="booking/confirm" element={<QuoteConfirmationPage />} />
 
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
@@ -23,6 +31,15 @@ export function App() {
 
       <Route
         path="account"
+        element={
+          <ProtectedRoute>
+            <VendorAccountPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="account/settings"
         element={
           <ProtectedRoute>
             <AccountLayout />
@@ -93,10 +110,12 @@ export function App() {
           }
         />
 
-        <Route
-          path="explore/results"
-          element={<PageShell title="Explore results" description="Discovery results." />}
-        />
+        <Route path="booking" element={<Navigate to="/booking/quote" replace />} />
+        <Route path="booking/review" element={<PageShell title="Review booking" />} />
+        <Route path="booking/payment" element={<PageShell title="Select payment" />} />
+
+        <Route path="messages" element={<PageShell title="Messages" />} />
+        <Route path="messages/:threadId" element={<PageShell title="Individual chat" />} />
 
         <Route
           path="location/:locationId"
@@ -107,20 +126,6 @@ export function App() {
             />
           }
         />
-        <Route
-          path="vendor/:vendorId"
-          element={
-            <PageShell title="Vendor details" description="Vendor detail — from Explore path." />
-          }
-        />
-
-        <Route path="booking" element={<PageShell title="Booking" />} />
-        <Route path="booking/review" element={<PageShell title="Review booking" />} />
-        <Route path="booking/payment" element={<PageShell title="Select payment" />} />
-        <Route path="booking/confirm" element={<PageShell title="Confirm booking" />} />
-
-        <Route path="messages" element={<PageShell title="Messages" />} />
-        <Route path="messages/:threadId" element={<PageShell title="Individual chat" />} />
 
         <Route path="about" element={<PageShell title="About" />} />
         <Route path="about/contact" element={<PageShell title="Contact us" />} />

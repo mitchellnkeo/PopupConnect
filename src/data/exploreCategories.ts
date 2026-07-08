@@ -4,6 +4,7 @@ export type ExploreCategory = {
 };
 
 export const exploreCategories: ExploreCategory[] = [
+  { id: "matcha-bar", label: "matcha bar" },
   { id: "photo-booth", label: "photo booth" },
   { id: "dj-live-music", label: "dj/live music" },
   { id: "catering", label: "catering" },

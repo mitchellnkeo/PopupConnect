@@ -5,11 +5,12 @@ import { Button } from "../../components/ui/Button";
 import { LogoMark } from "../../components/discovery/icons";
 
 const navItems = [
-  { to: "/account/profile", label: "My profile" },
-  { to: "/account/events", label: "My events" },
-  { to: "/account/privacy", label: "Privacy and security" },
-  { to: "/account/messages", label: "Messages" },
-  { to: "/account/docs", label: "My docs" },
+  { to: "/account", label: "My business" },
+  { to: "/account/settings/profile", label: "My profile" },
+  { to: "/account/settings/events", label: "My events" },
+  { to: "/account/settings/privacy", label: "Privacy and security" },
+  { to: "/account/settings/messages", label: "Messages" },
+  { to: "/account/settings/docs", label: "My docs" },
 ] as const;
 
 function navClassName({ isActive }: { isActive: boolean }) {

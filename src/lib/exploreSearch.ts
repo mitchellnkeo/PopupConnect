@@ -28,12 +28,12 @@ export type ExploreFilters = {
 
 export const defaultExploreFilters: ExploreFilters = {
   where: "honolulu, hi",
-  whenDay: 1,
-  whenMonth: 6,
+  whenDay: 15,
+  whenMonth: 7,
   whenYear: 2026,
   whenMode: "single",
-  whenEndDay: 1,
-  categoryId: "dj-live-music",
+  whenEndDay: 15,
+  categoryId: "matcha-bar",
   query: "",
 };
 
@@ -100,6 +100,7 @@ export function formatCategoryLabel(categoryId: string | null) {
   const match = exploreCategories.find((c) => c.id === categoryId);
   if (!match) return "All vendors";
   if (categoryId === "dj-live-music") return "DJs & Live music";
+  if (categoryId === "matcha-bar") return "Matcha Bar";
   return match.label
     .split("/")
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
@@ -109,6 +110,7 @@ export function formatCategoryLabel(categoryId: string | null) {
 export function resultsHeading(filters: ExploreFilters) {
   const city = formatLocationLabel(filters.where).split(",")[0]?.trim() ?? "your area";
   if (filters.categoryId === "dj-live-music") return `DJs in ${city}`;
+  if (filters.categoryId === "matcha-bar") return `Matcha Bars in ${city}`;
   const cat = formatCategoryLabel(filters.categoryId);
   return `${cat} in ${city}`;
 }

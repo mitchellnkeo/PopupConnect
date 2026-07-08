@@ -14,6 +14,7 @@ type Panel = "none" | "where" | "when" | "category";
 type ExploreSearchBarProps = {
   filters: ExploreFilters;
   onFiltersChange: (next: ExploreFilters) => void;
+  variant?: "default" | "compact";
 };
 
 type SegmentProps = {
@@ -21,10 +22,29 @@ type SegmentProps = {
   value: string;
   active: boolean;
   onClick: () => void;
+  compact?: boolean;
   children?: ReactNode;
 };
 
-function Segment({ label, value, active, onClick, children }: SegmentProps) {
+function Segment({ label, value, active, onClick, compact, children }: SegmentProps) {
+  if (compact) {
+    return (
+      <div className="relative min-w-[140px] flex-1 md:min-w-[200px] lg:min-w-[240px]">
+        <button
+          type="button"
+          onClick={onClick}
+          aria-expanded={active}
+          className={`w-full truncate px-5 py-2.5 text-body text-lg transition first:rounded-l-full last:rounded-r-full ${
+            active ? "bg-starlight/60" : "bg-white hover:bg-starlight/30"
+          }`}
+        >
+          {value}
+        </button>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-w-0 flex-1">
       <button
@@ -49,7 +69,11 @@ function PanelAnchor({ children }: { children: ReactNode }) {
   );
 }
 
-export function ExploreSearchBar({ filters, onFiltersChange }: ExploreSearchBarProps) {
+export function ExploreSearchBar({
+  filters,
+  onFiltersChange,
+  variant = "default",
+}: ExploreSearchBarProps) {
   const [panel, setPanel] = useState<Panel>("none");
   const [locationQuery, setLocationQuery] = useState("");
 
@@ -57,6 +81,8 @@ export function ExploreSearchBar({ filters, onFiltersChange }: ExploreSearchBarP
   const [singleDay, setSingleDay] = useState(filters.whenDay);
   const [rangeStart, setRangeStart] = useState(filters.whenDay);
   const [rangeEnd, setRangeEnd] = useState(filters.whenEndDay);
+
+  const compact = variant === "compact";
 
   function close() {
     setPanel("none");
@@ -74,18 +100,23 @@ export function ExploreSearchBar({ filters, onFiltersChange }: ExploreSearchBarP
   const dateDisplay = formatDateLabel(filters);
   const categoryDisplay = formatCategoryLabel(filters.categoryId);
 
+  const barClass = compact
+    ? "relative z-50 flex h-[42px] items-stretch overflow-hidden rounded-full border border-border bg-white"
+    : "relative z-50 flex divide-x divide-neutral-200 overflow-hidden rounded-full border border-neutral-200 bg-white shadow-sm";
+
   return (
     <div className="relative">
       {panel !== "none" ? (
         <button type="button" aria-label="Close search panel" className="fixed inset-0 z-40" onClick={close} />
       ) : null}
 
-      <div className="relative z-50 flex divide-x divide-neutral-200 overflow-hidden rounded-full border border-neutral-200 bg-white shadow-sm">
+      <div className={barClass}>
         <Segment
           label="Location"
           value={locationDisplay}
           active={panel === "where"}
           onClick={() => toggle("where")}
+          compact={compact}
         >
           {panel === "where" ? (
             <PanelAnchor>
@@ -101,11 +132,14 @@ export function ExploreSearchBar({ filters, onFiltersChange }: ExploreSearchBarP
           ) : null}
         </Segment>
 
+        {compact ? <div className="w-px self-stretch bg-border" /> : null}
+
         <Segment
           label="Date"
           value={dateDisplay}
           active={panel === "when"}
           onClick={() => toggle("when")}
+          compact={compact}
         >
           {panel === "when" ? (
             <PanelAnchor>
@@ -122,9 +156,9 @@ export function ExploreSearchBar({ filters, onFiltersChange }: ExploreSearchBarP
                 }}
                 onClear={() => {
                   setDateMode("single");
-                  setSingleDay(1);
-                  setRangeStart(1);
-                  setRangeEnd(1);
+                  setSingleDay(15);
+                  setRangeStart(15);
+                  setRangeEnd(15);
                 }}
                 onApply={() => {
                   if (dateMode === "range") {
@@ -132,14 +166,14 @@ export function ExploreSearchBar({ filters, onFiltersChange }: ExploreSearchBarP
                       whenMode: "range",
                       whenDay: rangeStart,
                       whenEndDay: rangeEnd,
-                      whenMonth: 4,
+                      whenMonth: 7,
                     });
                   } else {
                     patch({
                       whenMode: "single",
                       whenDay: singleDay,
                       whenEndDay: singleDay,
-                      whenMonth: 4,
+                      whenMonth: 7,
                     });
                   }
                   close();
@@ -149,11 +183,14 @@ export function ExploreSearchBar({ filters, onFiltersChange }: ExploreSearchBarP
           ) : null}
         </Segment>
 
+        {compact ? <div className="w-px self-stretch bg-border" /> : null}
+
         <Segment
           label="Service"
           value={categoryDisplay}
           active={panel === "category"}
           onClick={() => toggle("category")}
+          compact={compact}
         >
           {panel === "category" ? (
             <PanelAnchor>

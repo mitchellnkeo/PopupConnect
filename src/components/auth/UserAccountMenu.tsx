@@ -108,7 +108,7 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
               </div>
               <Link
                 role="menuitem"
-                to="/account/profile"
+                to="/account/settings/profile"
                 className={itemClass}
                 onClick={() => setOpen(false)}
               >
@@ -116,7 +116,7 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
               </Link>
               <Link
                 role="menuitem"
-                to="/account/events"
+                to="/account/settings/events"
                 className={itemClass}
                 onClick={() => setOpen(false)}
               >
