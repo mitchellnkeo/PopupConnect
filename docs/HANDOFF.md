@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-07-15 | P1: vendor package popout, Leaflet explore map, `vendor_profiles` migration + edit UI at `/account/settings/vendor`. |
 | 2026-07-15 | P0: logged-in vs guest flows (explore banner, landing CTAs, vendor CTAs, header nav); primary button darker hover token + shared `buttonStyles.ts`. |
 | 2026-07-15 | P0 shipped: explore search bar location-segment fill fix; quote + confirm routes require login with return URL through sign-in/welcome. |
 | 2026-07-15 | Team meeting captured in [ROADMAP.md](./ROADMAP.md): UX polish (icons, explore location fill, button hover), logged-in/out flows, login gate for quotes, map API, vendor package interactions, calendar/plan mode + export. Added [WORK_LOG.md](./WORK_LOG.md); refreshed [ProjectDeliverables.md](./ProjectDeliverables.md). |
@@ -102,6 +103,7 @@ Image assets:
 | `/sign-up` | `SignUpPage` | First/last name, email, passwords, terms |
 | `/welcome` | `WelcomePage` | Post-auth onboarding; role radio → `/explore` |
 | `/account` | `VendorAccountPage` | Protected; demo vendor account UI (mock vendor) |
+| `/account/settings/vendor` | `VendorProfileEditPage` | Protected; vendor role; Supabase CRUD |
 | `/account/settings/*` | `AccountLayout` | Protected; profile + placeholder sub-pages |
 
 `/booking` redirects to `/booking/quote`.
@@ -198,6 +200,12 @@ VITE_SUPABASE_ANON_KEY=<Publishable key from dashboard>
 - RLS policies
 - `handle_new_user()` trigger → auto-insert profile on sign-up
 
+`supabase/migrations/20260715120000_vendor_profiles.sql`:
+
+- `vendor_profiles` (1:1 with `profiles` per owner)
+- `vendor_products` (packages / offerings)
+- RLS: public read when `published`; owner CRUD
+
 ### CLI commands
 
 ```bash
@@ -247,7 +255,7 @@ Shared search components: `src/components/search/`. Search bars: `HeroSearchNav`
 - **Results:** `filterExploreResults()` in `src/lib/vendorResults.ts` over mock data
 - **Data:** `src/data/exploreResults.ts`, `src/data/vendors.ts` (6 Honolulu matcha vendors)
 - **Interactions:** card hover ↔ map marker; card click → `VendorPreviewModal` → full profile or quote
-- **Map:** static image in `ResultsMap` with positioned markers (`exploreImages.map`) — **real map API on [ROADMAP](./ROADMAP.md) P1**
+- **Map:** Leaflet + OpenStreetMap in `ExploreMap` (`ResultsMap`); markers use vendor `lat`/`lng`
 
 **Known issues (2026-07-15):** ~~location input segment background fill bug~~ — fixed in compact `ExploreSearchBar`.
 
@@ -264,9 +272,10 @@ flowchart LR
   E --> F[/booking/confirm]
 ```
 
-- **Vendor detail:** gallery, packages, highlights, quote CTA
+- **Vendor detail:** gallery, packages (click popout with hover fill), highlights, quote CTA
 - **Quote request / confirm:** static quote line items; no persistence yet
-- **`/account`:** demo vendor account page (not tied to signed-in user's vendor record)
+- **`/account`:** loads owner's `vendor_profiles` row when present; else demo + setup CTA
+- **`/account/settings/vendor`:** vendor profile + packages editor (Supabase)
 
 ### Planned changes (2026-07-15 meeting — see [ROADMAP.md](./ROADMAP.md))
 

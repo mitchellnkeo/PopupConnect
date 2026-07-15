@@ -1,7 +1,11 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 import { AppHeader } from "../components/layout/AppHeader";
 import { LandingFooter } from "../components/landing/LandingFooter";
+import { VendorPackageCard } from "../components/vendor/VendorPackageCard";
+import { VendorPackagePopout } from "../components/vendor/VendorPackagePopout";
 import { useAuth } from "../features/auth/AuthContext";
+import type { VendorPackage } from "../data/vendors";
 import { getVendorById } from "../data/vendors";
 import { btnPrimaryFull, btnSecondaryOutline } from "../lib/buttonStyles";
 
@@ -9,6 +13,7 @@ export function VendorDetailPage() {
   const { vendorId } = useParams<{ vendorId: string }>();
   const navigate = useNavigate();
   const { session } = useAuth();
+  const [selectedPackage, setSelectedPackage] = useState<VendorPackage | null>(null);
   const vendor = vendorId ? getVendorById(vendorId) : undefined;
 
   const quotePath = vendor ? `/booking/quote?vendor=${vendor.id}` : "/booking/quote";
@@ -176,11 +181,7 @@ export function VendorDetailPage() {
               <div className="mt-8 space-y-4">
                 <h3 className="font-bold text-[length:var(--text-section,28px)] text-midnight">Packages</h3>
                 {vendor.packages.map((pkg) => (
-                  <div key={pkg.id} className="rounded-lg border border-border p-4">
-                    <p className="font-bold text-midnight">{pkg.name}</p>
-                    <p className="mt-1 text-body/70 text-sm">{pkg.description}</p>
-                    <p className="mt-2 font-bold text-primary text-lg">${pkg.price}</p>
-                  </div>
+                  <VendorPackageCard key={pkg.id} pkg={pkg} onSelect={setSelectedPackage} />
                 ))}
               </div>
             </div>
@@ -189,6 +190,23 @@ export function VendorDetailPage() {
       </main>
 
       <LandingFooter />
+
+      {selectedPackage ? (
+        <VendorPackagePopout
+          pkg={selectedPackage}
+          vendorTitle={vendor.title}
+          onClose={() => setSelectedPackage(null)}
+          onQuote={() => {
+            setSelectedPackage(null);
+            if (session) {
+              navigate(quotePath);
+            } else {
+              navigate("/sign-in", { state: { from: quotePath } });
+            }
+          }}
+          quoteLabel={session ? "Request quote" : "Sign in to request quote"}
+        />
+      ) : null}
     </div>
   );
 }

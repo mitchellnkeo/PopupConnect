@@ -6,6 +6,7 @@ import { AccountLayout } from "./pages/account/AccountLayout";
 import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
 import { VendorAccountPage } from "./pages/account/VendorAccountPage";
+import { VendorProfileEditPage } from "./pages/account/VendorProfileEditPage";
 import { SignInPage } from "./pages/auth/SignInPage";
 import { SignUpPage } from "./pages/auth/SignUpPage";
 import { WelcomePage } from "./pages/auth/WelcomePage";
@@ -62,6 +63,7 @@ export function App() {
       >
         <Route index element={<Navigate to="profile" replace />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="vendor" element={<VendorProfileEditPage />} />
         <Route
           path="events"
           element={

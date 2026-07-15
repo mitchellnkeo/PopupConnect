@@ -3,6 +3,8 @@ export type VendorPackage = {
   name: string;
   price: number;
   description: string;
+  /** Extra bullet points shown in the package detail popout */
+  highlights?: string[];
 };
 
 export type VendorProfile = {
@@ -41,6 +43,8 @@ export type VendorProfile = {
   gallery: string[];
   mapX: number;
   mapY: number;
+  lat: number;
+  lng: number;
 };
 
 export const vendors: VendorProfile[] = [
@@ -91,12 +95,23 @@ export const vendors: VendorProfile[] = [
         name: "Premium Matcha Bar Package",
         price: 360,
         description: "Full mobile bar with ceremonial matcha service for up to 20 guests.",
+        highlights: [
+          "Ceremonial-grade matcha sourced from Japan",
+          "Made-to-order drinks for up to 20 guests",
+          "Full mobile bar setup and breakdown",
+          "Cultural storytelling throughout the event",
+        ],
       },
       {
         id: "standard",
         name: "Standard Matcha Bar Package",
         price: 240,
         description: "Mobile bar setup with classic matcha drinks for up to 15 guests.",
+        highlights: [
+          "Classic matcha drink menu",
+          "Service for up to 15 guests",
+          "Mobile bar setup included",
+        ],
       },
     ],
     gallery: [
@@ -106,6 +121,8 @@ export const vendors: VendorProfile[] = [
     ],
     mapX: 42,
     mapY: 48,
+    lat: 21.3099,
+    lng: -157.8583,
   },
   {
     id: "whiskd",
@@ -139,6 +156,8 @@ export const vendors: VendorProfile[] = [
     gallery: ["/images/vendors/whiskd.png"],
     mapX: 55,
     mapY: 52,
+    lat: 21.3049,
+    lng: -157.8523,
   },
   {
     id: "green-cup",
@@ -172,6 +191,8 @@ export const vendors: VendorProfile[] = [
     gallery: ["/images/vendors/green-cup.png"],
     mapX: 38,
     mapY: 60,
+    lat: 21.3019,
+    lng: -157.8643,
   },
   {
     id: "jade-cup",
@@ -204,6 +225,8 @@ export const vendors: VendorProfile[] = [
     gallery: ["/images/vendors/green-cup.png"],
     mapX: 62,
     mapY: 44,
+    lat: 21.3129,
+    lng: -157.8483,
   },
   {
     id: "ocha-matcha",
@@ -236,6 +259,8 @@ export const vendors: VendorProfile[] = [
     gallery: ["/images/vendors/whiskd.png"],
     mapX: 48,
     mapY: 65,
+    lat: 21.3079,
+    lng: -157.8693,
   },
   {
     id: "mist-bar",
@@ -268,6 +293,8 @@ export const vendors: VendorProfile[] = [
     gallery: ["/images/vendors/aki-hero.png"],
     mapX: 70,
     mapY: 55,
+    lat: 21.3159,
+    lng: -157.8553,
   },
 ];
 

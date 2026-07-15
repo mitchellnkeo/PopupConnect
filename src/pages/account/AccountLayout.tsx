@@ -7,6 +7,7 @@ import { LogoMark } from "../../components/discovery/icons";
 const navItems = [
   { to: "/account", label: "My business" },
   { to: "/account/settings/profile", label: "My profile" },
+  { to: "/account/settings/vendor", label: "Vendor profile" },
   { to: "/account/settings/events", label: "My events" },
   { to: "/account/settings/privacy", label: "Privacy and security" },
   { to: "/account/settings/messages", label: "Messages" },

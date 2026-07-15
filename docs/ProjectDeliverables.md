@@ -26,8 +26,9 @@ Branding is clear and reflected in design
 |-------------|--------|-------|
 | User personas & onboarding | **Partial** | Auth + welcome shipped; logged-in/out UI branching shipped |
 | Gallery / explore vendors | **Partial** | Explore UI on mock data; location fill fixed; map still static |
-| Vendor profile (public) | **Partial** | Detail page on mock data; pricing accepted; packages need hover + popout |
-| Vendor profile (owner edit) | **Not started** | Demo `/account` only; edit + Supabase tie-in on roadmap |
+| Vendor profile (public) | **Partial** | Detail page on mock data; package popout shipped; DB profiles when published |
+| Vendor profile (owner edit) | **Partial** | `/account/settings/vendor` + migration shipped |
+| Explore map | **Partial** | Leaflet/OSM live; explore list still mock data |
 | Business location profile | **Not started** | `venue_profiles` planned |
 | Manage reservations / quotes | **Partial** | Quote UI mock; **login gate shipped**; persistence not built |
 | Payment | **Not started** | `/booking/payment` placeholder |

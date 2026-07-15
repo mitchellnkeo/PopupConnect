@@ -6,6 +6,8 @@ export type ExploreResult = {
   city: string;
   mapX: number;
   mapY: number;
+  lat: number;
+  lng: number;
   imageSrc?: string;
   categoryIds?: string[];
 };

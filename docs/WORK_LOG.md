@@ -6,6 +6,37 @@
 
 ---
 
+## 2026-07-15 — P1: vendor packages, map API, vendor profiles
+
+**Who:** Mitchell + AI session  
+**Focus:** P1 roadmap — package UX, real explore map, Supabase vendor editing.
+
+### Done
+
+- **Package hover + popout** — `VendorPackageCard` (starlight hover fill), `VendorPackagePopout` with highlights and quote/sign-in CTA.
+- **Map API** — `ExploreMap` using Leaflet + OpenStreetMap; mock vendors have `lat`/`lng` (Honolulu). No API key required.
+- **Vendor profiles (Supabase)** — migration `20260715120000_vendor_profiles.sql` (`vendor_profiles`, `vendor_products`, RLS). `vendorService.ts`, `/account/settings/vendor` edit page, `/account` loads owner profile when present.
+
+### Apply migration
+
+```bash
+npm run db:push
+```
+
+### Files added/changed
+
+- `src/components/vendor/VendorPackageCard.tsx`, `VendorPackagePopout.tsx`
+- `src/components/explore/ExploreMap.tsx`, `ResultsMap.tsx`
+- `src/services/vendorService.ts`, `src/pages/account/VendorProfileEditPage.tsx`
+- `supabase/migrations/20260715120000_vendor_profiles.sql`
+- `leaflet`, `react-leaflet` dependencies
+
+### Next up
+
+Wire explore search to published `vendor_profiles`; P2 calendar/plan mode; optional Mapbox if team prefers styled tiles.
+
+---
+
 ## 2026-07-15 — P0: auth flows + button hover
 
 **Who:** Mitchell + AI session  

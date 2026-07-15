@@ -8,6 +8,8 @@ export function vendorsToExploreResults(): ExploreResult[] {
     city: vendor.distance,
     mapX: vendor.mapX,
     mapY: vendor.mapY,
+    lat: vendor.lat,
+    lng: vendor.lng,
     imageSrc: vendor.imageSrc,
     categoryIds: vendor.categoryIds,
   }));
