@@ -41,7 +41,9 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 | Backend | Supabase — Auth + Postgres + RLS (+ Storage planned) |
 | Client SDK | `@supabase/supabase-js` |
 
-**Not in repo yet:** Vercel Functions, Supabase Storage buckets, generated DB types, real map provider, real vendor/venue tables.
+**Current release:** `1.0.0` — see `src/config/version.ts`, root `VERSION`, [CHANGELOG.md](./CHANGELOG.md). Shown in site footer as `v1.0.0`.
+
+**Not in repo yet:** Vercel Functions, Supabase Storage buckets, generated DB types, real map provider, real vendor/venue tables (explore uses mock data in `src/data/`).
 
 ---
 
@@ -54,14 +56,21 @@ Defined in `src/index.css`:
 | `primary` | `#cc3d00` | Buttons, accents (Sienna Orange) |
 | `midnight` | `#172e50` | Headings, nav text |
 | `starlight` | `#ffdfa6` | Cards, active states, peach bands |
+| `cream` | `#f5ede0` | Section backgrounds |
+| `body` | `#102440` | Body copy |
+| `accent` | `#c94b1f` | Section headings |
 | `neutral-*` | stone scale | Backgrounds, borders |
 
-Reference assets: `reference_images/` (home, select_location, select_date, ColorScheme, etc.) and PDFs (`site map.pdf`, `Design Style Guide.pdf`).
+Typography tokens: `--text-hero`, `--text-hero-sub` (hero headline + subcopy).
 
-Image placeholder pattern:
+Reference assets: `reference_images/` (home, select_location, select_date, ColorScheme, etc.), Figma [Catalyst Design System](https://www.figma.com/design/Rr4R0eC6SzVheNO8Nlgxty/Catalyst-Design-System), and PDFs (`site map.pdf`, `Design Style Guide.pdf`).
 
-- `src/config/landingImages.ts` — hero, we-help-connect, community CTA
-- `src/config/exploreImages.ts` — map tile
+Image assets:
+
+- `public/images/landing/` — hero, we-help-connect, community (from Figma)
+- `public/images/explore/` — map placeholder
+- `public/images/vendors/` — mock vendor photos
+- `src/config/landingImages.ts`, `src/config/exploreImages.ts` — path constants
 - `src/components/landing/BackgroundImage.tsx` — `BackgroundImage` + `ContentImage` slots
 
 ---
@@ -72,16 +81,28 @@ Image placeholder pattern:
 
 | Path | Page | Notes |
 |------|------|--------|
-| `/` | `LandingPage` | Hero, sections, search pill, footer |
-| `/explore` | `ExplorePage` | Results grid + map split; URL-driven filters |
+| `/` | `LandingPage` | Hero, marketing sections, `HeroSearchNav`, footer |
+| `/explore` | `ExplorePage` | URL-driven filters; results grid + map; vendor preview modal |
+| `/vendor/:vendorId` | `VendorDetailPage` | Full vendor profile (mock data) |
+| `/booking/quote` | `QuoteRequestPage` | Quote preview; `?vendor=` query param |
+| `/booking/confirm` | `QuoteConfirmationPage` | Post-quote confirmation |
 | `/sign-in` | `SignInPage` | Split layout; page title says **"Log in"** |
 | `/sign-up` | `SignUpPage` | First/last name, email, passwords, terms |
 | `/welcome` | `WelcomePage` | Post-auth onboarding; role radio → `/explore` |
-| `/account/*` | `AccountLayout` | Profile + placeholder sub-pages |
+| `/account` | `VendorAccountPage` | Protected; demo vendor account UI (mock vendor) |
+| `/account/settings/*` | `AccountLayout` | Protected; profile + placeholder sub-pages |
+
+`/booking` redirects to `/booking/quote`.
 
 ### Placeholders (`PageShell` via `AppShell`)
 
-`/where`, `/when`, `/booking/*`, `/location/:id`, `/vendor/:id`, `/messages`, `/about/*`, etc. — scaffold only; not designed to match mockups yet.
+`/where`, `/when`, `/booking/review`, `/booking/payment`, `/location/:id`, `/messages`, `/about/*`, etc. — scaffold only.
+
+### Shared layout components
+
+- **`AppHeader`** — logo, optional `ExploreSearchBar`, account menu (used on explore, vendor, booking pages)
+- **`LandingHeader`** — transparent overlay header on home hero
+- **`LandingFooter`** — footer on landing + explore; shows `2026 · v1.0.0`
 
 ---
 
@@ -194,68 +215,96 @@ Sections in `src/pages/LandingPage.tsx`:
 
 ### Hero search pill (`HeroSearchNav`)
 
-Clickable segments with dropdowns:
+Clickable segments with dropdown panels:
 
-- **where** → `LocationDropdown` (cities mock in `src/data/searchLocations.ts`)
-- **when** → `DatePickerPopover` (May 2026, single/range)
-- **explore** → `ExploreDropdown` (categories in `src/data/exploreCategories.ts`) → navigates to `/explore?...`
+- **where** → `LocationDropdown` (mock cities in `src/data/searchLocations.ts`)
+- **when** → `DatePickerPopover` (single/range; month navigation)
+- **explore** → `ExploreDropdown` (categories in `src/data/exploreCategories.ts`) → **search** navigates to `/explore?...`
 
-Shared search components live in `src/components/search/`.
+Filter state is managed via `src/lib/exploreSearch.ts` (`ExploreFilters`, URL param helpers). Home hero uses Mona Sans headline (`--text-hero`); subcopy uses `--text-hero-sub`.
+
+Shared search components: `src/components/search/`. Search bars: `HeroSearchNav` (home), `ExploreSearchBar` (explore header).
 
 ---
 
 ## 8. Explore page (`/explore`)
 
-- **Header:** `ExploreHeader` — logo, `ExploreSearchBar`, globe, calendar, `UserAccountMenu`
-- **Layout:** ~58% results grid + ~42% sticky map
-- **Toggle:** show map / show list (mobile switches; desktop shows both)
-- **Filters:** parsed from URL via `src/lib/exploreSearch.ts` (`where`, `when`, `category`, `q`)
-- **Data:** mock results in `src/data/exploreResults.ts` with `mapX`/`mapY` for marker positions
-- **Map:** placeholder grid in `ResultsMap`; set `exploreImages.map` when ready
+- **Header:** `AppHeader` with compact `ExploreSearchBar`
+- **Layout:** ~42% results list + ~58% sticky map (desktop); stacked on mobile
+- **Filters:** URL params via `exploreSearch.ts` — `where`, `when` / `whenStart`+`whenEnd`, `whenMonth`, `whenYear`, `category`, `q`
+- **Results:** `filterExploreResults()` in `src/lib/vendorResults.ts` over mock data
+- **Data:** `src/data/exploreResults.ts`, `src/data/vendors.ts` (6 Honolulu matcha vendors)
+- **Interactions:** card hover ↔ map marker; card click → `VendorPreviewModal` → full profile or quote
+- **Map:** static image in `ResultsMap` with positioned markers (`exploreImages.map`)
 
 ---
 
-## 9. Source layout (high signal)
+## 9. Vendor & booking flow (mock UI — v1.0.0)
+
+```mermaid
+flowchart LR
+  A[/explore] --> B[Result card]
+  B --> C[VendorPreviewModal]
+  C --> D[/vendor/:id]
+  C --> E[/booking/quote]
+  E --> F[/booking/confirm]
+```
+
+- **Vendor detail:** gallery, packages, highlights, quote CTA
+- **Quote request / confirm:** static quote line items; no persistence yet
+- **`/account`:** demo vendor account page (not tied to signed-in user's vendor record)
+
+---
+
+## 10. Source layout (high signal)
 
 ```
 docs/                     # All project documentation (sources of truth)
   HANDOFF.md              # This file — start here for new sessions
+  CHANGELOG.md            # Release notes (v1.0.0+)
   SYSTEM_ARCHITECTURE.md
   ProjectDeliverables.md
   CodingFundamentals.md
   SUPABASE.md
   README.md               # Doc index
+VERSION                   # Plain-text release version (1.0.0)
 src/
   App.tsx                 # All routes
   main.tsx                # AuthProvider wrapper
-  index.css               # Tailwind theme
+  index.css               # Tailwind theme + typography tokens
+  config/
+    version.ts            # APP_VERSION (footer, releases)
+    landingImages.ts
+    exploreImages.ts
   pages/
     LandingPage.tsx
     ExplorePage.tsx
+    VendorDetailPage.tsx
+    booking/              # QuoteRequest, QuoteConfirmation
     auth/                 # SignIn, SignUp, Welcome
-    account/              # AccountLayout, Profile, placeholders
+    account/              # VendorAccountPage, AccountLayout, Profile
   components/
-    landing/              # Hero, sections, HeroSearchNav
-    explore/              # Grid, map, header
+    layout/AppHeader.tsx  # Shared header + search bar
+    landing/              # Hero, sections, HeroSearchNav, LandingFooter
+    explore/              # ExploreSearchBar, ResultCard, ResultsMap
     search/               # Location, date, explore dropdowns
+    vendor/               # VendorPreviewModal
     auth/                 # Menu, ProtectedRoute, AuthChrome
     ui/Button.tsx
   features/auth/          # AuthContext
   services/               # profileService
-  lib/                    # supabase, exploreSearch, authRouting
+  lib/                    # supabase, exploreSearch, vendorResults, authRouting
   types/database.ts       # Hand-written types (not yet generated)
-  data/                   # Mock vendors, results, locations, categories
-  config/                 # Image path configs
-supabase/
-  migrations/
-  README.md               # Pointer to docs/SUPABASE.md
+  data/                   # vendors, exploreResults, searchLocations, categories
+public/images/            # landing, explore, vendors assets
+supabase/migrations/
 reference_images/         # UI/UX PNG references
 README.md                 # Setup + deploy (repo entry point)
 ```
 
 ---
 
-## 10. Deployment (Vercel)
+## 11. Deployment (Vercel)
 
 - Build: `npm run build` → `dist/`
 - `vercel.json`: SPA fallback to `index.html`
@@ -275,57 +324,60 @@ vercel env add VITE_SUPABASE_ANON_KEY
 
 ---
 
-## 11. Team conventions ([CodingFundamentals.md](./CodingFundamentals.md))
+## 12. Team conventions ([CodingFundamentals.md](./CodingFundamentals.md))
 
 - **Before coding:** describe approach and wait for approval if requirements are ambiguous.
 - **>3 files:** break into smaller tasks first.
 - **After code:** note what could break + suggested tests.
 - **Commits:** only when user asks.
 - **Supabase:** never expose service role in client; RLS is source of truth; use `services/` wrappers.
-- **Docs:** update [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) when schema/auth patterns change; add a row to **§0 Recent updates** in this file when major features ship.
+- **Docs:** update [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) when schema/auth patterns change; add a row to **§0 Recent updates** and [CHANGELOG.md](./CHANGELOG.md) when releases ship.
 
 ---
 
-## 12. What is NOT built yet (priority backlog)
+## 13. What is NOT built yet (priority backlog)
 
 Aligned with [ProjectDeliverables.md](./ProjectDeliverables.md) and [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) phases:
 
 | Priority | Feature | Notes |
 |----------|---------|--------|
-| High | Booking flow screens | `/booking/*` still `PageShell` |
-| High | Vendor / venue detail pages | `/vendor/:id`, `/location/:id` |
-| High | `vendor_profiles`, `venue_profiles` tables + migrations | Phase 3 |
+| High | Persist bookings / quotes | Quote UI exists; no `reservations` table or submit |
+| High | `vendor_profiles`, `venue_profiles` tables + migrations | Phase 3 — UI uses `src/data/vendors.ts` mock |
 | High | Replace mock explore data with Supabase queries | |
+| High | Payment step | `/booking/payment` still placeholder |
 | Medium | Password reset, email confirm UX | Privacy page placeholder |
 | Medium | Avatar upload (Storage) | `profiles.avatar_url` exists |
-| Medium | Real map (Mapbox/Google/static image) | `exploreImages.map` |
+| Medium | Real map provider | Static map image + markers today |
 | Medium | Messaging | `conversations` / `messages` |
-| Medium | Reservations + studio areas + products | Phase 4 |
+| Medium | Venue / location detail | `/location/:id` placeholder |
+| Medium | Tie `/account` to signed-in vendor profile | Demo page only |
 | Low | Workflow automations | Edge Functions |
 | Low | Wire `/where` `/when` standalone pages or remove in favor of search pill | |
 | Low | Generate `src/types/database.ts` from Supabase CLI | |
+| Low | Remove orphaned `ExploreHeader.tsx` if unused | Superseded by `AppHeader` |
 | Low | Sign-in page title says "Log in" while menu says "Sign in" — align if user wants consistency | |
 
 ### Sitemap reference (from `site map.pdf`)
 
-Home → where/when/explore/messages/about/account → results → details → booking → payment → confirm. Many branches share the same checkout funnel.
+Home → search → explore results → vendor detail → quote → payment → confirm. **v1.0.0** covers through quote confirmation (mock); payment and persistence remain.
 
 ---
 
-## 13. Known gotchas
+## 14. Known gotchas
 
 1. **Vite env vars** must be prefixed `VITE_` and require dev server restart / Vercel redeploy.
 2. **Vercel `vercel env add`:** cannot select Development + Production/Preview in one command.
 3. **Email confirmation:** if enabled in Supabase, sign-up may not get a session until email is confirmed → user lands on message, not `/welcome`.
 4. **Explore route vs AppShell:** `/explore` is the real page; `/explore/results` under `AppShell` is still a placeholder.
 5. **Bundle size warning** ~500KB — consider code-splitting later.
-6. **Mock card locations** say "Seattle, WA" while filters may say Honolulu — intentional mock mismatch until real data.
+6. **Mock data scope:** default filters use Honolulu + matcha vendors; `searchLocations.ts` has houston, honolulu, hartford, hayward (not Seattle).
 7. **`UserAccountButton.tsx`** re-exports `UserAccountMenu` for backwards compatibility — prefer `UserAccountMenu`.
 8. **Supabase CLI:** use `npm run db:*` scripts (dev dependency) unless you installed the CLI globally — see [SUPABASE.md](./SUPABASE.md).
+9. **Search dropdown z-index:** backdrop must stay below panel (`z-40` / `z-50` / `z-60`) — portaling backdrop above panels breaks search button clicks.
 
 ---
 
-## 14. Quick start for next agent
+## 15. Quick start for next agent
 
 ```bash
 npm install
@@ -335,27 +387,32 @@ npm run db:push
 npm run dev                  # http://localhost:5173
 ```
 
-**Smoke test path:**
+**Smoke test path (v1.0.0):**
 
-1. `/` → open where/when/explore dropdowns
-2. `/sign-up` → create account → `/welcome` → Start booking → `/explore`
-3. Account circle → Sign out → Sign in
-4. `/account/profile` → edit name/roles
+1. `/` → open where/when/explore dropdowns → search → `/explore`
+2. `/explore` → change filters; click vendor → preview modal → profile or quote
+3. `/booking/quote` → continue → `/booking/confirm`
+4. `/sign-up` → create account → `/welcome` → Start booking → `/explore`
+5. Account circle → Sign out → Sign in
+6. `/account/settings/profile` → edit name/roles
+7. Footer shows `v1.0.0`
 
 ---
 
-## 15. Related docs
+## 16. Related docs
 
 | File | Purpose |
 |------|---------|
 | [docs/README.md](./README.md) | Documentation index |
+| [CHANGELOG.md](./CHANGELOG.md) | Release notes |
 | [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) | Supabase model, RLS, phases, decision log |
 | [ProjectDeliverables.md](./ProjectDeliverables.md) | Scope + deliverable → architecture map |
 | [CodingFundamentals.md](./CodingFundamentals.md) | Code style + Supabase rules |
 | [SUPABASE.md](./SUPABASE.md) | CLI + migration steps |
 | [../README.md](../README.md) | Setup + deploy |
+| [../VERSION](../VERSION) | Current release version |
 | [../.env.example](../.env.example) | Env template |
 
 ---
 
-*Last updated: 2026-07-07. Update §0 and relevant sections when major features ship or architecture changes.*
+*Last updated: 2026-07-08 — v1.0.0 UI prototype for team review.*

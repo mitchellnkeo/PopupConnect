@@ -49,6 +49,7 @@ Open the URL shown in the terminal (typically `http://localhost:5173`).
 All documentation lives in **[docs/](./docs/)**. Start here for new sessions:
 
 - [docs/HANDOFF.md](./docs/HANDOFF.md) — Onboarding handoff (start here)
+- [docs/CHANGELOG.md](./docs/CHANGELOG.md) — Release notes
 - [docs/SYSTEM_ARCHITECTURE.md](./docs/SYSTEM_ARCHITECTURE.md) — Supabase, auth, RLS, deployment
 - [docs/ProjectDeliverables.md](./docs/ProjectDeliverables.md) — Product scope
 - [docs/CodingFundamentals.md](./docs/CodingFundamentals.md) — Team coding standards

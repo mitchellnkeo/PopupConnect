@@ -179,11 +179,11 @@ See `.env.example` for a template. Configure the same variables in the Vercel pr
 
 | Phase | Scope | Status |
 |-------|--------|--------|
-| **0** | UI skeleton (landing, explore, placeholders) | Done |
+| **0** | UI prototype (landing, explore, vendor detail, quote flow) | Done — **v1.0.0**; mock data in `src/data/` |
 | **1** | Supabase project, Auth, `profiles`, session in SPA | Done — client SDK, auth pages, `profiles` + `profile_roles` migration |
 | **2** | Role onboarding (vendor / host / organizer), RLS for profiles | Partial — welcome + profile edit; expand as vendor/venue flows land |
-| **3** | Vendor & venue profiles, gallery Storage | Planned |
-| **4** | Reservations + availability | Planned |
+| **3** | Vendor & venue profiles, gallery Storage | Planned — UI shells exist; no DB tables yet |
+| **4** | Reservations + availability | Planned — quote pages are mock only |
 | **5** | Messaging, notifications, automations | Planned |
 
 ## Mapping deliverables → architecture
@@ -205,6 +205,7 @@ See `.env.example` for a template. Configure the same variables in the Vercel pr
 | [README.md](../README.md) | Setup, scripts, deploy |
 | [docs/README.md](./README.md) | Documentation index |
 | [HANDOFF.md](./HANDOFF.md) | Agent/teammate onboarding |
+| [CHANGELOG.md](./CHANGELOG.md) | Release notes |
 | [ProjectDeliverables.md](./ProjectDeliverables.md) | Product scope and acceptance |
 | [CodingFundamentals.md](./CodingFundamentals.md) | Code style; Supabase-specific rules |
 | [SUPABASE.md](./SUPABASE.md) | CLI setup and migrations |
@@ -217,7 +218,8 @@ See `.env.example` for a template. Configure the same variables in the Vercel pr
 | 2026-05 | **Supabase** for auth + data | Relational bookings, RLS, single backend for team velocity on Vercel SPA |
 | — | Firebase not adopted | Firestore weaker fit for reservations and multi-entity inventory |
 | 2026-07 | **Docs in `docs/`** | Single source-of-truth folder for handoff, architecture, standards, and Supabase setup |
+| 2026-07 | **v1.0.0 UI prototype** | Landing, explore, vendor detail, quote flow on mock data; version in footer |
 
 ---
 
-*Last updated: 2026-07-07 — Phase 1 auth complete; documentation consolidated under `docs/`.*
+*Last updated: 2026-07-08 — v1.0.0 UI prototype; Phase 0 expanded beyond skeleton.*

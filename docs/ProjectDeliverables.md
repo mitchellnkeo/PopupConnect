@@ -2,6 +2,8 @@
 
 Backend and accounts follow **[SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)** (Supabase Auth + Postgres, RLS, Storage). See [README.md](./README.md) for the full doc index.
 
+**Implementation status (v1.0.0):** See [HANDOFF.md](./HANDOFF.md) for what is built vs placeholder. Summary: landing, explore, vendor detail, and quote UI are live on mock data; persistence, payment, and messaging are not.
+
 ## Quality bar
 
 Every screen in the primary happy path is designed and built
