@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-07-15 | P0 shipped: explore search bar location-segment fill fix; quote + confirm routes require login with return URL through sign-in/welcome. |
 | 2026-07-15 | Team meeting captured in [ROADMAP.md](./ROADMAP.md): UX polish (icons, explore location fill, button hover), logged-in/out flows, login gate for quotes, map API, vendor package interactions, calendar/plan mode + export. Added [WORK_LOG.md](./WORK_LOG.md); refreshed [ProjectDeliverables.md](./ProjectDeliverables.md). |
 | 2026-07-08 | **v1.0.0** — First review release: landing, explore, vendor detail, booking quote flow, hero/search UX polish. Version in footer + `src/config/version.ts`. |
 | 2026-07-07 | Consolidated all project docs into **`docs/`** (`HANDOFF`, architecture, deliverables, coding standards, Supabase setup). Root `README.md` remains the setup entry point; `supabase/README.md` is a short pointer to `docs/SUPABASE.md`. |
@@ -93,8 +94,8 @@ Image assets:
 | `/` | `LandingPage` | Hero, marketing sections, `HeroSearchNav`, footer |
 | `/explore` | `ExplorePage` | URL-driven filters; results grid + map; vendor preview modal |
 | `/vendor/:vendorId` | `VendorDetailPage` | Full vendor profile (mock data) |
-| `/booking/quote` | `QuoteRequestPage` | Quote preview; `?vendor=` query param |
-| `/booking/confirm` | `QuoteConfirmationPage` | Post-quote confirmation |
+| `/booking/quote` | `QuoteRequestPage` | **Protected** — requires sign-in; `?vendor=` query param |
+| `/booking/confirm` | `QuoteConfirmationPage` | **Protected** — requires sign-in |
 | `/sign-in` | `SignInPage` | Split layout; page title says **"Log in"** |
 | `/sign-up` | `SignUpPage` | First/last name, email, passwords, terms |
 | `/welcome` | `WelcomePage` | Post-auth onboarding; role radio → `/explore` |
@@ -246,7 +247,7 @@ Shared search components: `src/components/search/`. Search bars: `HeroSearchNav`
 - **Interactions:** card hover ↔ map marker; card click → `VendorPreviewModal` → full profile or quote
 - **Map:** static image in `ResultsMap` with positioned markers (`exploreImages.map`) — **real map API on [ROADMAP](./ROADMAP.md) P1**
 
-**Known issues (2026-07-15):** location input segment background fill bug on explore search bar — see [ROADMAP](./ROADMAP.md) P0.
+**Known issues (2026-07-15):** ~~location input segment background fill bug~~ — fixed in compact `ExploreSearchBar`.
 
 ---
 
@@ -267,8 +268,8 @@ flowchart LR
 
 ### Planned changes (2026-07-15 meeting — see [ROADMAP.md](./ROADMAP.md))
 
-- **Login gate:** quote flow should require sign-in before proceeding (not implemented yet).
-- **Logged-in vs guest flows:** distinct UI/state paths through explore → vendor → booking.
+- **Login gate:** quote flow requires sign-in before proceeding — **shipped** (`ProtectedRoute` on `/booking/quote` and `/booking/confirm`; return URL preserved).
+- **Logged-in vs guest flows:** distinct UI/state paths through explore → vendor → booking — not yet implemented.
 - **Vendor packages:** hover fill + click popout for package details.
 - **Pricing:** general prices on vendor profiles accepted as-is — no change required.
 
@@ -363,8 +364,8 @@ vercel env add VITE_SUPABASE_ANON_KEY
 
 | Feature | Notes |
 |---------|-------|
-| Explore location input background fill | Bug on explore search bar |
-| Login required for quote | Gate `/booking/quote`; return URL after sign-in |
+| Explore location input background fill | ~~Bug on explore search bar~~ **Fixed** |
+| Login required for quote | **Shipped** — `ProtectedRoute`; return URL through auth |
 | Logged-in vs guest flows | Branching across discovery and booking |
 | Button hover darkening | Primary button interaction polish |
 | Friendly icon replacement | Replace placeholder icons |

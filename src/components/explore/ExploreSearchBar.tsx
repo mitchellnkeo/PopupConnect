@@ -24,9 +24,26 @@ type SegmentButtonProps = {
   active: boolean;
   onClick: () => void;
   compact?: boolean;
+  segmentPosition?: "first" | "middle" | "last";
 };
 
-function SegmentButton({ label, value, active, onClick, compact }: SegmentButtonProps) {
+function segmentCornerClass(compact: boolean | undefined, position: SegmentButtonProps["segmentPosition"]) {
+  if (!compact || !position) return "";
+  if (position === "first") return "rounded-l-full";
+  if (position === "last") return "rounded-r-full";
+  return "";
+}
+
+function SegmentButton({
+  label,
+  value,
+  active,
+  onClick,
+  compact,
+  segmentPosition,
+}: SegmentButtonProps) {
+  const corners = segmentCornerClass(compact, segmentPosition);
+
   if (compact) {
     return (
       <button
@@ -34,7 +51,7 @@ function SegmentButton({ label, value, active, onClick, compact }: SegmentButton
         onClick={onClick}
         aria-expanded={active}
         title={value}
-        className={`w-full truncate px-3 py-2.5 text-body text-base transition sm:px-5 sm:text-lg ${
+        className={`h-full w-full truncate px-3 py-2.5 text-body text-base transition sm:px-5 sm:text-lg ${corners} ${
           active ? "bg-starlight/60" : "bg-white hover:bg-starlight/30"
         }`}
       >
@@ -107,7 +124,7 @@ export function ExploreSearchBar({
   const exploreDisplay = formatExploreQueryLabel(filters);
 
   const barClass = compact
-    ? "relative z-50 flex h-[42px] max-w-full items-stretch rounded-full border border-border bg-white"
+    ? "relative z-50 flex h-[42px] max-w-full items-stretch overflow-hidden rounded-full border border-border bg-white"
     : "relative z-50 flex max-w-full rounded-full border border-neutral-200 bg-white shadow-sm";
 
   const panelContent =
@@ -199,37 +216,40 @@ export function ExploreSearchBar({
       ) : null}
 
       <div className={barClass}>
-        <div className={`relative min-w-0 flex-1 ${compact ? "" : "border-neutral-200 border-r"}`}>
+        <div className={`relative flex h-full min-w-0 flex-1 ${compact ? "" : "border-neutral-200 border-r"}`}>
           <SegmentButton
             label="Location"
             value={locationDisplay}
             active={panel === "where"}
             onClick={() => toggle("where")}
             compact={compact}
+            segmentPosition={compact ? "first" : undefined}
           />
         </div>
 
         {compact ? <div className="w-px shrink-0 self-stretch bg-border" /> : null}
 
-        <div className={`relative min-w-0 flex-1 ${compact ? "" : "border-neutral-200 border-r"}`}>
+        <div className={`relative flex h-full min-w-0 flex-1 ${compact ? "" : "border-neutral-200 border-r"}`}>
           <SegmentButton
             label="Date"
             value={dateDisplay}
             active={panel === "when"}
             onClick={() => toggle("when")}
             compact={compact}
+            segmentPosition={compact ? "middle" : undefined}
           />
         </div>
 
         {compact ? <div className="w-px shrink-0 self-stretch bg-border" /> : null}
 
-        <div className="relative min-w-0 flex-1">
+        <div className="relative flex h-full min-w-0 flex-1">
           <SegmentButton
             label="Search"
             value={exploreDisplay}
             active={panel === "explore"}
             onClick={() => toggle("explore")}
             compact={compact}
+            segmentPosition={compact ? "last" : undefined}
           />
         </div>
       </div>

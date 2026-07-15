@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthChrome } from "../../components/auth/AuthChrome";
 import { authCardClass, authInputClass, authLabelClass } from "../../components/auth/authStyles";
 import { Button } from "../../components/ui/Button";
@@ -7,6 +7,8 @@ import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 
 export function SignUpPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from ?? "/explore";
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -65,7 +67,7 @@ export function SignUpPage() {
     }
 
     if (data.session) {
-      navigate("/welcome", { replace: true });
+      navigate("/welcome", { replace: true, state: { from } });
       return;
     }
 
@@ -190,7 +192,7 @@ export function SignUpPage() {
 
         <p className="mt-6 text-center text-neutral-600 text-sm">
           Already have an account?{" "}
-          <Link to="/sign-in" className="font-medium text-primary hover:underline">
+          <Link to="/sign-in" state={{ from }} className="font-medium text-primary hover:underline">
             Log in
           </Link>
         </p>

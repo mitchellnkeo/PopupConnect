@@ -31,7 +31,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!session) {
-    return <Navigate to="/sign-in" replace state={{ from: location.pathname }} />;
+    const returnTo = `${location.pathname}${location.search}`;
+    return <Navigate to="/sign-in" replace state={{ from: returnTo }} />;
   }
 
   return children;

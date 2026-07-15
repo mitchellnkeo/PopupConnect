@@ -46,7 +46,12 @@ export function SignInPage() {
 
     try {
       const profile = await fetchProfile(userId);
-      navigate(getPostAuthPath(profile, from), { replace: true });
+      const target = getPostAuthPath(profile, from);
+      if (target === "/welcome") {
+        navigate("/welcome", { replace: true, state: { from } });
+      } else {
+        navigate(target, { replace: true });
+      }
     } catch {
       navigate(from, { replace: true });
     }
@@ -108,13 +113,14 @@ export function SignInPage() {
 
           <p className="mt-6 text-center text-midnight text-sm">
             Don&apos;t have an account?{" "}
-            <Link to="/sign-up" className="font-medium text-primary hover:underline">
+            <Link to="/sign-up" state={{ from }} className="font-medium text-primary hover:underline">
               Create account
             </Link>
           </p>
 
           <Link
             to="/sign-up"
+            state={{ from }}
             className="mt-4 inline-flex w-full items-center justify-center rounded-full border-2 border-primary bg-white px-5 py-2.5 font-medium text-primary text-sm transition hover:bg-starlight/50"
           >
             Create account

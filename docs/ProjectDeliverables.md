@@ -29,7 +29,7 @@ Branding is clear and reflected in design
 | Vendor profile (public) | **Partial** | Detail page on mock data; pricing accepted; packages need hover + popout |
 | Vendor profile (owner edit) | **Not started** | Demo `/account` only; edit + Supabase tie-in on roadmap |
 | Business location profile | **Not started** | `venue_profiles` planned |
-| Manage reservations / quotes | **Partial** | Quote UI mock only; **login gate** + persistence not built |
+| Manage reservations / quotes | **Partial** | Quote UI mock; **login gate shipped**; persistence not built |
 | Payment | **Not started** | `/booking/payment` placeholder |
 | Customer profile | **Partial** | Settings profile page shipped |
 | Calendar / plan mode | **Not started** | MVP 1 Figma flows; export spreadsheet/PDF required |

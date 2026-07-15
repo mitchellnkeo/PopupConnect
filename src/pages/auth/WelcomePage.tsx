@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthChrome } from "../../components/auth/AuthChrome";
 import { authCardClass, authLabelClass } from "../../components/auth/authStyles";
 import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
@@ -17,6 +17,8 @@ const roleOptions: { value: AppRole; label: string }[] = [
 
 function WelcomeContent() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = (location.state as { from?: string } | null)?.from ?? "/explore";
   const { user, profile, loading, refreshProfile } = useAuth();
 
   const [role, setRole] = useState<AppRole>("vendor");
@@ -25,9 +27,9 @@ function WelcomeContent() {
 
   useEffect(() => {
     if (!loading && profile?.onboarding_completed) {
-      navigate("/explore", { replace: true });
+      navigate(returnTo, { replace: true });
     }
-  }, [loading, profile?.onboarding_completed, navigate]);
+  }, [loading, profile?.onboarding_completed, navigate, returnTo]);
 
   useEffect(() => {
     if (profile?.roles[0]) {
@@ -52,7 +54,7 @@ function WelcomeContent() {
         onboarding_completed: true,
       });
       await refreshProfile();
-      navigate("/explore", { replace: true });
+      navigate(returnTo, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save your profile.");
     } finally {

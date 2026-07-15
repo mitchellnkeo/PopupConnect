@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-07-15
+**Last updated:** 2026-07-15 (P0: explore fill + quote login gate shipped)
 
 ---
 
@@ -27,7 +27,7 @@ Captured from team review of v1.0.0 prototype.
 | Item | Status | Notes |
 |------|--------|-------|
 | Replace placeholder icons with friendly-feeling icons | **Todo** | Audit current icon usage (landing cards, explore, vendor, auth); align with Figma Catalyst / MVP 1 |
-| Explore page — location input background fill bug | **Todo** | `ExploreSearchBar` / `LocationDropdown` — fix fill on location segment |
+| Explore page — location input background fill bug | **Done** | `ExploreSearchBar` compact — overflow clip, corner rounding, full-height segments |
 | Button hover — darker interaction state | **Todo** | Primary buttons should darken on hover; check `Button.tsx` and inline button styles |
 | Vendor packages — hover fill effect | **Todo** | Package cards on vendor detail page |
 | Vendor page — click-to-view popout for package/info | **Todo** | Modal or drawer for package details without leaving profile |
@@ -38,8 +38,8 @@ Captured from team review of v1.0.0 prototype.
 | Item | Status | Notes |
 |------|--------|-------|
 | Distinct **logged-in** vs **not logged-in** flows | **Todo** | UI/state branching across explore, vendor, booking; see Figma MVP 1 auth flows |
-| **Login required** before proceeding with quote | **Todo** | Gate `/booking/quote` (and entry from vendor preview) — redirect to `/sign-in` with return URL |
-| Quote flow after login | **Todo** | Preserve vendor/context through sign-in; resume quote |
+| **Login required** before proceeding with quote | **Done** | `ProtectedRoute` on `/booking/quote` + `/booking/confirm`; return URL with `?vendor=` |
+| Quote flow after login | **Done** | Return URL preserved through sign-in → welcome → quote |
 
 ### Vendor profiles (medium-term)
 
@@ -73,8 +73,8 @@ From Figma MVP 1 **flow: plan mode** and meeting notes:
 
 ### P0 — Ship next (polish + gating)
 
-1. Explore location input background fill fix
-2. Login required for quote flow
+1. ~~Explore location input background fill fix~~ **Done**
+2. ~~Login required for quote flow~~ **Done**
 3. Logged-in vs logged-out flow differentiation
 4. Button hover darkening
 5. Friendly icon replacement pass

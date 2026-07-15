@@ -6,6 +6,42 @@
 
 ---
 
+## 2026-07-15 — P0: explore location fill + quote login gate
+
+**Who:** Mitchell + AI session  
+**Focus:** Ship first two P0 roadmap items from team meeting.
+
+### Done
+
+- **Explore location fill fix** — `ExploreSearchBar` compact variant: `overflow-hidden` on pill, `h-full` segment buttons, `rounded-l-full` / `rounded-r-full` on first/last segments so active/hover backgrounds fill the left cap cleanly.
+- **Quote login gate** — `/booking/quote` and `/booking/confirm` wrapped in `ProtectedRoute`. Return URL includes query string (`?vendor=…`). Sign-in → welcome → quote resume path preserves `from` via location state (`SignInPage`, `SignUpPage`, `WelcomePage`).
+
+### Files changed
+
+- `src/components/explore/ExploreSearchBar.tsx`
+- `src/components/auth/ProtectedRoute.tsx`
+- `src/lib/authRouting.ts`
+- `src/App.tsx`
+- `src/pages/auth/SignInPage.tsx`, `SignUpPage.tsx`, `WelcomePage.tsx`
+
+### What could break
+
+- Guest users hitting `/booking/quote` directly now redirect to sign-in (intended).
+- New users completing welcome should land on quote if that was their `from` URL; verify with `?vendor=` param intact.
+- Explore search pill on mobile header — confirm location segment corners look correct at narrow widths.
+
+### Suggested tests
+
+1. Logged out → vendor detail → Book now → sign-in → (welcome if new) → quote page with same vendor.
+2. Explore page → open location segment → active fill reaches rounded left edge with no white gap.
+3. Logged in → quote flow works without redirect.
+
+### Next up
+
+Logged-in vs guest flow differentiation (ROADMAP P0 #3) or button hover darkening.
+
+---
+
 ## 2026-07-15 — Documentation & meeting capture
 
 **Who:** Mitchell + AI session  

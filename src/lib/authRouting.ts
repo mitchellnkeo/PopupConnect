@@ -1,5 +1,10 @@
 import type { ProfileWithRoles } from "../types/database";
 
+/** Full path including query string — use for post-auth redirects. */
+export function getReturnPath(pathname: string, search = ""): string {
+  return `${pathname}${search}`;
+}
+
 export function getPostAuthPath(
   profile: ProfileWithRoles | null,
   fallback = "/explore",

@@ -22,8 +22,22 @@ export function App() {
       <Route path="explore" element={<ExplorePage />} />
       <Route path="vendor/:vendorId" element={<VendorDetailPage />} />
 
-      <Route path="booking/quote" element={<QuoteRequestPage />} />
-      <Route path="booking/confirm" element={<QuoteConfirmationPage />} />
+      <Route
+        path="booking/quote"
+        element={
+          <ProtectedRoute>
+            <QuoteRequestPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="booking/confirm"
+        element={
+          <ProtectedRoute>
+            <QuoteConfirmationPage />
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
