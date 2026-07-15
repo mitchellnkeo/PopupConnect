@@ -1,10 +1,18 @@
 # PopupConnect — Agent Handoff
 
-Use this document to onboard a new AI session or teammate. It summarizes **what exists**, **how it works**, and **what to build next**.
+**Living document** — update this file when the codebase, architecture, or team priorities change. It summarizes **what exists**, **how it works**, and **where to look next**.
 
-**Read order:** this file → [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) → [ProjectDeliverables.md](./ProjectDeliverables.md) → [CodingFundamentals.md](./CodingFundamentals.md).
+**Read order:** this file → [ROADMAP.md](./ROADMAP.md) → [WORK_LOG.md](./WORK_LOG.md) (recent sessions) → [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) → [ProjectDeliverables.md](./ProjectDeliverables.md) → [CodingFundamentals.md](./CodingFundamentals.md).
 
 All project documentation lives in **`docs/`** — see [docs/README.md](./README.md) for the full index.
+
+| Doc | Update when… |
+|-----|----------------|
+| [ROADMAP.md](./ROADMAP.md) | Priorities shift or work starts/completes |
+| [WORK_LOG.md](./WORK_LOG.md) | Each work session (progress, troubleshooting) |
+| [ProjectDeliverables.md](./ProjectDeliverables.md) | Deliverable status changes |
+| [CHANGELOG.md](./CHANGELOG.md) | A version ships |
+| This file (§0 + affected sections) | Architecture, routes, or major features change |
 
 ---
 
@@ -12,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-07-15 | Team meeting captured in [ROADMAP.md](./ROADMAP.md): UX polish (icons, explore location fill, button hover), logged-in/out flows, login gate for quotes, map API, vendor package interactions, calendar/plan mode + export. Added [WORK_LOG.md](./WORK_LOG.md); refreshed [ProjectDeliverables.md](./ProjectDeliverables.md). |
 | 2026-07-08 | **v1.0.0** — First review release: landing, explore, vendor detail, booking quote flow, hero/search UX polish. Version in footer + `src/config/version.ts`. |
 | 2026-07-07 | Consolidated all project docs into **`docs/`** (`HANDOFF`, architecture, deliverables, coding standards, Supabase setup). Root `README.md` remains the setup entry point; `supabase/README.md` is a short pointer to `docs/SUPABASE.md`. |
 | 2026-05 | Phase 1 auth shipped: Supabase client, sign-in/sign-up/welcome, profiles + roles migration, account profile page, Vercel deploy with env vars. |
@@ -63,7 +72,7 @@ Defined in `src/index.css`:
 
 Typography tokens: `--text-hero`, `--text-hero-sub` (hero headline + subcopy).
 
-Reference assets: `reference_images/` (home, select_location, select_date, ColorScheme, etc.), Figma [Catalyst Design System](https://www.figma.com/design/Rr4R0eC6SzVheNO8Nlgxty/Catalyst-Design-System), and PDFs (`site map.pdf`, `Design Style Guide.pdf`).
+Reference assets: `reference_images/` (home, select_location, select_date, ColorScheme, etc.), Figma [Catalyst Design System](https://www.figma.com/design/Rr4R0eC6SzVheNO8Nlgxty/Catalyst-Design-System), [v.01_sandbox MVP 1](https://www.figma.com/design/xR1Xp9QmdUVHj55DmQFnO4/v.01_sandbox?node-id=121-3813) (plan mode / calendar flows), and PDFs (`site map.pdf`, `Design Style Guide.pdf`).
 
 Image assets:
 
@@ -235,7 +244,9 @@ Shared search components: `src/components/search/`. Search bars: `HeroSearchNav`
 - **Results:** `filterExploreResults()` in `src/lib/vendorResults.ts` over mock data
 - **Data:** `src/data/exploreResults.ts`, `src/data/vendors.ts` (6 Honolulu matcha vendors)
 - **Interactions:** card hover ↔ map marker; card click → `VendorPreviewModal` → full profile or quote
-- **Map:** static image in `ResultsMap` with positioned markers (`exploreImages.map`)
+- **Map:** static image in `ResultsMap` with positioned markers (`exploreImages.map`) — **real map API on [ROADMAP](./ROADMAP.md) P1**
+
+**Known issues (2026-07-15):** location input segment background fill bug on explore search bar — see [ROADMAP](./ROADMAP.md) P0.
 
 ---
 
@@ -254,6 +265,13 @@ flowchart LR
 - **Quote request / confirm:** static quote line items; no persistence yet
 - **`/account`:** demo vendor account page (not tied to signed-in user's vendor record)
 
+### Planned changes (2026-07-15 meeting — see [ROADMAP.md](./ROADMAP.md))
+
+- **Login gate:** quote flow should require sign-in before proceeding (not implemented yet).
+- **Logged-in vs guest flows:** distinct UI/state paths through explore → vendor → booking.
+- **Vendor packages:** hover fill + click popout for package details.
+- **Pricing:** general prices on vendor profiles accepted as-is — no change required.
+
 ---
 
 ## 10. Source layout (high signal)
@@ -261,6 +279,8 @@ flowchart LR
 ```
 docs/                     # All project documentation (sources of truth)
   HANDOFF.md              # This file — start here for new sessions
+  ROADMAP.md              # Prioritized backlog (living)
+  WORK_LOG.md             # Session progress & troubleshooting (living)
   CHANGELOG.md            # Release notes (v1.0.0+)
   SYSTEM_ARCHITECTURE.md
   ProjectDeliverables.md
@@ -331,35 +351,47 @@ vercel env add VITE_SUPABASE_ANON_KEY
 - **After code:** note what could break + suggested tests.
 - **Commits:** only when user asks.
 - **Supabase:** never expose service role in client; RLS is source of truth; use `services/` wrappers.
-- **Docs:** update [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) when schema/auth patterns change; add a row to **§0 Recent updates** and [CHANGELOG.md](./CHANGELOG.md) when releases ship.
+- **Docs:** update [ROADMAP.md](./ROADMAP.md) and [WORK_LOG.md](./WORK_LOG.md) during active work; update [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) when schema/auth patterns change; add a row to **§0 Recent updates** and [CHANGELOG.md](./CHANGELOG.md) when releases ship.
 
 ---
 
 ## 13. What is NOT built yet (priority backlog)
 
-Aligned with [ProjectDeliverables.md](./ProjectDeliverables.md) and [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) phases:
+**Source of truth for active priorities:** [ROADMAP.md](./ROADMAP.md) (updated 2026-07-15 from team meeting).
 
-| Priority | Feature | Notes |
-|----------|---------|--------|
-| High | Persist bookings / quotes | Quote UI exists; no `reservations` table or submit |
-| High | `vendor_profiles`, `venue_profiles` tables + migrations | Phase 3 — UI uses `src/data/vendors.ts` mock |
-| High | Replace mock explore data with Supabase queries | |
-| High | Payment step | `/booking/payment` still placeholder |
-| Medium | Password reset, email confirm UX | Privacy page placeholder |
-| Medium | Avatar upload (Storage) | `profiles.avatar_url` exists |
-| Medium | Real map provider | Static map image + markers today |
-| Medium | Messaging | `conversations` / `messages` |
-| Medium | Venue / location detail | `/location/:id` placeholder |
-| Medium | Tie `/account` to signed-in vendor profile | Demo page only |
-| Low | Workflow automations | Edge Functions |
-| Low | Wire `/where` `/when` standalone pages or remove in favor of search pill | |
-| Low | Generate `src/types/database.ts` from Supabase CLI | |
-| Low | Remove orphaned `ExploreHeader.tsx` if unused | Superseded by `AppHeader` |
-| Low | Sign-in page title says "Log in" while menu says "Sign in" — align if user wants consistency | |
+### P0 — next up
+
+| Feature | Notes |
+|---------|-------|
+| Explore location input background fill | Bug on explore search bar |
+| Login required for quote | Gate `/booking/quote`; return URL after sign-in |
+| Logged-in vs guest flows | Branching across discovery and booking |
+| Button hover darkening | Primary button interaction polish |
+| Friendly icon replacement | Replace placeholder icons |
+
+### P1 — vendor & explore
+
+| Feature | Notes |
+|---------|-------|
+| Vendor package hover fill + popout | Vendor detail page |
+| Map API | Replace static map in `ResultsMap` |
+| Vendor profile edit + Supabase | Tie `/account` to real data |
+
+### P2 — plan mode / calendar (MVP 1 Figma)
+
+| Feature | Notes |
+|---------|-------|
+| Calendar view + saved lists | Tabs or modes TBD |
+| Export events (Excel/PDF) | Meeting requirement |
+| Event details + invites | Organizer tooling |
+
+### P3 — architecture backlog
+
+Persist bookings/quotes, payment, messaging, avatar upload, generated DB types, venue profiles — see [ROADMAP.md](./ROADMAP.md) and [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md).
 
 ### Sitemap reference (from `site map.pdf`)
 
-Home → search → explore results → vendor detail → quote → payment → confirm. **v1.0.0** covers through quote confirmation (mock); payment and persistence remain.
+Home → search → explore results → vendor detail → quote → **login (planned)** → payment → confirm. **v1.0.0** covers through quote confirmation (mock, no login gate); payment and persistence remain.
 
 ---
 
@@ -404,9 +436,11 @@ npm run dev                  # http://localhost:5173
 | File | Purpose |
 |------|---------|
 | [docs/README.md](./README.md) | Documentation index |
+| [ROADMAP.md](./ROADMAP.md) | Prioritized backlog (living) |
+| [WORK_LOG.md](./WORK_LOG.md) | Session progress & troubleshooting (living) |
 | [CHANGELOG.md](./CHANGELOG.md) | Release notes |
 | [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) | Supabase model, RLS, phases, decision log |
-| [ProjectDeliverables.md](./ProjectDeliverables.md) | Scope + deliverable → architecture map |
+| [ProjectDeliverables.md](./ProjectDeliverables.md) | Scope + deliverable status |
 | [CodingFundamentals.md](./CodingFundamentals.md) | Code style + Supabase rules |
 | [SUPABASE.md](./SUPABASE.md) | CLI + migration steps |
 | [../README.md](../README.md) | Setup + deploy |
@@ -415,4 +449,4 @@ npm run dev                  # http://localhost:5173
 
 ---
 
-*Last updated: 2026-07-08 — v1.0.0 UI prototype for team review.*
+*Last updated: 2026-07-15 — living handoff; see ROADMAP for active work.*
