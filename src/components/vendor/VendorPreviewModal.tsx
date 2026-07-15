@@ -1,5 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import type { VendorProfile } from "../../data/vendors";
+import { useAuth } from "../../features/auth/AuthContext";
+import { btnPrimarySm, btnSecondaryOutline } from "../../lib/buttonStyles";
 
 type VendorPreviewModalProps = {
   vendor: VendorProfile;
@@ -8,6 +10,8 @@ type VendorPreviewModalProps = {
 
 export function VendorPreviewModal({ vendor, onClose }: VendorPreviewModalProps) {
   const navigate = useNavigate();
+  const { session } = useAuth();
+  const quotePath = `/booking/quote?vendor=${vendor.id}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -61,27 +65,38 @@ export function VendorPreviewModal({ vendor, onClose }: VendorPreviewModalProps)
             <button
               type="button"
               onClick={onClose}
-              className="rounded border-2 border-primary bg-white px-5 py-2.5 font-semibold text-primary text-sm transition hover:bg-orange-100/40"
+              className={btnSecondaryOutline}
             >
               Keep browsing
             </button>
             <Link
               to={`/vendor/${vendor.id}`}
               onClick={onClose}
-              className="rounded bg-primary px-5 py-2.5 font-semibold text-sm text-white transition hover:bg-primary/90"
+              className={`inline-flex items-center justify-center ${btnPrimarySm}`}
             >
               View full profile
             </Link>
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                navigate(`/booking/quote?vendor=${vendor.id}`);
-              }}
-              className="rounded bg-primary px-5 py-2.5 font-semibold text-sm text-white transition hover:bg-primary/90"
-            >
-              Request quote
-            </button>
+            {session ? (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate(quotePath);
+                }}
+                className={btnPrimarySm}
+              >
+                Request quote
+              </button>
+            ) : (
+              <Link
+                to="/sign-in"
+                state={{ from: quotePath }}
+                onClick={onClose}
+                className={`inline-flex items-center justify-center ${btnPrimarySm}`}
+              >
+                Sign in to request quote
+              </Link>
+            )}
           </div>
         </div>
       </div>

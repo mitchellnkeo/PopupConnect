@@ -2,6 +2,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
 import { getVendorById } from "../../data/vendors";
+import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
 
 const quoteDetails = [
   { label: "Event date", value: "Saturday July 12, 2026" },
@@ -65,21 +66,18 @@ export function QuoteRequestPage() {
           <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-border border-t pt-8">
             <Link
               to={vendor ? `/vendor/${vendor.id}` : "/explore"}
-              className="rounded border-2 border-primary bg-white px-5 py-2.5 font-semibold text-primary"
+              className={btnSecondaryOutline}
             >
               Decline & Edit
             </Link>
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                className="rounded border-2 border-primary bg-white px-5 py-2.5 font-semibold text-primary"
-              >
+              <button type="button" className={btnSecondaryOutline}>
                 Save for later
               </button>
               <button
                 type="button"
                 onClick={() => navigate(`/booking/confirm?vendor=${vendorId}`)}
-                className="rounded bg-primary px-5 py-2.5 font-semibold text-white hover:bg-primary/90"
+                className={btnPrimary}
               >
                 Confirm
               </button>

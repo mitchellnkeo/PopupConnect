@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-07-15 | P0: logged-in vs guest flows (explore banner, landing CTAs, vendor CTAs, header nav); primary button darker hover token + shared `buttonStyles.ts`. |
 | 2026-07-15 | P0 shipped: explore search bar location-segment fill fix; quote + confirm routes require login with return URL through sign-in/welcome. |
 | 2026-07-15 | Team meeting captured in [ROADMAP.md](./ROADMAP.md): UX polish (icons, explore location fill, button hover), logged-in/out flows, login gate for quotes, map API, vendor package interactions, calendar/plan mode + export. Added [WORK_LOG.md](./WORK_LOG.md); refreshed [ProjectDeliverables.md](./ProjectDeliverables.md). |
 | 2026-07-08 | **v1.0.0** — First review release: landing, explore, vendor detail, booking quote flow, hero/search UX polish. Version in footer + `src/config/version.ts`. |
@@ -64,6 +65,7 @@ Defined in `src/index.css`:
 | Token | Hex | Usage |
 |-------|-----|--------|
 | `primary` | `#cc3d00` | Buttons, accents (Sienna Orange) |
+| `primary-hover` | `#a83300` | Primary button hover/active |
 | `midnight` | `#172e50` | Headings, nav text |
 | `starlight` | `#ffdfa6` | Cards, active states, peach bands |
 | `cream` | `#f5ede0` | Section backgrounds |
@@ -269,7 +271,7 @@ flowchart LR
 ### Planned changes (2026-07-15 meeting — see [ROADMAP.md](./ROADMAP.md))
 
 - **Login gate:** quote flow requires sign-in before proceeding — **shipped** (`ProtectedRoute` on `/booking/quote` and `/booking/confirm`; return URL preserved).
-- **Logged-in vs guest flows:** distinct UI/state paths through explore → vendor → booking — not yet implemented.
+- **Logged-in vs guest flows:** branching across explore, landing, vendor, header — **shipped** (see `ExploreAuthBanner`, `CommunityWaitingSection`, `HeaderUtilityNav`).
 - **Vendor packages:** hover fill + click popout for package details.
 - **Pricing:** general prices on vendor profiles accepted as-is — no change required.
 
@@ -366,9 +368,9 @@ vercel env add VITE_SUPABASE_ANON_KEY
 |---------|-------|
 | Explore location input background fill | ~~Bug on explore search bar~~ **Fixed** |
 | Login required for quote | **Shipped** — `ProtectedRoute`; return URL through auth |
-| Logged-in vs guest flows | Branching across discovery and booking |
-| Button hover darkening | Primary button interaction polish |
-| Friendly icon replacement | Replace placeholder icons |
+| Logged-in vs guest flows | **Shipped** — explore banner, CTAs, header nav |
+| Button hover darkening | **Shipped** — `primary-hover` token |
+| Friendly icon replacement | On roadmap P0 |
 
 ### P1 — vendor & explore
 

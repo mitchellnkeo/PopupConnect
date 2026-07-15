@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../../features/auth/AuthContext";
 import { landingImages } from "../../config/landingImages";
+import { btnPrimary } from "../../lib/buttonStyles";
 
 const COMMUNITY_IMAGE_SRC = landingImages.community;
 
-const ctaCards = [
+const guestCards = [
   {
     title: "Join as vendor or host",
     body: "Register to sell your products or host community events and workshops.",
@@ -18,7 +20,25 @@ const ctaCards = [
   },
 ] as const;
 
+const memberCards = [
+  {
+    title: "Explore vendors",
+    body: "Pick up where you left off — browse pop-ups, artists, and hosts near you.",
+    buttonLabel: "Browse explore",
+    to: "/explore",
+  },
+  {
+    title: "Your events",
+    body: "See upcoming bookings and events you are planning in one place.",
+    buttonLabel: "View my events",
+    to: "/account/settings/events",
+  },
+] as const;
+
 export function CommunityWaitingSection() {
+  const { session, loading } = useAuth();
+  const cards = !loading && session ? memberCards : guestCards;
+
   return (
     <section className="relative min-h-[560px] overflow-hidden bg-body">
       <img
@@ -37,7 +57,7 @@ export function CommunityWaitingSection() {
 
         <div className="flex flex-1 items-center justify-center px-6 pt-16 pb-[60px] md:px-[100px] md:pt-[120px]">
           <div className="grid w-full max-w-[1100px] gap-6 md:grid-cols-2 md:gap-6">
-            {ctaCards.map((card) => (
+            {cards.map((card) => (
               <div
                 key={card.title}
                 className="flex flex-col gap-4 rounded-xl border border-white/40 bg-white/10 p-8 backdrop-blur-[2.5px]"
@@ -52,7 +72,7 @@ export function CommunityWaitingSection() {
                 </div>
                 <Link
                   to={card.to}
-                  className="inline-flex w-full items-center justify-center rounded bg-primary px-5 py-2.5 font-semibold text-[length:var(--text-cta-body,18px)] text-white transition hover:bg-primary/90"
+                  className={`inline-flex w-full items-center justify-center text-[length:var(--text-cta-body,18px)] ${btnPrimary}`}
                 >
                   {card.buttonLabel}
                 </Link>

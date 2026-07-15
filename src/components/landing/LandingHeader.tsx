@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { UserAccountMenu } from "../auth/UserAccountMenu";
-import { IconCalendar, IconComment, LogoMarkLight } from "./icons";
+import { LogoMarkLight } from "./icons";
 import { HeroSearchNav } from "./HeroSearchNav";
+import { HeaderUtilityNav } from "../layout/HeaderUtilityNav";
 
 type LandingHeaderProps = {
   /** Hero uses transparent overlay; inner pages can use solid header later */
@@ -30,20 +31,7 @@ export function LandingHeader({ overlay = true }: LandingHeaderProps) {
         </div>
 
         <div className={`flex shrink-0 items-center gap-2.5 pl-0 md:pl-[60px] ${textClass}`}>
-          <Link
-            to="/messages"
-            className="rounded p-2.5 transition hover:bg-white/10"
-            aria-label="Messages"
-          >
-            <IconComment className="size-[18px]" />
-          </Link>
-          <Link
-            to="/when"
-            className="rounded p-2.5 transition hover:bg-white/10"
-            aria-label="Calendar"
-          >
-            <IconCalendar className="size-[18px]" />
-          </Link>
+          <HeaderUtilityNav variant="overlay" />
           <UserAccountMenu variant="overlay" />
         </div>
       </div>

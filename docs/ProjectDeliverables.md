@@ -24,8 +24,8 @@ Branding is clear and reflected in design
 
 | Deliverable | Status | Notes |
 |-------------|--------|-------|
-| User personas & onboarding | **Partial** | Auth + welcome + profile roles shipped; logged-in/out branching not fully wired |
-| Gallery / explore vendors | **Partial** | Explore UI on mock data; map is static image; location input polish needed |
+| User personas & onboarding | **Partial** | Auth + welcome shipped; logged-in/out UI branching shipped |
+| Gallery / explore vendors | **Partial** | Explore UI on mock data; location fill fixed; map still static |
 | Vendor profile (public) | **Partial** | Detail page on mock data; pricing accepted; packages need hover + popout |
 | Vendor profile (owner edit) | **Not started** | Demo `/account` only; edit + Supabase tie-in on roadmap |
 | Business location profile | **Not started** | `venue_profiles` planned |
@@ -38,7 +38,7 @@ Branding is clear and reflected in design
 | Manage multiple studio areas | **Not started** | Host/venue feature |
 | Manage multiple vendor products | **Partial** | UI shows packages; no owner CRUD |
 | Map (real provider) | **Not started** | On roadmap — replace static explore map |
-| Icons & interaction polish | **In planning** | Friendly icons, darker button hover — see ROADMAP P0 |
+| Icons & interaction polish | **Partial** | Button hover shipped; friendly icons remain |
 
 **Status key:** **Shipped** · **Partial** · **In planning** · **Not started**
 

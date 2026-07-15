@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-07-15 (P0: explore fill + quote login gate shipped)
+**Last updated:** 2026-07-15 (P0 complete except friendly icons)
 
 ---
 
@@ -28,7 +28,7 @@ Captured from team review of v1.0.0 prototype.
 |------|--------|-------|
 | Replace placeholder icons with friendly-feeling icons | **Todo** | Audit current icon usage (landing cards, explore, vendor, auth); align with Figma Catalyst / MVP 1 |
 | Explore page — location input background fill bug | **Done** | `ExploreSearchBar` compact — overflow clip, corner rounding, full-height segments |
-| Button hover — darker interaction state | **Todo** | Primary buttons should darken on hover; check `Button.tsx` and inline button styles |
+| Button hover — darker interaction state | **Done** | `--color-primary-hover` token + shared `buttonStyles.ts` |
 | Vendor packages — hover fill effect | **Todo** | Package cards on vendor detail page |
 | Vendor page — click-to-view popout for package/info | **Todo** | Modal or drawer for package details without leaving profile |
 | General prices on vendor profile pages | **Accepted as-is** | No change required per meeting |
@@ -37,7 +37,7 @@ Captured from team review of v1.0.0 prototype.
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Distinct **logged-in** vs **not logged-in** flows | **Todo** | UI/state branching across explore, vendor, booking; see Figma MVP 1 auth flows |
+| Distinct **logged-in** vs **not logged-in** flows | **Done** | Explore banner, landing CTAs, vendor CTAs, header nav, account menu return URLs |
 | **Login required** before proceeding with quote | **Done** | `ProtectedRoute` on `/booking/quote` + `/booking/confirm`; return URL with `?vendor=` |
 | Quote flow after login | **Done** | Return URL preserved through sign-in → welcome → quote |
 
@@ -75,8 +75,8 @@ From Figma MVP 1 **flow: plan mode** and meeting notes:
 
 1. ~~Explore location input background fill fix~~ **Done**
 2. ~~Login required for quote flow~~ **Done**
-3. Logged-in vs logged-out flow differentiation
-4. Button hover darkening
+3. ~~Logged-in vs logged-out flow differentiation~~ **Done**
+4. ~~Button hover darkening~~ **Done**
 5. Friendly icon replacement pass
 
 ### P1 — Vendor & explore depth

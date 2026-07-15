@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppHeader } from "../components/layout/AppHeader";
+import { ExploreAuthBanner } from "../components/explore/ExploreAuthBanner";
 import { ResultCard } from "../components/explore/ResultCard";
 import { ResultsMap } from "../components/explore/ResultsMap";
 import { VendorPreviewModal } from "../components/vendor/VendorPreviewModal";
@@ -43,7 +44,9 @@ export function ExplorePage() {
 
       <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col gap-5 px-4 pt-10 pb-6 md:px-[60px] lg:flex-row lg:gap-5">
         <section className="flex min-w-0 flex-col lg:w-[42%]">
-          <p className="font-bold text-body/60 text-sm">Results</p>
+          <ExploreAuthBanner />
+
+          <p className="mt-5 font-bold text-body/60 text-sm">Results</p>
           <h1 className="mt-2.5 font-bold text-[length:var(--text-section,28px)] text-midnight">
             {heading}
           </h1>

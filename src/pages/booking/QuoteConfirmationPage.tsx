@@ -2,6 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
 import { getVendorById } from "../../data/vendors";
+import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
 
 const summaryLeft = [
   { label: "Event date", value: "Saturday July 12, 2026" },
@@ -100,16 +101,10 @@ export function QuoteConfirmationPage() {
             </div>
 
             <div className="flex flex-wrap justify-between gap-4">
-              <Link
-                to="/messages"
-                className="rounded border-2 border-primary bg-white px-5 py-2.5 font-semibold text-primary"
-              >
+              <Link to="/messages" className={btnSecondaryOutline}>
                 Message Aki
               </Link>
-              <Link
-                to="/"
-                className="rounded bg-primary px-5 py-2.5 font-semibold text-white hover:bg-primary/90"
-              >
+              <Link to="/" className={btnPrimary}>
                 Back to home
               </Link>
             </div>

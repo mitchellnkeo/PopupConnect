@@ -6,6 +6,41 @@
 
 ---
 
+## 2026-07-15 — P0: auth flows + button hover
+
+**Who:** Mitchell + AI session  
+**Focus:** Logged-in vs guest UX differentiation; darker primary button hover.
+
+### Done
+
+- **Button hover** — Added `--color-primary-hover: #a83300` in `index.css`. Centralized classes in `src/lib/buttonStyles.ts`; updated `Button.tsx` and all inline primary buttons.
+- **Guest vs member flows:**
+  - `ExploreAuthBanner` — guest sign-in CTA vs logged-in welcome + my events link
+  - `CommunityWaitingSection` — sign-up CTAs for guests; explore + my events for members
+  - `VendorDetailPage` / `VendorPreviewModal` — "Sign in to book/quote" vs direct actions
+  - `HeaderUtilityNav` — messages + calendar icons only when signed in
+  - `UserAccountMenu` — sign-in/sign-up preserve current page as return URL
+
+### Files changed
+
+- `src/index.css`, `src/lib/buttonStyles.ts`, `src/hooks/useReturnPath.ts`
+- `src/components/ui/Button.tsx`, `layout/HeaderUtilityNav.tsx`, `explore/ExploreAuthBanner.tsx`
+- `src/components/landing/CommunityWaitingSection.tsx`, `LandingHeader.tsx`, `layout/AppHeader.tsx`
+- `src/pages/ExplorePage.tsx`, `VendorDetailPage.tsx`, `components/vendor/VendorPreviewModal.tsx`
+- `src/components/auth/UserAccountMenu.tsx`, booking pages
+
+### Suggested tests
+
+1. Signed out: explore shows guest banner; vendor shows "Sign in to book"; no calendar/message icons in header.
+2. Signed in: explore welcome banner; landing community section shows member cards; vendor shows "Book now".
+3. Primary buttons darken on hover (not lighten).
+
+### Next up
+
+Friendly icon replacement (ROADMAP P0 #5) or P1 vendor package hover.
+
+---
+
 ## 2026-07-15 — P0: explore location fill + quote login gate
 
 **Who:** Mitchell + AI session  

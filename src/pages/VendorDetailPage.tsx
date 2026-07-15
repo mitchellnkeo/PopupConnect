@@ -1,12 +1,18 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AppHeader } from "../components/layout/AppHeader";
 import { LandingFooter } from "../components/landing/LandingFooter";
+import { useAuth } from "../features/auth/AuthContext";
 import { getVendorById } from "../data/vendors";
+import { btnPrimaryFull, btnSecondaryOutline } from "../lib/buttonStyles";
 
 export function VendorDetailPage() {
   const { vendorId } = useParams<{ vendorId: string }>();
   const navigate = useNavigate();
+  const { session } = useAuth();
   const vendor = vendorId ? getVendorById(vendorId) : undefined;
+
+  const quotePath = vendor ? `/booking/quote?vendor=${vendor.id}` : "/booking/quote";
+  const vendorShortName = vendor?.title.split("'")[0] ?? "vendor";
 
   if (!vendor) {
     return (
@@ -135,19 +141,36 @@ export function VendorDetailPage() {
               </div>
 
               <div className="mt-6 space-y-3">
-                <button
-                  type="button"
-                  className="w-full rounded border-2 border-primary bg-white px-5 py-2.5 font-semibold text-primary transition hover:bg-orange-100/40"
-                >
-                  Message {vendor.title.split("'")[0] ?? "vendor"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/booking/quote?vendor=${vendor.id}`)}
-                  className="w-full rounded bg-primary px-5 py-2.5 font-semibold text-white transition hover:bg-primary/90"
-                >
-                  Book now
-                </button>
+                {session ? (
+                  <button type="button" className={`w-full ${btnSecondaryOutline}`}>
+                    Message {vendorShortName}
+                  </button>
+                ) : (
+                  <Link
+                    to="/sign-in"
+                    state={{ from: `/messages` }}
+                    className={`inline-flex w-full items-center justify-center ${btnSecondaryOutline}`}
+                  >
+                    Sign in to message
+                  </Link>
+                )}
+                {session ? (
+                  <button
+                    type="button"
+                    onClick={() => navigate(quotePath)}
+                    className={btnPrimaryFull}
+                  >
+                    Book now
+                  </button>
+                ) : (
+                  <Link
+                    to="/sign-in"
+                    state={{ from: quotePath }}
+                    className={`inline-flex items-center justify-center ${btnPrimaryFull}`}
+                  >
+                    Sign in to book
+                  </Link>
+                )}
               </div>
 
               <div className="mt-8 space-y-4">

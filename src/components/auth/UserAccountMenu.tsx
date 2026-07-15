@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
+import { getReturnPath } from "../../lib/authRouting";
 
 function initials(displayName: string | null | undefined, email: string | undefined) {
   if (displayName?.trim()) {
@@ -26,6 +27,8 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = getReturnPath(location.pathname, location.search);
   const { configured, loading, user, profile, signOut } = useAuth();
   const [open, setOpen] = useState(false);
 
@@ -139,6 +142,7 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
               <Link
                 role="menuitem"
                 to="/sign-in"
+                state={{ from: returnTo }}
                 className={itemClass}
                 onClick={() => setOpen(false)}
               >
@@ -147,6 +151,7 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
               <Link
                 role="menuitem"
                 to="/sign-up"
+                state={{ from: returnTo }}
                 className={itemClass}
                 onClick={() => setOpen(false)}
               >

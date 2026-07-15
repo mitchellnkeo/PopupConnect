@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { UserAccountMenu } from "../auth/UserAccountMenu";
-import { IconCalendar, IconComment, LogoMarkPrimary } from "../explore/icons";
+import { LogoMarkPrimary } from "../explore/icons";
 import type { ExploreFilters } from "../../lib/exploreSearch";
 import { ExploreSearchBar } from "../explore/ExploreSearchBar";
+import { HeaderUtilityNav } from "./HeaderUtilityNav";
 
 type AppHeaderProps = {
   showSearch?: boolean;
@@ -30,20 +31,7 @@ export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppH
         )}
 
         <div className="flex shrink-0 items-center gap-2.5 pl-0 md:pl-[60px]">
-          <Link
-            to="/messages"
-            className="rounded p-2.5 text-midnight transition hover:bg-neutral-100"
-            aria-label="Messages"
-          >
-            <IconComment className="size-[18px]" />
-          </Link>
-          <Link
-            to="/when"
-            className="rounded p-2.5 text-midnight transition hover:bg-neutral-100"
-            aria-label="Calendar"
-          >
-            <IconCalendar className="size-[18px]" />
-          </Link>
+          <HeaderUtilityNav />
           <UserAccountMenu />
         </div>
       </div>
