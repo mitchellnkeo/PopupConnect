@@ -66,7 +66,7 @@ export function ExplorePage() {
         </section>
 
         <section className="min-w-0 lg:w-[58%]">
-          <div className="lg:sticky lg:top-28">
+          <div className="h-[320px] lg:h-[calc(100vh-12rem)] lg:sticky lg:top-28">
             <ResultsMap results={results} activeId={activeId} onMarkerHover={setActiveId} />
           </div>
         </section>

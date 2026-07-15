@@ -11,6 +11,27 @@ type ExploreMapProps = {
 
 const HONOLULU_CENTER: [number, number] = [21.3069, -157.8583];
 
+function MapResize() {
+  const map = useMap();
+
+  useEffect(() => {
+    const invalidate = () => {
+      map.invalidateSize();
+    };
+
+    invalidate();
+    const frame = window.requestAnimationFrame(invalidate);
+    window.addEventListener("resize", invalidate);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", invalidate);
+    };
+  }, [map]);
+
+  return null;
+}
+
 function MapBounds({ results }: { results: ExploreResult[] }) {
   const map = useMap();
 
@@ -50,11 +71,11 @@ export function ExploreMap({ results, activeId, onMarkerHover }: ExploreMapProps
   const activeResult = results.find((r) => r.id === activeId);
 
   return (
-    <div className="relative h-full min-h-[320px] overflow-hidden rounded-2xl border border-neutral-200 shadow-sm lg:min-h-[calc(100vh-12rem)]">
+    <div className="relative h-[320px] overflow-hidden rounded-2xl border border-neutral-200 shadow-sm lg:h-[calc(100vh-12rem)]">
       <MapContainer
         center={HONOLULU_CENTER}
         zoom={13}
-        className="size-full z-0"
+        className="h-full w-full"
         scrollWheelZoom
         aria-label="Map of search results"
       >
@@ -62,6 +83,7 @@ export function ExploreMap({ results, activeId, onMarkerHover }: ExploreMapProps
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <MapResize />
         <MapBounds results={results} />
         <ActiveMarkerFocus result={activeResult} />
 
