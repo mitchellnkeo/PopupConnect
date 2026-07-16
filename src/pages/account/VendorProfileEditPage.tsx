@@ -4,6 +4,7 @@ import { authInputClass, authLabelClass } from "../../components/auth/authStyles
 import { Button } from "../../components/ui/Button";
 import { useAuth } from "../../features/auth/AuthContext";
 import { slugify } from "../../lib/slugify";
+import { invalidateVendorCatalog } from "../../lib/vendorCatalog";
 import { fetchVendorProfileByOwner, saveVendorProfile } from "../../services/vendorService";
 import type { VendorProductInput, VendorProfileWithProducts } from "../../types/database";
 
@@ -159,6 +160,7 @@ export function VendorProfileEditPage() {
         },
         productInputs,
       );
+      invalidateVendorCatalog();
       setMessage("Vendor profile saved.");
       setSlug(trimmedSlug);
       setSlugTouched(true);

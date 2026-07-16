@@ -6,6 +6,39 @@
 
 ---
 
+## 2026-07-15 — Explore wired to Supabase vendor catalog
+
+**Who:** Mitchell + AI session  
+**Focus:** Roadmap #1 — replace mock-only explore/vendor resolution with published `vendor_profiles`.
+
+### Done
+
+- **`fetchPublishedVendorProfiles()`** — joins `vendor_products`; used by catalog loader.
+- **`vendorCatalog.ts`** — maps DB rows → `VendorProfile` / `ExploreResult`; merges with mock vendors (DB wins on slug collision); module cache + invalidation on profile save.
+- **`useVendorCatalog` hook** — shared by explore, vendor detail, quote pages.
+- **Location filter** — `filterExploreResults` matches `where` against vendor city.
+- **Migration** — `category_ids jsonb` on `vendor_profiles` (default `matcha-bar`).
+
+### Apply migration
+
+```bash
+export $(grep -v '^#' .env.local | grep SUPABASE_DB_PASSWORD | xargs)
+npm run db:push
+```
+
+### Files added/changed
+
+- `src/lib/vendorCatalog.ts`, `src/hooks/useVendorCatalog.ts`
+- `src/services/vendorService.ts`, `src/lib/vendorResults.ts`
+- `src/pages/ExplorePage.tsx`, `VendorDetailPage.tsx`, booking quote pages
+- `supabase/migrations/20260715140000_vendor_profile_categories.sql`
+
+### Next up
+
+Quote/booking persistence (P2); calendar/plan mode.
+
+---
+
 ## 2026-07-15 — P1: vendor packages, map API, vendor profiles
 
 **Who:** Mitchell + AI session  

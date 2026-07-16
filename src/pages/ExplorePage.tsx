@@ -6,8 +6,8 @@ import { ResultCard } from "../components/explore/ResultCard";
 import { ResultsMap } from "../components/explore/ResultsMap";
 import { VendorPreviewModal } from "../components/vendor/VendorPreviewModal";
 import { LandingFooter } from "../components/landing/LandingFooter";
-import { exploreResults } from "../data/exploreResults";
-import { getVendorById } from "../data/vendors";
+import { useVendorCatalog } from "../hooks/useVendorCatalog";
+import { vendorsToExploreResults } from "../lib/vendorCatalog";
 import { filterExploreResults } from "../lib/vendorResults";
 import {
   defaultExploreFilters,
@@ -22,6 +22,7 @@ export function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [previewVendorId, setPreviewVendorId] = useState<string | null>(null);
+  const { vendors, loading, getVendor } = useVendorCatalog();
 
   useEffect(() => {
     if (!hasExploreSearchParams(searchParams)) {
@@ -30,9 +31,13 @@ export function ExplorePage() {
   }, [searchParams, setSearchParams]);
 
   const filters = useMemo(() => parseExploreFilters(searchParams), [searchParams]);
-  const results = useMemo(() => filterExploreResults(exploreResults, filters), [filters]);
+  const catalogResults = useMemo(() => vendorsToExploreResults(vendors), [vendors]);
+  const results = useMemo(
+    () => filterExploreResults(catalogResults, filters),
+    [catalogResults, filters],
+  );
   const heading = useMemo(() => resultsHeading(filters), [filters]);
-  const previewVendor = previewVendorId ? getVendorById(previewVendorId) : undefined;
+  const previewVendor = previewVendorId ? getVendor(previewVendorId) : undefined;
 
   function handleFiltersChange(next: ExploreFilters) {
     setSearchParams(filtersToSearchParams(next), { replace: true });
@@ -52,6 +57,14 @@ export function ExplorePage() {
           </h1>
 
           <ul className="mt-5 grid max-h-[calc(100vh-12rem)] grid-cols-1 gap-6 overflow-y-auto pb-5 sm:grid-cols-2">
+            {loading ? (
+              <li className="col-span-full py-8 text-body/60 text-sm">Loading vendors…</li>
+            ) : null}
+            {!loading && results.length === 0 ? (
+              <li className="col-span-full py-8 text-body/60 text-sm">
+                No vendors match your search. Try a different category or location.
+              </li>
+            ) : null}
             {results.map((result) => (
               <li key={result.id}>
                 <ResultCard

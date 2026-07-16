@@ -5,19 +5,29 @@ import { LandingFooter } from "../components/landing/LandingFooter";
 import { VendorPackageCard } from "../components/vendor/VendorPackageCard";
 import { VendorPackagePopout } from "../components/vendor/VendorPackagePopout";
 import { useAuth } from "../features/auth/AuthContext";
+import { useVendorCatalog } from "../hooks/useVendorCatalog";
 import type { VendorPackage } from "../data/vendors";
-import { getVendorById } from "../data/vendors";
 import { btnPrimaryFull, btnSecondaryOutline } from "../lib/buttonStyles";
 
 export function VendorDetailPage() {
   const { vendorId } = useParams<{ vendorId: string }>();
   const navigate = useNavigate();
   const { session } = useAuth();
+  const { getVendor, loading } = useVendorCatalog();
   const [selectedPackage, setSelectedPackage] = useState<VendorPackage | null>(null);
-  const vendor = vendorId ? getVendorById(vendorId) : undefined;
+  const vendor = vendorId ? getVendor(vendorId) : undefined;
 
   const quotePath = vendor ? `/booking/quote?vendor=${vendor.id}` : "/booking/quote";
   const vendorShortName = vendor?.title.split("'")[0] ?? "vendor";
+
+  if (loading) {
+    return (
+      <div className="flex min-h-dvh flex-col bg-white">
+        <AppHeader />
+        <div className="mx-auto max-w-3xl px-4 py-20 text-center text-body/60">Loading vendor…</div>
+      </div>
+    );
+  }
 
   if (!vendor) {
     return (

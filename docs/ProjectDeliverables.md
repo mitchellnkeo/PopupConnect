@@ -25,10 +25,10 @@ Branding is clear and reflected in design
 | Deliverable | Status | Notes |
 |-------------|--------|-------|
 | User personas & onboarding | **Partial** | Auth + welcome shipped; logged-in/out UI branching shipped |
-| Gallery / explore vendors | **Partial** | Explore UI on mock data; location fill fixed; map still static |
-| Vendor profile (public) | **Partial** | Detail page on mock data; package popout shipped; DB profiles when published |
+| Gallery / explore vendors | **Partial** | Explore loads published Supabase profiles + mock fallback; DB vendors lack full gallery/highlights |
+| Vendor profile (public) | **Partial** | Detail page resolves from catalog (Supabase + mock); package popout shipped |
 | Vendor profile (owner edit) | **Partial** | `/account/settings/vendor` + migration shipped |
-| Explore map | **Partial** | Leaflet/OSM live; explore list still mock data |
+| Explore map | **Done** | Leaflet/OSM; markers from catalog lat/lng |
 | Business location profile | **Not started** | `venue_profiles` planned |
 | Manage reservations / quotes | **Partial** | Quote UI mock; **login gate shipped**; persistence not built |
 | Payment | **Not started** | `/booking/payment` placeholder |

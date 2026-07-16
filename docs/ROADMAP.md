@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-07-15 (P1 vendor/explore depth shipped)
+**Last updated:** 2026-07-15 (explore wired to Supabase)
 
 ---
 
@@ -53,7 +53,7 @@ Captured from team review of v1.0.0 prototype.
 | Item | Status | Notes |
 |------|--------|-------|
 | Map API implementation | **Done** | Leaflet + OpenStreetMap tiles in `ExploreMap`; lat/lng on mock vendors |
-| Replace mock explore data with Supabase | **Todo** | Explore still uses `src/data/`; published `vendor_profiles` ready for wiring |
+| Replace mock explore data with Supabase | **Done** | `vendorCatalog.ts` + `useVendorCatalog`; explore, vendor detail, quote pages merge published profiles with mock fallback |
 
 ### Plan mode / calendar (MVP 1 — larger feature)
 
@@ -83,7 +83,8 @@ From Figma MVP 1 **flow: plan mode** and meeting notes:
 
 1. ~~Vendor package hover fill + click popout~~ **Done**
 2. ~~Map API on explore page~~ **Done** (Leaflet + OSM)
-3. ~~Vendor profile edit + Supabase `vendor_profiles`~~ **Done** — run `npm run db:push` to apply migration
+3. ~~Vendor profile edit + Supabase `vendor_profiles`~~ **Done** — run `npm run db:push` to apply migrations
+4. ~~Wire explore + public vendor pages to published profiles~~ **Done** — includes `20260715140000_vendor_profile_categories.sql`
 
 ### P2 — Plan mode / calendar
 

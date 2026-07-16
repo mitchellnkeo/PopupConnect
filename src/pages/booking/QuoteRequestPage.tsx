@@ -1,7 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
-import { getVendorById } from "../../data/vendors";
+import { useVendorCatalog } from "../../hooks/useVendorCatalog";
 import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
 
 const quoteDetails = [
@@ -17,7 +17,8 @@ export function QuoteRequestPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const vendorId = searchParams.get("vendor") ?? "aki-matcha";
-  const vendor = getVendorById(vendorId);
+  const { getVendor, loading } = useVendorCatalog();
+  const vendor = getVendor(vendorId);
 
   return (
     <div className="flex min-h-dvh flex-col bg-white">
@@ -28,7 +29,7 @@ export function QuoteRequestPage() {
           <div className="border-border border-b pb-5">
             <p className="text-body/60 text-lg">Quote preview</p>
             <h1 className="font-bold text-[length:var(--text-section,28px)] text-midnight">
-              {vendor?.title ?? "Vendor"}
+              {loading ? "Loading vendor…" : (vendor?.title ?? "Vendor")}
             </h1>
           </div>
 

@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-07-15 | Explore + vendor detail + quote pages wired to published Supabase `vendor_profiles` via `vendorCatalog` (mock fallback). |
 | 2026-07-15 | P1: vendor package popout, Leaflet explore map, `vendor_profiles` migration + edit UI at `/account/settings/vendor`. |
 | 2026-07-15 | P0: logged-in vs guest flows (explore banner, landing CTAs, vendor CTAs, header nav); primary button darker hover token + shared `buttonStyles.ts`. |
 | 2026-07-15 | P0 shipped: explore search bar location-segment fill fix; quote + confirm routes require login with return URL through sign-in/welcome. |
@@ -55,7 +56,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 **Current release:** `1.0.0` — see `src/config/version.ts`, root `VERSION`, [CHANGELOG.md](./CHANGELOG.md). Shown in site footer as `v1.0.0`.
 
-**Not in repo yet:** Vercel Functions, Supabase Storage buckets, generated DB types, real map provider, real vendor/venue tables (explore uses mock data in `src/data/`).
+**Not in repo yet:** Vercel Functions, Supabase Storage buckets, generated DB types, real map provider beyond OSM tiles, quote/booking persistence.
 
 ---
 
@@ -252,8 +253,8 @@ Shared search components: `src/components/search/`. Search bars: `HeroSearchNav`
 - **Header:** `AppHeader` with compact `ExploreSearchBar`
 - **Layout:** ~42% results list + ~58% sticky map (desktop); stacked on mobile
 - **Filters:** URL params via `exploreSearch.ts` — `where`, `when` / `whenStart`+`whenEnd`, `whenMonth`, `whenYear`, `category`, `q`
-- **Results:** `filterExploreResults()` in `src/lib/vendorResults.ts` over mock data
-- **Data:** `src/data/exploreResults.ts`, `src/data/vendors.ts` (6 Honolulu matcha vendors)
+- **Results:** `filterExploreResults()` over merged catalog (`vendorCatalog.ts` + `useVendorCatalog`)
+- **Data:** Published `vendor_profiles` from Supabase merged with mock vendors in `src/data/vendors.ts` (mock fills gaps; DB wins on slug match)
 - **Interactions:** card hover ↔ map marker; card click → `VendorPreviewModal` → full profile or quote
 - **Map:** Leaflet + OpenStreetMap in `ExploreMap` (`ResultsMap`); markers use vendor `lat`/`lng`
 

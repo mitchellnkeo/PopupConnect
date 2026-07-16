@@ -6,6 +6,7 @@ export function vendorsToExploreResults(): ExploreResult[] {
     id: vendor.id,
     title: vendor.title,
     city: vendor.distance,
+    locationCity: vendor.city,
     mapX: vendor.mapX,
     mapY: vendor.mapY,
     lat: vendor.lat,
@@ -15,14 +16,31 @@ export function vendorsToExploreResults(): ExploreResult[] {
   }));
 }
 
+function matchesLocation(result: ExploreResult, where: string) {
+  const parts = where
+    .toLowerCase()
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (parts.length === 0) return true;
+
+  const haystack = `${result.locationCity ?? ""} ${result.city}`.toLowerCase();
+  return parts.some((part) => haystack.includes(part));
+}
+
 export function filterExploreResults(
   results: ExploreResult[],
-  filters: { categoryId: string | null; query: string },
+  filters: { categoryId: string | null; query: string; where?: string },
 ): ExploreResult[] {
   let filtered = results;
 
   if (filters.categoryId) {
     filtered = filtered.filter((r) => r.categoryIds?.includes(filters.categoryId!));
+  }
+
+  if (filters.where?.trim()) {
+    filtered = filtered.filter((r) => matchesLocation(r, filters.where!));
   }
 
   if (filters.query.trim()) {

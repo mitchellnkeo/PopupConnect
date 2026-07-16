@@ -4,6 +4,7 @@ export type ExploreResult = {
   id: string;
   title: string;
   city: string;
+  locationCity?: string;
   mapX: number;
   mapY: number;
   lat: number;

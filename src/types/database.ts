@@ -38,6 +38,7 @@ export type VendorProfileRow = {
   lat: number | null;
   lng: number | null;
   published: boolean;
+  category_ids: string[];
   created_at: string;
   updated_at: string;
 };
@@ -74,6 +75,7 @@ export type VendorProfileInput = {
   lat?: number | null;
   lng?: number | null;
   published?: boolean;
+  category_ids?: string[];
 };
 
 export type VendorProductInput = {

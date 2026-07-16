@@ -7,6 +7,11 @@ import type {
   VendorProfileWithProducts,
 } from "../types/database";
 
+function parseCategoryIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return ["matcha-bar"];
+  return value.filter((item): item is string => typeof item === "string" && item.length > 0);
+}
+
 function mapProduct(row: Record<string, unknown>): VendorProductRow {
   const highlights = row.highlights;
   return {
@@ -41,6 +46,7 @@ function mapProfile(row: Record<string, unknown>): VendorProfileRow {
     lat: row.lat != null ? Number(row.lat) : null,
     lng: row.lng != null ? Number(row.lng) : null,
     published: Boolean(row.published),
+    category_ids: parseCategoryIds(row.category_ids),
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
   };
@@ -96,6 +102,28 @@ export async function fetchPublishedVendorBySlug(
   return { ...profile, products };
 }
 
+export async function fetchPublishedVendorProfiles(): Promise<VendorProfileWithProducts[]> {
+  if (!isSupabaseConfigured) return [];
+
+  const { data, error } = await supabase
+    .from("vendor_profiles")
+    .select("*, vendor_products(*)")
+    .eq("published", true)
+    .order("title");
+
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const profile = mapProfile(row as Record<string, unknown>);
+    const nestedProducts = (row as { vendor_products?: Record<string, unknown>[] }).vendor_products ?? [];
+    const products = nestedProducts
+      .map((product) => mapProduct(product))
+      .sort((a, b) => a.sort_order - b.sort_order);
+
+    return { ...profile, products };
+  });
+}
+
 export async function saveVendorProfile(
   profileId: string,
   input: VendorProfileInput,
@@ -126,6 +154,7 @@ export async function saveVendorProfile(
     lat: input.lat ?? null,
     lng: input.lng ?? null,
     published: input.published ?? false,
+    category_ids: input.category_ids ?? ["matcha-bar"],
   };
 
   if (vendorProfileId) {
