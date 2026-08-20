@@ -94,16 +94,50 @@ This runs SQL files in `supabase/migrations/` against your **remote** database.
 
 ## 5. Auth settings
 
-In **Authentication → Providers**, enable **Email**.
+### Email + confirmation link
 
-For local development you may disable **Confirm email** under **Authentication → Providers → Email** so sign-up works immediately.
+In **Authentication → Providers → Email**:
+
+1. Enable **Email**.
+2. Turn **Confirm email** **on** so new users receive a verification link instead of signing in immediately.
+3. Keep **Secure email change** on.
+
+In **Authentication → URL configuration**:
+
+| Setting | Value |
+|---------|--------|
+| Site URL | Production origin, e.g. `https://your-app.vercel.app` |
+| Redirect URLs | `http://localhost:5173/**`, `http://localhost:5174/**`, `https://your-app.vercel.app/**` |
+
+Sign-up sends users to `/auth/callback`. That URL must be allowed here or the confirmation link will fail.
+
+If confirmation emails never arrive, check **Authentication → Emails** (rate limits on the built-in sender) or add custom SMTP.
+
+### Google SSO
+
+1. In [Google Cloud Console](https://console.cloud.google.com/) create an OAuth client (Web application).
+2. Add authorized JavaScript origins: `https://YOUR_PROJECT_REF.supabase.co`, plus `http://localhost:5173` for local.
+3. Add authorized redirect URI: `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`.
+4. In **Authentication → Providers → Google**, enable the provider and paste the Client ID and Client Secret.
+
+The app buttons call `signInWithOAuth({ provider: "google" })` and return to `/auth/callback`.
+
+### Do not use Vercel Authentication for user accounts
+
+Vercel **Deployment Protection** / **Vercel Authentication** is a team login wall (Vercel SSO). It is not app signup. If production requires “Log in with Vercel”:
+
+1. Vercel project → **Settings → Deployment Protection**
+2. Set **Vercel Authentication** to **off** for **Production** (previews can stay protected)
+
+Users should only verify through the **email link** or **Google**.
 
 ## 6. Verify
 
 1. `npm run dev`
-2. Open `/sign-up`, create an account.
-3. Open `/account/profile` and edit your display name.
-4. Confirm rows appear in **Table Editor** → `profiles` and `profile_roles`.
+2. Open `/sign-up`, create an account with email — you should see “Check your email…”.
+3. Open the confirmation link; you should land on `/welcome`.
+4. Repeat with **Continue with Google** after the Google provider is enabled.
+5. Confirm rows appear in **Table Editor** → `profiles` and `profile_roles`.
 
 ## 7. Troubleshooting `db push` (login role timeout / 544)
 

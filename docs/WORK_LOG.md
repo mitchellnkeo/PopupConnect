@@ -6,6 +6,38 @@
 
 ---
 
+## 2026-08-19 — Email confirmation + Google SSO
+
+**Who:** Mitchell + AI session  
+**Focus:** Replace Vercel-gated account access with email verification links and Google sign-in.
+
+### Done
+
+- Sign-up sends `emailRedirectTo` → `/auth/callback`.
+- `/auth/callback` exchanges the PKCE code, then routes to `/welcome` or the return URL.
+- **Continue with Google** on `/sign-in` and `/sign-up` (`signInWithOAuth`).
+- `handle_new_user` now maps Google `full_name` / `picture` onto `profiles`.
+
+### Apply migration
+
+```bash
+export $(grep -v '^#' .env.local | grep SUPABASE_DB_PASSWORD | xargs)
+npm run db:push
+```
+
+### Dashboard (required for this to work in prod)
+
+1. Supabase → **Authentication → Providers → Email** → Confirm email **on**
+2. Supabase → **URL configuration** → allow `/auth/callback` on prod + localhost
+3. Supabase → **Providers → Google** → enable with Google Cloud OAuth client
+4. Vercel → **Deployment Protection** → Vercel Authentication **off** for Production
+
+### Next up
+
+Quote persistence; calendar/plan mode.
+
+---
+
 ## 2026-07-15 — Explore wired to Supabase vendor catalog
 
 **Who:** Mitchell + AI session  

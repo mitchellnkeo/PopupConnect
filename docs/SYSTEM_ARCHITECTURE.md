@@ -74,11 +74,12 @@ A single human may hold **multiple roles** (e.g. vendor and host). Recommended p
 
 ## Authentication flow (target)
 
-1. User opens sign-in / sign-up (Supabase-hosted UI or custom forms using Supabase Auth).
-2. Supabase returns a **session** (access JWT + refresh token).
-3. SPA stores session via Supabase client (`@supabase/supabase-js`); `onAuthStateChange` drives React context.
-4. Protected routes (`/account/*`, host/vendor dashboards) require a valid session.
-5. Each request to Postgres includes the user JWT; **RLS policies** use `auth.uid()`.
+1. User opens custom `/sign-in` or `/sign-up` (email/password or Google OAuth).
+2. Email sign-up sends a confirmation link to `/auth/callback`. Google returns to the same route.
+3. `/auth/callback` establishes the Supabase session (PKCE code exchange), then routes to `/welcome` or the return URL.
+4. SPA stores session via Supabase client (`@supabase/supabase-js`); `onAuthStateChange` drives React context.
+5. Protected routes (`/account/*`, host/vendor dashboards) require a valid session.
+6. Each request to Postgres includes the user JWT; **RLS policies** use `auth.uid()`.
 
 **Rules:**
 

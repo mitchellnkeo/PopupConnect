@@ -19,7 +19,7 @@ export function getFirstName(
   profile: { display_name: string | null } | null,
   userMetadata?: Record<string, unknown>,
 ): string {
-  const first = userMetadata?.first_name;
+  const first = userMetadata?.first_name ?? userMetadata?.given_name;
   if (typeof first === "string" && first.trim()) {
     return first.trim();
   }

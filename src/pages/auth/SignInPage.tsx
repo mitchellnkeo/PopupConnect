@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthChrome } from "../../components/auth/AuthChrome";
+import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { authCardClass, authInputClass, authLabelClass } from "../../components/auth/authStyles";
 import { Button } from "../../components/ui/Button";
 import { getPostAuthPath } from "../../lib/authRouting";
@@ -69,7 +70,17 @@ export function SignInPage() {
         <div className={authCardClass}>
           <h1 className="font-semibold text-3xl text-midnight tracking-tight">Log in</h1>
 
-          <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+          <div className="mt-8">
+            <GoogleAuthButton nextPath={from} disabled={submitting} onError={setError} />
+          </div>
+
+          <div className="my-6 flex items-center gap-3 text-neutral-500 text-xs uppercase tracking-wide">
+            <span className="h-px flex-1 bg-neutral-200" />
+            or continue with email
+            <span className="h-px flex-1 bg-neutral-200" />
+          </div>
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className={authLabelClass}>
                 Username

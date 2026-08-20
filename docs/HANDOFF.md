@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-08-19 | Email confirmation links + Google SSO on sign-in/sign-up; `/auth/callback` exchanges the auth code. Turn off Vercel Authentication on production. |
 | 2026-07-15 | Explore + vendor detail + quote pages wired to published Supabase `vendor_profiles` via `vendorCatalog` (mock fallback). |
 | 2026-07-15 | P1: vendor package popout, Leaflet explore map, `vendor_profiles` migration + edit UI at `/account/settings/vendor`. |
 | 2026-07-15 | P0: logged-in vs guest flows (explore banner, landing CTAs, vendor CTAs, header nav); primary button darker hover token + shared `buttonStyles.ts`. |
@@ -102,6 +103,7 @@ Image assets:
 | `/booking/confirm` | `QuoteConfirmationPage` | **Protected** — requires sign-in |
 | `/sign-in` | `SignInPage` | Split layout; page title says **"Log in"** |
 | `/sign-up` | `SignUpPage` | First/last name, email, passwords, terms |
+| `/auth/callback` | `AuthCallbackPage` | Email confirm + Google OAuth return; exchanges code then routes to welcome/return URL |
 | `/welcome` | `WelcomePage` | Post-auth onboarding; role radio → `/explore` |
 | `/account` | `VendorAccountPage` | Protected; demo vendor account UI (mock vendor) |
 | `/account/settings/vendor` | `VendorProfileEditPage` | Protected; vendor role; Supabase CRUD |
@@ -219,8 +221,10 @@ See [SUPABASE.md](./SUPABASE.md) for full setup (CLI install options, auth dashb
 
 ### Auth dashboard settings (important for prod)
 
-- **Authentication → URL configuration:** add production `*.vercel.app` URL + `http://localhost:5173/**`
-- Email provider enabled; **Confirm email** may be disabled for easier dev testing
+- **Authentication → URL configuration:** Site URL = production origin; Redirect URLs include `http://localhost:5173/**`, `http://localhost:5174/**`, and `https://<prod-domain>/**`
+- **Email:** Confirm email **on** — confirmation links return to `/auth/callback`
+- **Google:** enable provider with Google Cloud OAuth client (see [SUPABASE.md](./SUPABASE.md) §5)
+- **Do not** use Vercel Deployment Protection / Vercel Authentication on production — that is team SSO, not user signup
 
 ---
 
@@ -412,7 +416,7 @@ Home → search → explore results → vendor detail → quote → **login (pla
 
 1. **Vite env vars** must be prefixed `VITE_` and require dev server restart / Vercel redeploy.
 2. **Vercel `vercel env add`:** cannot select Development + Production/Preview in one command.
-3. **Email confirmation:** if enabled in Supabase, sign-up may not get a session until email is confirmed → user lands on message, not `/welcome`.
+3. **Email confirmation:** with Confirm email on, sign-up shows a check-your-email message; the link hits `/auth/callback` then `/welcome`. If that link asks for Vercel login, turn off Vercel Authentication on production.
 4. **Explore route vs AppShell:** `/explore` is the real page; `/explore/results` under `AppShell` is still a placeholder.
 5. **Bundle size warning** ~500KB — consider code-splitting later.
 6. **Mock data scope:** default filters use Honolulu + matcha vendors; `searchLocations.ts` has houston, honolulu, hartford, hayward (not Seattle).

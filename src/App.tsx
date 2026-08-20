@@ -7,6 +7,7 @@ import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
 import { VendorAccountPage } from "./pages/account/VendorAccountPage";
 import { VendorProfileEditPage } from "./pages/account/VendorProfileEditPage";
+import { AuthCallbackPage } from "./pages/auth/AuthCallbackPage";
 import { SignInPage } from "./pages/auth/SignInPage";
 import { SignUpPage } from "./pages/auth/SignUpPage";
 import { WelcomePage } from "./pages/auth/WelcomePage";
@@ -42,6 +43,7 @@ export function App() {
 
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
+      <Route path="auth/callback" element={<AuthCallbackPage />} />
       <Route path="welcome" element={<WelcomePage />} />
 
       <Route

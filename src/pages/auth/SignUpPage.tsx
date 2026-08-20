@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthChrome } from "../../components/auth/AuthChrome";
+import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { authCardClass, authInputClass, authLabelClass } from "../../components/auth/authStyles";
 import { Button } from "../../components/ui/Button";
+import { getAuthCallbackUrl } from "../../lib/authRedirects";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 
 export function SignUpPage() {
@@ -52,6 +54,7 @@ export function SignUpPage() {
       email: email.trim(),
       password,
       options: {
+        emailRedirectTo: getAuthCallbackUrl(from),
         data: {
           first_name: firstName.trim(),
           last_name: lastName.trim(),
@@ -81,7 +84,26 @@ export function SignUpPage() {
       <div className={authCardClass}>
         <h1 className="font-semibold text-3xl text-midnight tracking-tight">Create account</h1>
 
-        <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+        <div className="mt-8">
+          <GoogleAuthButton
+            nextPath={from}
+            disabled={submitting}
+            onBeforeStart={() => {
+              if (acceptedTerms) return true;
+              setError("Please agree to the Terms and Conditions.");
+              return false;
+            }}
+            onError={setError}
+          />
+        </div>
+
+        <div className="my-6 flex items-center gap-3 text-neutral-500 text-xs uppercase tracking-wide">
+          <span className="h-px flex-1 bg-neutral-200" />
+          or continue with email
+          <span className="h-px flex-1 bg-neutral-200" />
+        </div>
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="firstName" className={authLabelClass}>
