@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { authInputClass, authLabelClass } from "../../components/auth/authStyles";
 import { Button } from "../../components/ui/Button";
+import { StatusBadge } from "../../components/ui/StatusBadge";
 import { Switch } from "../../components/ui/Switch";
 import { useAuth } from "../../features/auth/AuthContext";
 import { geocodeAddress } from "../../lib/geocode";
@@ -342,12 +343,15 @@ export function VendorProfileEditPage() {
           </div>
         </div>
 
-        <Switch
-          id="publish-vendor"
-          checked={published}
-          onChange={setPublished}
-          label="Publish my vendor profile publicly"
-        />
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 px-4 py-3">
+          <Switch
+            id="publish-vendor"
+            checked={published}
+            onChange={setPublished}
+            label="Publish my vendor profile publicly"
+          />
+          <StatusBadge label={published ? "Published" : "Draft"} tone={published ? "success" : "neutral"} />
+        </div>
 
         <div>
           <div className="flex items-center justify-between gap-4">

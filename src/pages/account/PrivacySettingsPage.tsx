@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { TextField } from "../../components/ui/TextField";
 import { useAuth } from "../../features/auth/AuthContext";
@@ -6,7 +7,9 @@ import { mapAuthError } from "../../lib/authErrors";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 
 export function PrivacySettingsPage() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const [signingOutEverywhere, setSigningOutEverywhere] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -50,10 +53,31 @@ export function PrivacySettingsPage() {
     setSaved(true);
   }
 
+  async function handleSignOutEverywhere() {
+    setSigningOutEverywhere(true);
+    await signOut({ everywhere: true });
+    navigate("/sign-in", { replace: true });
+  }
+
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
       <h1 className="font-semibold text-2xl text-midnight">Privacy and security</h1>
       <p className="mt-1 text-neutral-600 text-sm">{user?.email}</p>
+
+      <section className="mt-8 max-w-md space-y-3">
+        <h2 className="font-medium text-midnight text-sm">Email</h2>
+        <TextField
+          id="account-email"
+          label="Account email"
+          type="email"
+          value={user?.email ?? ""}
+          disabled
+        />
+        <p className="text-neutral-500 text-xs leading-relaxed">
+          Changing email needs a confirmed sending domain so we can verify the new address. That
+          stays off until production email is set up.
+        </p>
+      </section>
 
       {!usesPassword ? (
         <p className="mt-6 text-body text-sm leading-relaxed">
@@ -99,6 +123,21 @@ export function PrivacySettingsPage() {
           </Button>
         </form>
       )}
+
+      <section className="mt-10 max-w-md space-y-3 border-neutral-200 border-t pt-8">
+        <h2 className="font-medium text-midnight text-sm">Sessions</h2>
+        <p className="text-neutral-600 text-sm leading-relaxed">
+          Sign out of PopupConnect on this browser and every other device using this account.
+        </p>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={signingOutEverywhere}
+          onClick={() => void handleSignOutEverywhere()}
+        >
+          {signingOutEverywhere ? "Signing out…" : "Sign out of all devices"}
+        </Button>
+      </section>
     </div>
   );
 }

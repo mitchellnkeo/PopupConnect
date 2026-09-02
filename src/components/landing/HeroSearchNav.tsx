@@ -98,7 +98,7 @@ export function HeroSearchNav() {
   }
 
   function handleExploreSearch(query: string, categoryId: string | null) {
-    const next = { ...filters, query, categoryId };
+    const next = { ...filters, query, categoryId, categoryIds: categoryId ? [categoryId] : [] };
     setFilters(next);
     navigateToExplore(next);
   }

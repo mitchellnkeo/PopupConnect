@@ -6,6 +6,27 @@
 
 ---
 
+## 2026-09-02 — Phase C: settings + refine + map area
+
+**Who:** Mitchell + AI session  
+**Focus:** Settings depth, explore sort/filters, map “search this area,” mobile list/map tabs.
+
+### Done
+
+- Account settings: scrollable Tabs on mobile; sidebar stays on desktop.
+- Profile shows an initials avatar placeholder (upload waits on Storage).
+- Privacy: current email is read-only with honest copy; **Sign out of all devices** uses a global Supabase sign-out.
+- Vendor editor shows a Published/Draft badge next to the publish Switch.
+- Explore refine bar: sort (distance / price / newest), multi-category checkboxes, price bands. Values persist in the URL.
+- Map shows **Search this area** after the user pans ~1.5 miles from the current origin.
+- Mobile explore uses List / Map tabs.
+
+### Next up
+
+Domain/email unblocks confirmation and email change. Later: map clustering, server-side catalog filters, account deletion.
+
+---
+
 ## 2026-09-02 — Phase B: search + map
 
 **Who:** Mitchell + AI session  

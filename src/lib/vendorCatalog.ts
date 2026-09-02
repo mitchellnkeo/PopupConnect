@@ -73,7 +73,13 @@ export function mapDbVendorToProfile(row: VendorProfileWithProducts): VendorProf
     mapY: 50,
     lat,
     lng,
+    createdAt: row.created_at,
   };
+}
+
+function fallbackCreatedAt(id: string) {
+  const hash = [...id].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return `2026-02-${String((hash % 28) + 1).padStart(2, "0")}T00:00:00.000Z`;
 }
 
 export function vendorToExploreResult(vendor: VendorProfile): ExploreResult {
@@ -89,6 +95,8 @@ export function vendorToExploreResult(vendor: VendorProfile): ExploreResult {
     imageSrc: vendor.imageSrc,
     categoryIds: vendor.categoryIds,
     searchText: [vendor.title, vendor.city, vendor.about, vendor.idealFor, ...vendor.tags].join(" "),
+    startingPrice: vendor.startingPrice,
+    createdAt: vendor.createdAt ?? fallbackCreatedAt(vendor.id),
   };
 }
 

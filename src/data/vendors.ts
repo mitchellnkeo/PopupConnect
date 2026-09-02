@@ -45,6 +45,7 @@ export type VendorProfile = {
   mapY: number;
   lat: number;
   lng: number;
+  createdAt?: string;
 };
 
 export const vendors: VendorProfile[] = [

@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
 import { Button } from "../../components/ui/Button";
+import { Tabs } from "../../components/ui/Tabs";
 import { LogoMark } from "../../components/discovery/icons";
-import { formatRoleList, getAccountNavItems } from "../../lib/roles";
+import { formatRoleList, getAccountNavItems, getSettingsTabItems } from "../../lib/roles";
 
 function navClassName({ isActive }: { isActive: boolean }) {
   return [
@@ -14,7 +15,12 @@ function navClassName({ isActive }: { isActive: boolean }) {
 
 export function AccountLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, profile, signOut, loading } = useAuth();
+  const roles = profile?.roles ?? [];
+  const settingsTabs = getSettingsTabItems(roles);
+  const activeTab =
+    settingsTabs.find((tab) => location.pathname.startsWith(tab.id))?.id ?? settingsTabs[0]?.id ?? "";
 
   useEffect(() => {
     if (!loading && profile && !profile.onboarding_completed) {
@@ -44,7 +50,7 @@ export function AccountLayout() {
       </header>
 
       <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-[220px_1fr]">
-        <aside>
+        <aside className="hidden md:block">
           <p className="font-medium text-midnight text-sm">
             {profile?.display_name ?? user?.email ?? "Account"}
           </p>
@@ -53,7 +59,7 @@ export function AccountLayout() {
           ) : null}
 
           <nav className="mt-6 flex flex-col gap-1" aria-label="Account">
-            {getAccountNavItems(profile?.roles ?? []).map((item) => (
+            {getAccountNavItems(roles).map((item) => (
               <NavLink key={item.to} to={item.to} className={navClassName}>
                 {item.label}
               </NavLink>
@@ -62,7 +68,28 @@ export function AccountLayout() {
         </aside>
 
         <div className="min-w-0">
-          <Outlet />
+          <div className="md:hidden">
+            <p className="font-medium text-midnight text-sm">
+              {profile?.display_name ?? user?.email ?? "Account"}
+            </p>
+            <Link to="/account" className="mt-1 inline-block text-primary text-xs hover:underline">
+              {roles.includes("vendor") ? "Back to my business" : "Back to my account"}
+            </Link>
+            {settingsTabs.length ? (
+              <div className="mt-4 overflow-x-auto">
+                <Tabs
+                  aria-label="Account settings"
+                  grow={false}
+                  tabs={settingsTabs}
+                  value={activeTab}
+                  onChange={(id) => navigate(id)}
+                />
+              </div>
+            ) : null}
+          </div>
+          <div className="mt-6 md:mt-0">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ type AuthContextValue = {
   user: User | null;
   profile: ProfileWithRoles | null;
   refreshProfile: () => Promise<void>;
-  signOut: () => Promise<void>;
+  signOut: (options?: { everywhere?: boolean }) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -81,8 +81,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void refreshProfile();
   }, [user, refreshProfile]);
 
-  const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+  const signOut = useCallback(async (options?: { everywhere?: boolean }) => {
+    await supabase.auth.signOut({ scope: options?.everywhere ? "global" : "local" });
     setProfile(null);
   }, []);
 

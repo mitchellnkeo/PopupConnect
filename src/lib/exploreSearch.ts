@@ -16,6 +16,9 @@ const MONTH_NAMES = [
   "December",
 ] as const;
 
+export type ExploreSort = "distance" | "price" | "newest";
+export type ExplorePriceBand = "any" | "under-150" | "under-300" | "300-plus";
+
 export type ExploreFilters = {
   where: string;
   lat: number | null;
@@ -27,7 +30,10 @@ export type ExploreFilters = {
   whenEndDay: number;
   whenEndMonth: number;
   categoryId: string | null;
+  categoryIds: string[];
   query: string;
+  sort: ExploreSort;
+  priceBand: ExplorePriceBand;
 };
 
 export const defaultExploreFilters: ExploreFilters = {
@@ -41,7 +47,10 @@ export const defaultExploreFilters: ExploreFilters = {
   whenEndDay: 15,
   whenEndMonth: 7,
   categoryId: "matcha-bar",
+  categoryIds: ["matcha-bar"],
   query: "",
+  sort: "distance",
+  priceBand: "any",
 };
 
 function parseMonth(value: string | null, fallback: number) {
@@ -65,12 +74,46 @@ function parseCoord(value: string | null): number | null {
   return Number.isFinite(coord) ? coord : null;
 }
 
+const SORTS: ExploreSort[] = ["distance", "price", "newest"];
+const PRICE_BANDS: ExplorePriceBand[] = ["any", "under-150", "under-300", "300-plus"];
+
+function parseSort(value: string | null): ExploreSort {
+  return SORTS.includes(value as ExploreSort) ? (value as ExploreSort) : defaultExploreFilters.sort;
+}
+
+function parsePriceBand(value: string | null): ExplorePriceBand {
+  return PRICE_BANDS.includes(value as ExplorePriceBand)
+    ? (value as ExplorePriceBand)
+    : defaultExploreFilters.priceBand;
+}
+
+function parseCategoryIds(params: URLSearchParams): string[] {
+  const multi = params.get("categories");
+  if (multi) {
+    return multi
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean);
+  }
+  if (params.has("category")) {
+    const single = params.get("category");
+    return single ? [single] : [];
+  }
+  return defaultExploreFilters.categoryIds;
+}
+
+export function selectedCategoryIds(filters: ExploreFilters): string[] {
+  if (filters.categoryIds.length > 0) return filters.categoryIds;
+  return filters.categoryId ? [filters.categoryId] : [];
+}
+
 export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
   const where = params.get("where") ?? defaultExploreFilters.where;
-  const categoryId = params.has("category")
-    ? params.get("category")
-    : defaultExploreFilters.categoryId;
+  const categoryIds = parseCategoryIds(params);
+  const categoryId = categoryIds.length === 1 ? categoryIds[0] : null;
   const query = params.get("q") ?? "";
+  const sort = parseSort(params.get("sort"));
+  const priceBand = parsePriceBand(params.get("price"));
 
   const whenYear = parseYear(params.get("whenYear"), defaultExploreFilters.whenYear);
   const whenStart = params.get("whenStart");
@@ -94,7 +137,10 @@ export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
       lat,
       lng,
       categoryId,
+      categoryIds,
       query,
+      sort,
+      priceBand,
       whenMode: "range",
       whenDay,
       whenEndDay,
@@ -112,7 +158,10 @@ export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
     lat,
     lng,
     categoryId,
+    categoryIds,
     query,
+    sort,
+    priceBand,
     whenMode: "single",
     whenDay,
     whenEndDay: whenDay,
@@ -163,12 +212,28 @@ export function formatCategoryLabel(categoryId: string | null) {
 export function formatExploreQueryLabel(filters: ExploreFilters) {
   const trimmed = filters.query.trim();
   if (trimmed) return trimmed;
-  if (filters.categoryId) return formatCategoryLabel(filters.categoryId);
+  const ids = selectedCategoryIds(filters);
+  if (ids.length > 1) return `${ids.length} categories`;
+  if (ids.length === 1) return formatCategoryLabel(ids[0]);
   return "Explore vendors";
+}
+
+export function formatSortLabel(sort: ExploreSort) {
+  if (sort === "price") return "Price";
+  if (sort === "newest") return "Newest";
+  return "Distance";
+}
+
+export function formatPriceBandLabel(band: ExplorePriceBand) {
+  if (band === "under-150") return "Under $150";
+  if (band === "under-300") return "Under $300";
+  if (band === "300-plus") return "$300+";
+  return "Any price";
 }
 
 export function exploreEmptyCopy(filters: ExploreFilters) {
   const city = formatLocationLabel(filters.where).split(",")[0]?.trim() ?? "this area";
+  const ids = selectedCategoryIds(filters);
 
   if (filters.query.trim()) {
     return {
@@ -177,9 +242,16 @@ export function exploreEmptyCopy(filters: ExploreFilters) {
     };
   }
 
-  if (filters.categoryId) {
+  if (ids.length > 1) {
     return {
-      title: `No ${formatCategoryLabel(filters.categoryId).toLowerCase()} nearby`,
+      title: `No matching vendors nearby`,
+      hint: `No matches within 25 miles of ${city} for those categories. Try fewer filters.`,
+    };
+  }
+
+  if (ids.length === 1) {
+    return {
+      title: `No ${formatCategoryLabel(ids[0]).toLowerCase()} nearby`,
       hint: `No matches within 25 miles of ${city}. Try another category or location.`,
     };
   }
@@ -192,15 +264,17 @@ export function exploreEmptyCopy(filters: ExploreFilters) {
 
 export function resultsHeading(filters: ExploreFilters) {
   const city = formatLocationLabel(filters.where).split(",")[0]?.trim() ?? "your area";
+  const ids = selectedCategoryIds(filters);
 
   if (filters.query.trim()) {
     return `${filters.query.trim()} in ${city}`;
   }
 
-  if (filters.categoryId === "dj-live-music") return `DJs in ${city}`;
-  if (filters.categoryId === "matcha-bar") return `Matcha Bars in ${city}`;
+  if (ids.length > 1) return `${ids.length} categories in ${city}`;
+  if (ids[0] === "dj-live-music") return `DJs in ${city}`;
+  if (ids[0] === "matcha-bar") return `Matcha Bars in ${city}`;
 
-  const cat = formatCategoryLabel(filters.categoryId);
+  const cat = formatCategoryLabel(ids[0] ?? null);
   return `${cat} in ${city}`;
 }
 
@@ -210,7 +284,14 @@ export function filtersToSearchParams(filters: ExploreFilters) {
   if (filters.lat != null) params.set("lat", String(filters.lat));
   if (filters.lng != null) params.set("lng", String(filters.lng));
   if (filters.query.trim()) params.set("q", filters.query.trim());
-  if (filters.categoryId) params.set("category", filters.categoryId);
+  const categoryIds = selectedCategoryIds(filters);
+  if (categoryIds.length > 1) {
+    params.set("categories", categoryIds.join(","));
+  } else if (categoryIds.length === 1) {
+    params.set("category", categoryIds[0]);
+  }
+  if (filters.sort !== "distance") params.set("sort", filters.sort);
+  if (filters.priceBand !== "any") params.set("price", filters.priceBand);
   params.set("whenYear", String(filters.whenYear));
 
   if (filters.whenMode === "range") {
@@ -234,6 +315,9 @@ export function hasExploreSearchParams(params: URLSearchParams) {
     params.has("when") ||
     params.has("whenStart") ||
     params.has("category") ||
+    params.has("categories") ||
+    params.has("sort") ||
+    params.has("price") ||
     params.has("q")
   );
 }

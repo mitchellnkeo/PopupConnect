@@ -4,10 +4,17 @@ type MenuProps = {
   trigger: ReactNode;
   children: ReactNode;
   align?: "left" | "right";
+  closeOnSelect?: boolean;
   "aria-label"?: string;
 };
 
-export function Menu({ trigger, children, align = "right", "aria-label": ariaLabel }: MenuProps) {
+export function Menu({
+  trigger,
+  children,
+  align = "right",
+  closeOnSelect = true,
+  "aria-label": ariaLabel,
+}: MenuProps) {
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -56,7 +63,7 @@ export function Menu({ trigger, children, align = "right", "aria-label": ariaLab
             align === "right" ? "right-0" : "left-0",
           ].join(" ")}
         >
-          <div onClick={() => setOpen(false)}>{children}</div>
+          <div onClick={closeOnSelect ? () => setOpen(false) : undefined}>{children}</div>
         </div>
       ) : null}
     </div>

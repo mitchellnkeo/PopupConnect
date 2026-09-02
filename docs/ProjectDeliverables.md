@@ -25,14 +25,14 @@ Branding is clear and reflected in design
 | Deliverable | Status | Notes |
 |-------------|--------|-------|
 | User personas & onboarding | **Partial** | Auth + welcome shipped; logged-in/out UI branching shipped |
-| Gallery / explore vendors | **Partial** | Radius + text search shipped; DB vendors still lack full gallery/highlights |
+| Gallery / explore vendors | **Partial** | Radius, text, sort, multi-category, and price filters shipped; gallery/highlights still thin |
 | Vendor profile (public) | **Partial** | Detail page resolves from catalog (Supabase + mock); package popout shipped |
 | Vendor profile (owner edit) | **Partial** | `/account/settings/vendor` + migration shipped |
 | Explore map | **Done** | Leaflet/OSM; fit bounds; marker click → preview; vendor geocode on save |
 | Business location profile | **Not started** | `venue_profiles` planned |
 | Manage reservations / quotes | **Partial** | Quote UI mock; **login gate shipped**; persistence not built |
 | Payment | **Not started** | `/booking/payment` placeholder |
-| Customer profile | **Partial** | Settings profile page shipped |
+| Customer profile | **Partial** | Profile + privacy shipped; avatar upload and email change still blocked |
 | Calendar / plan mode | **Not started** | MVP 1 Figma flows; export spreadsheet/PDF required |
 | Messaging | **Not started** | Placeholder routes |
 | Workflow automations | **Not started** | Later phase |

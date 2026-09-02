@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-09-02 (Phase B search + map)
+**Last updated:** 2026-09-02 (Phase C settings + refine + map area)
 
 ---
 
@@ -58,6 +58,9 @@ Captured from team review of v1.0.0 prototype.
 | Location geocode + 25-mile radius | **Done** | Nominatim + curated cities; URL `lat`/`lng`; sort by distance; current location |
 | Map bounds + marker click | **Done** | Fit bounds on result set change; marker click opens vendor preview |
 | Vendor city geocode on save | **Done** | `VendorProfileEditPage` writes `lat`/`lng` from Nominatim |
+| Sort / multi-category / price filters | **Done** | `ExploreRefineBar`; URL `sort`, `categories`, `price` |
+| Map search this area | **Done** | Button after panning ~1.5 miles from the search origin |
+| Mobile list / map tabs | **Done** | Tabs on small screens; desktop list + map unchanged |
 
 ### Plan mode / calendar (MVP 1 — larger feature)
 
@@ -90,6 +93,7 @@ From Figma MVP 1 **flow: plan mode** and meeting notes:
 3. ~~Vendor profile edit + Supabase `vendor_profiles`~~ **Done** — run `npm run db:push` to apply migrations
 4. ~~Wire explore + public vendor pages to published profiles~~ **Done** — includes `20260715140000_vendor_profile_categories.sql`
 5. ~~Explore radius search + map click-through (Phase B)~~ **Done** — Nominatim, 25-mile filter, vendor geocode on save
+6. ~~Explore refine + mobile map tabs + search this area (Phase C)~~ **Done**
 
 ### P2 — Plan mode / calendar
 

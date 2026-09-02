@@ -196,7 +196,7 @@ export function ExploreSearchBar({
         initialQuery={filters.query}
         initialCategoryId={filters.categoryId}
         onSearch={(query, categoryId) => {
-          patch({ query, categoryId });
+          patch({ query, categoryId, categoryIds: categoryId ? [categoryId] : [] });
           close();
         }}
       />

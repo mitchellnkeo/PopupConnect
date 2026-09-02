@@ -1,5 +1,7 @@
 import type { ExploreResult } from "../data/exploreResults";
 import { vendors } from "../data/vendors";
+import type { ExploreFilters, ExplorePriceBand } from "./exploreSearch";
+import { selectedCategoryIds } from "./exploreSearch";
 import { DEFAULT_RADIUS_MILES, distanceMiles, normalizeSearchText } from "./geo";
 
 export function vendorsToExploreResults(): ExploreResult[] {
@@ -15,6 +17,8 @@ export function vendorsToExploreResults(): ExploreResult[] {
     imageSrc: vendor.imageSrc,
     categoryIds: vendor.categoryIds,
     searchText: [vendor.title, vendor.city, vendor.about, vendor.idealFor, ...vendor.tags].join(" "),
+    startingPrice: vendor.startingPrice,
+    createdAt: vendor.createdAt,
   }));
 }
 
@@ -43,26 +47,28 @@ function matchesQuery(result: ExploreResult, query: string) {
   return haystack.includes(needle);
 }
 
-export function filterExploreResults(
-  results: ExploreResult[],
-  filters: {
-    categoryId: string | null;
-    query: string;
-    where?: string;
-    lat?: number | null;
-    lng?: number | null;
-    radiusMiles?: number;
-  },
-): ExploreResult[] {
-  let filtered = results;
+function matchesPrice(price: number, band: ExplorePriceBand) {
+  if (band === "any") return true;
+  if (band === "under-150") return price < 150;
+  if (band === "under-300") return price < 300;
+  return price >= 300;
+}
 
-  if (filters.categoryId) {
-    filtered = filtered.filter((r) => r.categoryIds?.includes(filters.categoryId!));
+function createdAtValue(result: ExploreResult) {
+  return result.createdAt ?? "";
+}
+
+export function filterExploreResults(results: ExploreResult[], filters: ExploreFilters): ExploreResult[] {
+  let filtered = results;
+  const categoryIds = selectedCategoryIds(filters);
+
+  if (categoryIds.length > 0) {
+    filtered = filtered.filter((result) => categoryIds.some((id) => result.categoryIds?.includes(id)));
   }
 
   const origin =
     filters.lat != null && filters.lng != null ? { lat: filters.lat, lng: filters.lng } : null;
-  const radius = filters.radiusMiles ?? DEFAULT_RADIUS_MILES;
+  const radius = DEFAULT_RADIUS_MILES;
 
   if (origin) {
     filtered = filtered
@@ -70,14 +76,29 @@ export function filterExploreResults(
         ...result,
         distanceMiles: distanceMiles(origin, { lat: result.lat, lng: result.lng }),
       }))
-      .filter((result) => result.distanceMiles <= radius)
-      .sort((a, b) => a.distanceMiles - b.distanceMiles);
+      .filter((result) => result.distanceMiles <= radius);
   } else if (filters.where?.trim()) {
-    filtered = filtered.filter((r) => matchesLocation(r, filters.where!));
+    filtered = filtered.filter((result) => matchesLocation(result, filters.where));
   }
 
   if (filters.query.trim()) {
-    filtered = filtered.filter((r) => matchesQuery(r, filters.query));
+    filtered = filtered.filter((result) => matchesQuery(result, filters.query));
+  }
+
+  if (filters.priceBand !== "any") {
+    filtered = filtered.filter((result) => matchesPrice(result.startingPrice ?? 0, filters.priceBand));
+  }
+
+  if (filters.sort === "price") {
+    return [...filtered].sort((a, b) => (a.startingPrice ?? 0) - (b.startingPrice ?? 0));
+  }
+
+  if (filters.sort === "newest") {
+    return [...filtered].sort((a, b) => createdAtValue(b).localeCompare(createdAtValue(a)));
+  }
+
+  if (origin) {
+    return [...filtered].sort((a, b) => (a.distanceMiles ?? 0) - (b.distanceMiles ?? 0));
   }
 
   return filtered;

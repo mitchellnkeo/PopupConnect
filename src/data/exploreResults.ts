@@ -13,6 +13,8 @@ export type ExploreResult = {
   categoryIds?: string[];
   searchText?: string;
   distanceMiles?: number;
+  startingPrice?: number;
+  createdAt?: string;
 };
 
 export const exploreResults: ExploreResult[] = vendorsToExploreResults();

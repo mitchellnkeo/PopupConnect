@@ -51,12 +51,43 @@ export function ProfilePage() {
     }
   }
 
+  const initials = displayName.trim()
+    ? displayName
+        .trim()
+        .split(/\s+/)
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : (user?.email?.slice(0, 2).toUpperCase() ?? "?");
+
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
       <h1 className="font-semibold text-2xl text-midnight">My profile</h1>
       <p className="mt-1 text-neutral-600 text-sm">{user?.email}</p>
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="flex items-center gap-4">
+          {profile?.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt=""
+              className="size-16 rounded-full object-cover"
+            />
+          ) : (
+            <div
+              className="flex size-16 items-center justify-center rounded-full bg-midnight font-semibold text-lg text-white"
+              aria-hidden
+            >
+              {initials}
+            </div>
+          )}
+          <div>
+            <p className="font-medium text-midnight text-sm">Profile photo</p>
+            <p className="mt-1 text-neutral-500 text-xs">Photo upload is coming once Storage is set up.</p>
+          </div>
+        </div>
+
         <div className="max-w-md">
           <TextField
             id="displayName"

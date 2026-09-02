@@ -25,6 +25,7 @@ export function TextField({ label, error, hint, id, name, ...rest }: TextFieldPr
           error
             ? "border-primary focus:ring-primary/30"
             : "border-neutral-300 focus:ring-primary/30",
+          rest.disabled ? "cursor-not-allowed bg-neutral-50 text-neutral-500" : "",
         ].join(" ")}
         {...rest}
       />

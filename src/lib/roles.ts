@@ -40,3 +40,21 @@ export function getAccountNavItems(roles: AppRole[]): AccountNavItem[] {
 
   return items;
 }
+
+const SETTINGS_SHORT_LABELS: Record<string, string> = {
+  "/account/settings/profile": "Profile",
+  "/account/settings/vendor": "Vendor",
+  "/account/settings/events": "Events",
+  "/account/settings/privacy": "Privacy",
+  "/account/settings/messages": "Messages",
+  "/account/settings/docs": "Docs",
+};
+
+export function getSettingsTabItems(roles: AppRole[]): { id: string; label: string }[] {
+  return getAccountNavItems(roles)
+    .filter((item) => item.to.startsWith("/account/settings/"))
+    .map((item) => ({
+      id: item.to,
+      label: SETTINGS_SHORT_LABELS[item.to] ?? item.label,
+    }));
+}
