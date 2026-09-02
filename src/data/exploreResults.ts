@@ -11,6 +11,8 @@ export type ExploreResult = {
   lng: number;
   imageSrc?: string;
   categoryIds?: string[];
+  searchText?: string;
+  distanceMiles?: number;
 };
 
 export const exploreResults: ExploreResult[] = vendorsToExploreResults();

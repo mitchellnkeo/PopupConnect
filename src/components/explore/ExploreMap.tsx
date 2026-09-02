@@ -7,6 +7,7 @@ type ExploreMapProps = {
   results: ExploreResult[];
   activeId: string | null;
   onMarkerHover: (id: string) => void;
+  onMarkerClick?: (id: string) => void;
 };
 
 const HONOLULU_CENTER: [number, number] = [21.3069, -157.8583];
@@ -34,6 +35,7 @@ function MapResize() {
 
 function MapBounds({ results }: { results: ExploreResult[] }) {
   const map = useMap();
+  const boundsKey = results.map((result) => `${result.id}:${result.lat}:${result.lng}`).join("|");
 
   useEffect(() => {
     if (results.length === 0) {
@@ -51,7 +53,7 @@ function MapBounds({ results }: { results: ExploreResult[] }) {
     const southWest: [number, number] = [Math.min(...lats) - 0.01, Math.min(...lngs) - 0.01];
     const northEast: [number, number] = [Math.max(...lats) + 0.01, Math.max(...lngs) + 0.01];
     map.fitBounds([southWest, northEast], { padding: [32, 32], maxZoom: 14 });
-  }, [map, results]);
+  }, [map, boundsKey, results]);
 
   return null;
 }
@@ -67,7 +69,7 @@ function ActiveMarkerFocus({ result }: { result: ExploreResult | undefined }) {
   return null;
 }
 
-export function ExploreMap({ results, activeId, onMarkerHover }: ExploreMapProps) {
+export function ExploreMap({ results, activeId, onMarkerHover, onMarkerClick }: ExploreMapProps) {
   const activeResult = results.find((r) => r.id === activeId);
 
   return (
@@ -102,6 +104,7 @@ export function ExploreMap({ results, activeId, onMarkerHover }: ExploreMapProps
               }}
               eventHandlers={{
                 mouseover: () => onMarkerHover(result.id),
+                click: () => onMarkerClick?.(result.id),
               }}
             >
               <Tooltip direction="top" offset={[0, -8]} opacity={0.95}>

@@ -88,6 +88,7 @@ export function vendorToExploreResult(vendor: VendorProfile): ExploreResult {
     lng: vendor.lng,
     imageSrc: vendor.imageSrc,
     categoryIds: vendor.categoryIds,
+    searchText: [vendor.title, vendor.city, vendor.about, vendor.idealFor, ...vendor.tags].join(" "),
   };
 }
 

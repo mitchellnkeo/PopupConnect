@@ -5,6 +5,7 @@ type ResultsMapProps = {
   results: ExploreResult[];
   activeId: string | null;
   onMarkerHover: (id: string) => void;
+  onMarkerClick?: (id: string) => void;
 };
 
 export function ResultsMap(props: ResultsMapProps) {

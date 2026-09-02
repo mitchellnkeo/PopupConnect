@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-09-02 | Phase B: explore radius search, Nominatim location picker, map marker click, vendor geocode on save. |
 | 2026-09-02 | Phase A: shared UI primitives, auth polish, forgot/reset password, role-based `/account` home. |
 | 2026-08-19 | Email confirmation links + Google SSO on sign-in/sign-up; `/auth/callback` exchanges the auth code. Turn off Vercel Authentication on production. |
 | 2026-07-15 | Explore + vendor detail + quote pages wired to published Supabase `vendor_profiles` via `vendorCatalog` (mock fallback). |
@@ -259,11 +260,13 @@ Shared search components: `src/components/search/`. Search bars: `HeroSearchNav`
 
 - **Header:** `AppHeader` with compact `ExploreSearchBar`
 - **Layout:** ~42% results list + ~58% sticky map (desktop); stacked on mobile
-- **Filters:** URL params via `exploreSearch.ts` — `where`, `when` / `whenStart`+`whenEnd`, `whenMonth`, `whenYear`, `category`, `q`
-- **Results:** `filterExploreResults()` over merged catalog (`vendorCatalog.ts` + `useVendorCatalog`)
+- **Filters:** URL params via `exploreSearch.ts` — `where`, `lat`, `lng`, `when` / `whenStart`+`whenEnd`, `whenMonth`, `whenYear`, `category`, `q`
+- **Results:** `filterExploreResults()` over merged catalog — category, 25-mile radius when lat/lng are present, text match on title/about/tags
+- **Location:** Nominatim geocode + curated cities; URL stores `where`, `lat`, `lng`
+- **Dates:** shown in the heading note; do **not** filter availability yet
 - **Data:** Published `vendor_profiles` from Supabase merged with mock vendors in `src/data/vendors.ts` (mock fills gaps; DB wins on slug match)
-- **Interactions:** card hover ↔ map marker; card click → `VendorPreviewModal` → full profile or quote
-- **Map:** Leaflet + OpenStreetMap in `ExploreMap` (`ResultsMap`); markers use vendor `lat`/`lng`
+- **Interactions:** card hover ↔ map marker; card or marker click → `VendorPreviewModal` → full profile or quote
+- **Map:** Leaflet + OpenStreetMap in `ExploreMap` (`ResultsMap`); markers use vendor `lat`/`lng`; bounds refit when results change
 
 **Known issues (2026-07-15):** ~~location input segment background fill bug~~ — fixed in compact `ExploreSearchBar`.
 

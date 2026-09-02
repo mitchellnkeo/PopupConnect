@@ -4,6 +4,7 @@ import { authInputClass, authLabelClass } from "../../components/auth/authStyles
 import { Button } from "../../components/ui/Button";
 import { Switch } from "../../components/ui/Switch";
 import { useAuth } from "../../features/auth/AuthContext";
+import { geocodeAddress } from "../../lib/geocode";
 import { slugify } from "../../lib/slugify";
 import { invalidateVendorCatalog } from "../../lib/vendorCatalog";
 import { fetchVendorProfileByOwner, saveVendorProfile } from "../../services/vendorService";
@@ -144,6 +145,7 @@ export function VendorProfileEditPage() {
 
     setSaving(true);
     try {
+      const coords = city.trim() ? await geocodeAddress(city.trim()) : null;
       await saveVendorProfile(
         user.id,
         {
@@ -158,6 +160,8 @@ export function VendorProfileEditPage() {
           min_party_size: minPartySize ? Number.parseInt(minPartySize, 10) : null,
           response_time: responseTime.trim() || null,
           published,
+          lat: coords?.lat ?? null,
+          lng: coords?.lng ?? null,
         },
         productInputs,
       );

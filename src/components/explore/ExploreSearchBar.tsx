@@ -132,10 +132,8 @@ export function ExploreSearchBar({
       <LocationDropdown
         query={locationQuery}
         onQueryChange={setLocationQuery}
-        onPick={(primary) => {
-          if (primary !== "use current location") {
-            patch({ where: primary });
-          }
+        onPick={(place) => {
+          patch({ where: place.label, lat: place.lat, lng: place.lng });
           close();
         }}
       />

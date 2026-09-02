@@ -55,10 +55,8 @@ export function HeroSearchNav() {
     close();
   }
 
-  function handleLocationPick(primary: string) {
-    if (primary !== "use current location") {
-      patch({ where: primary });
-    }
+  function handleLocationPick(place: { label: string; lat: number | null; lng: number | null }) {
+    patch({ where: place.label, lat: place.lat, lng: place.lng });
     close();
   }
 

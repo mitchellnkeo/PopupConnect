@@ -22,7 +22,11 @@ export function ResultCard({ result, highlighted, onHover, onClick }: ResultCard
       )}
       <div className="px-5 py-2.5">
         <h3 className="font-bold text-lg text-midnight leading-snug">{result.title}</h3>
-        <p className="text-body/60 text-xs">{result.city}</p>
+        <p className="text-body/60 text-xs">
+          {result.distanceMiles != null
+            ? `${result.distanceMiles < 10 ? result.distanceMiles.toFixed(1) : Math.round(result.distanceMiles)} mi · ${result.locationCity ?? result.city}`
+            : result.city}
+        </p>
       </div>
     </>
   );

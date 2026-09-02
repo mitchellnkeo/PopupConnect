@@ -1,4 +1,5 @@
 import { exploreCategories } from "../data/exploreCategories";
+import { findCuratedLocation } from "../data/searchLocations";
 
 const MONTH_NAMES = [
   "January",
@@ -17,6 +18,8 @@ const MONTH_NAMES = [
 
 export type ExploreFilters = {
   where: string;
+  lat: number | null;
+  lng: number | null;
   whenDay: number;
   whenMonth: number;
   whenYear: number;
@@ -29,6 +32,8 @@ export type ExploreFilters = {
 
 export const defaultExploreFilters: ExploreFilters = {
   where: "honolulu, hi",
+  lat: 21.3069,
+  lng: -157.8583,
   whenDay: 15,
   whenMonth: 7,
   whenYear: 2026,
@@ -54,6 +59,12 @@ function parseYear(value: string | null, fallback: number) {
   return Number.isFinite(year) && year >= 2000 && year <= 2100 ? year : fallback;
 }
 
+function parseCoord(value: string | null): number | null {
+  if (value == null || value === "") return null;
+  const coord = Number(value);
+  return Number.isFinite(coord) ? coord : null;
+}
+
 export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
   const where = params.get("where") ?? defaultExploreFilters.where;
   const categoryId = params.has("category")
@@ -65,6 +76,9 @@ export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
   const whenStart = params.get("whenStart");
   const whenEnd = params.get("whenEnd");
   const when = params.get("when");
+  const curated = findCuratedLocation(where);
+  const lat = parseCoord(params.get("lat")) ?? curated?.lat ?? null;
+  const lng = parseCoord(params.get("lng")) ?? curated?.lng ?? null;
 
   if (whenStart && whenEnd) {
     const whenDay = parseDay(whenStart, defaultExploreFilters.whenDay);
@@ -77,6 +91,8 @@ export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
 
     return {
       where,
+      lat,
+      lng,
       categoryId,
       query,
       whenMode: "range",
@@ -93,6 +109,8 @@ export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
 
   return {
     where,
+    lat,
+    lng,
     categoryId,
     query,
     whenMode: "single",
@@ -149,6 +167,29 @@ export function formatExploreQueryLabel(filters: ExploreFilters) {
   return "Explore vendors";
 }
 
+export function exploreEmptyCopy(filters: ExploreFilters) {
+  const city = formatLocationLabel(filters.where).split(",")[0]?.trim() ?? "this area";
+
+  if (filters.query.trim()) {
+    return {
+      title: `No results for “${filters.query.trim()}”`,
+      hint: `Nothing in ${city} matches that search. Try different words or clear filters.`,
+    };
+  }
+
+  if (filters.categoryId) {
+    return {
+      title: `No ${formatCategoryLabel(filters.categoryId).toLowerCase()} nearby`,
+      hint: `No matches within 25 miles of ${city}. Try another category or location.`,
+    };
+  }
+
+  return {
+    title: `No vendors near ${city}`,
+    hint: "Try a different city or clear filters to see more results.",
+  };
+}
+
 export function resultsHeading(filters: ExploreFilters) {
   const city = formatLocationLabel(filters.where).split(",")[0]?.trim() ?? "your area";
 
@@ -166,6 +207,8 @@ export function resultsHeading(filters: ExploreFilters) {
 export function filtersToSearchParams(filters: ExploreFilters) {
   const params = new URLSearchParams();
   if (filters.where) params.set("where", filters.where);
+  if (filters.lat != null) params.set("lat", String(filters.lat));
+  if (filters.lng != null) params.set("lng", String(filters.lng));
   if (filters.query.trim()) params.set("q", filters.query.trim());
   if (filters.categoryId) params.set("category", filters.categoryId);
   params.set("whenYear", String(filters.whenYear));
@@ -186,6 +229,8 @@ export function filtersToSearchParams(filters: ExploreFilters) {
 export function hasExploreSearchParams(params: URLSearchParams) {
   return (
     params.has("where") ||
+    params.has("lat") ||
+    params.has("lng") ||
     params.has("when") ||
     params.has("whenStart") ||
     params.has("category") ||

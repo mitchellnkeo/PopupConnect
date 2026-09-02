@@ -11,6 +11,8 @@ import { vendorsToExploreResults } from "../lib/vendorCatalog";
 import { filterExploreResults } from "../lib/vendorResults";
 import {
   defaultExploreFilters,
+  exploreEmptyCopy,
+  formatDateLabel,
   filtersToSearchParams,
   hasExploreSearchParams,
   parseExploreFilters,
@@ -37,6 +39,7 @@ export function ExplorePage() {
     [catalogResults, filters],
   );
   const heading = useMemo(() => resultsHeading(filters), [filters]);
+  const emptyCopy = useMemo(() => exploreEmptyCopy(filters), [filters]);
   const previewVendor = previewVendorId ? getVendor(previewVendorId) : undefined;
 
   function handleFiltersChange(next: ExploreFilters) {
@@ -55,14 +58,25 @@ export function ExplorePage() {
           <h1 className="mt-2.5 font-bold text-[length:var(--text-section,28px)] text-midnight">
             {heading}
           </h1>
+          <p className="mt-2 text-body/55 text-sm">
+            Planning for {formatDateLabel(filters)}. Dates don&apos;t filter availability yet.
+          </p>
 
           <ul className="mt-5 grid max-h-[calc(100vh-12rem)] grid-cols-1 gap-6 overflow-y-auto pb-5 sm:grid-cols-2">
             {loading ? (
               <li className="col-span-full py-8 text-body/60 text-sm">Loading vendors…</li>
             ) : null}
             {!loading && results.length === 0 ? (
-              <li className="col-span-full py-8 text-body/60 text-sm">
-                No vendors match your search. Try a different category or location.
+              <li className="col-span-full py-8">
+                <p className="font-medium text-midnight text-sm">{emptyCopy.title}</p>
+                <p className="mt-1 text-body/60 text-sm">{emptyCopy.hint}</p>
+                <button
+                  type="button"
+                  onClick={() => handleFiltersChange(defaultExploreFilters)}
+                  className="mt-3 font-medium text-primary text-sm hover:underline"
+                >
+                  Clear filters
+                </button>
               </li>
             ) : null}
             {results.map((result) => (
@@ -80,7 +94,12 @@ export function ExplorePage() {
 
         <section className="min-w-0 lg:w-[58%]">
           <div className="h-[320px] lg:h-[calc(100vh-12rem)] lg:sticky lg:top-28">
-            <ResultsMap results={results} activeId={activeId} onMarkerHover={setActiveId} />
+            <ResultsMap
+              results={results}
+              activeId={activeId}
+              onMarkerHover={setActiveId}
+              onMarkerClick={setPreviewVendorId}
+            />
           </div>
         </section>
       </div>

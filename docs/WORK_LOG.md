@@ -6,6 +6,27 @@
 
 ---
 
+## 2026-09-02 — Phase B: search + map
+
+**Who:** Mitchell + AI session  
+**Focus:** Honest date copy, radius location search, richer text match, real vendor coordinates, map click-through.
+
+### Done
+
+- Location picker searches Nominatim (debounced) and can use current location; curated cities include lat/lng.
+- Explore filters by 25-mile radius when `lat`/`lng` are in the URL; results sort by distance.
+- Text search matches title, city, about, tags, and categories (diacritic-insensitive).
+- Empty states distinguish query vs category vs location; **Clear filters** resets to Honolulu defaults.
+- Date pill is labeled as planning-only — it does not filter availability.
+- Map markers open the vendor preview; bounds refit when the result set changes.
+- Saving a vendor profile geocodes the city into `lat`/`lng`.
+
+### Next up
+
+Phase C — settings depth, sort/filter menus, map “search this area,” mobile list/map tabs.
+
+---
+
 ## 2026-09-02 — Phase A: primitives, auth polish, password reset, account branching
 
 **Who:** Mitchell + AI session  

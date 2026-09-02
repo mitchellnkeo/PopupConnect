@@ -25,10 +25,10 @@ Branding is clear and reflected in design
 | Deliverable | Status | Notes |
 |-------------|--------|-------|
 | User personas & onboarding | **Partial** | Auth + welcome shipped; logged-in/out UI branching shipped |
-| Gallery / explore vendors | **Partial** | Explore loads published Supabase profiles + mock fallback; DB vendors lack full gallery/highlights |
+| Gallery / explore vendors | **Partial** | Radius + text search shipped; DB vendors still lack full gallery/highlights |
 | Vendor profile (public) | **Partial** | Detail page resolves from catalog (Supabase + mock); package popout shipped |
 | Vendor profile (owner edit) | **Partial** | `/account/settings/vendor` + migration shipped |
-| Explore map | **Done** | Leaflet/OSM; markers from catalog lat/lng |
+| Explore map | **Done** | Leaflet/OSM; fit bounds; marker click → preview; vendor geocode on save |
 | Business location profile | **Not started** | `venue_profiles` planned |
 | Manage reservations / quotes | **Partial** | Quote UI mock; **login gate shipped**; persistence not built |
 | Payment | **Not started** | `/booking/payment` placeholder |
@@ -38,7 +38,7 @@ Branding is clear and reflected in design
 | Workflow automations | **Not started** | Later phase |
 | Manage multiple studio areas | **Not started** | Host/venue feature |
 | Manage multiple vendor products | **Partial** | UI shows packages; no owner CRUD |
-| Map (real provider) | **Not started** | On roadmap — replace static explore map |
+| Map (real provider) | **Partial** | OSM/Leaflet + Nominatim shipped; Mapbox still optional later |
 | Icons & interaction polish | **Partial** | Button hover shipped; friendly icons remain |
 
 **Status key:** **Shipped** · **Partial** · **In planning** · **Not started**
