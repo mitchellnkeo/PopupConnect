@@ -2,8 +2,11 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthChrome } from "../../components/auth/AuthChrome";
 import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
-import { authCardClass, authInputClass, authLabelClass } from "../../components/auth/authStyles";
+import { authCardClass } from "../../components/auth/authStyles";
 import { Button } from "../../components/ui/Button";
+import { Checkbox } from "../../components/ui/Checkbox";
+import { TextField } from "../../components/ui/TextField";
+import { mapAuthError } from "../../lib/authErrors";
 import { getAuthCallbackUrl } from "../../lib/authRedirects";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 
@@ -65,7 +68,7 @@ export function SignUpPage() {
     setSubmitting(false);
 
     if (signUpError) {
-      setError(signUpError.message);
+      setError(mapAuthError(signUpError));
       return;
     }
 
@@ -93,7 +96,7 @@ export function SignUpPage() {
               setError("Please agree to the Terms and Conditions.");
               return false;
             }}
-            onError={setError}
+            onError={(authError) => setError(mapAuthError(authError))}
           />
         </div>
 
@@ -105,96 +108,68 @@ export function SignUpPage() {
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="firstName" className={authLabelClass}>
-                First name
-              </label>
-              <input
-                id="firstName"
-                type="text"
-                autoComplete="given-name"
-                required
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className={authInputClass}
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName" className={authLabelClass}>
-                Last name
-              </label>
-              <input
-                id="lastName"
-                type="text"
-                autoComplete="family-name"
-                required
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className={authInputClass}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="email" className={authLabelClass}>
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
+            <TextField
+              id="firstName"
+              label="First name"
+              type="text"
+              autoComplete="given-name"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={authInputClass}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <TextField
+              id="lastName"
+              label="Last name"
+              type="text"
+              autoComplete="family-name"
+              required
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className={authLabelClass}>
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={authInputClass}
-            />
-          </div>
+          <TextField
+            id="email"
+            label="Email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-          <div>
-            <label htmlFor="confirmPassword" className={authLabelClass}>
-              Confirm password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={authInputClass}
-            />
-          </div>
+          <TextField
+            id="password"
+            label="Password"
+            type="password"
+            autoComplete="new-password"
+            required
+            hint="At least 8 characters."
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-          <label className="flex cursor-pointer items-start gap-3 text-sm">
-            <input
-              type="checkbox"
-              checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="mt-1 accent-primary"
-              required
-            />
-            <span className="text-midnight">
-              I agree to the{" "}
-              <Link to="/about" className="font-medium text-primary hover:underline">
-                Terms and Conditions
-              </Link>
-            </span>
-          </label>
+          <TextField
+            id="confirmPassword"
+            label="Confirm password"
+            type="password"
+            autoComplete="new-password"
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+
+          <Checkbox
+            id="terms"
+            checked={acceptedTerms}
+            onChange={setAcceptedTerms}
+            required
+          >
+            I agree to the{" "}
+            <Link to="/about" className="font-medium text-primary hover:underline">
+              Terms and Conditions
+            </Link>
+          </Checkbox>
 
           {error ? (
             <p className="text-primary text-sm" role="alert">
@@ -208,7 +183,7 @@ export function SignUpPage() {
           ) : null}
 
           <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "Submitting…" : "Submit"}
+            {submitting ? "Creating account…" : "Create account"}
           </Button>
         </form>
 

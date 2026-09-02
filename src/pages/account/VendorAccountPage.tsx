@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
+import { StatusBadge } from "../../components/ui/StatusBadge";
 import { btnPrimaryFull, btnSecondaryOutline } from "../../lib/buttonStyles";
 import { useAuth } from "../../features/auth/AuthContext";
 import { fetchVendorProfileByOwner } from "../../services/vendorService";
@@ -63,13 +64,6 @@ export function VendorAccountPage() {
           </div>
         ) : null}
 
-        {!isOwnProfile && !isVendorRole ? (
-          <div className="mb-6 rounded-xl border border-border bg-white px-4 py-3 text-body text-sm">
-            Showing demo vendor data. Add the vendor role and create a profile to manage your own
-            business page.
-          </div>
-        ) : null}
-
         <div className="overflow-hidden rounded-[20px] bg-white shadow-[0_0_6px_rgba(0,0,0,0.12)]">
           {(vendorProfile?.hero_image_url ?? demoVendor.heroImageSrc) ? (
             <img
@@ -87,11 +81,13 @@ export function VendorAccountPage() {
                 </h1>
                 <p className="mt-1 text-body/60 text-base">{displayCity}</p>
                 {vendorProfile?.published ? (
-                  <p className="mt-2 font-medium text-primary text-xs uppercase tracking-wide">
-                    Published
-                  </p>
+                  <div className="mt-2">
+                    <StatusBadge label="Published" tone="success" />
+                  </div>
                 ) : isOwnProfile ? (
-                  <p className="mt-2 text-neutral-500 text-xs">Draft — not public yet</p>
+                  <div className="mt-2">
+                    <StatusBadge label="Draft" tone="neutral" />
+                  </div>
                 ) : null}
               </div>
 

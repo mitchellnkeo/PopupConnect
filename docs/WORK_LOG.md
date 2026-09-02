@@ -6,6 +6,28 @@
 
 ---
 
+## 2026-09-02 — Phase A: primitives, auth polish, password reset, account branching
+
+**Who:** Mitchell + AI session  
+**Focus:** Shared UI primitives from Figma atomic docs (visual examples were empty — styled to existing tokens) plus auth/account iteration.
+
+### Done
+
+- UI primitives in `src/components/ui/`: TextField, Checkbox, RadioGroup, Switch, StatusBadge, Tabs, Menu, Table.
+- Auth polish: Email label, mapped Supabase errors, forgot-password link, Google button busy state.
+- `/forgot-password` + `/reset-password`; signed-in password change on Privacy & security.
+- Role-based `/account`: vendors see the business dashboard; hosts/organizers see a planner home. Vendor editor gated by role.
+
+### Dashboard
+
+Add `/reset-password` to Supabase Redirect URLs (wildcard `/**` already covers it if set).
+
+### Next up
+
+Phase B — search + map (honest date filter, geocoding/radius, real vendor coordinates).
+
+---
+
 ## 2026-08-19 — Email confirmation + Google SSO
 
 **Who:** Mitchell + AI session  

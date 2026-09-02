@@ -109,7 +109,7 @@ In **Authentication → URL configuration**:
 | Site URL | Production origin, e.g. `https://your-app.vercel.app` |
 | Redirect URLs | `http://localhost:5173/**`, `http://localhost:5174/**`, `https://your-app.vercel.app/**` |
 
-Sign-up sends users to `/auth/callback`. That URL must be allowed here or the confirmation link will fail.
+Sign-up and Google return to `/auth/callback`. Password reset links return to `/reset-password`. Both must be covered by the Redirect URLs allowlist.
 
 If confirmation emails never arrive, check **Authentication → Emails** (rate limits on the built-in sender) or add custom SMTP.
 

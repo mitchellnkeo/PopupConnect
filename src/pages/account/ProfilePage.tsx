@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/Button";
+import { Checkbox } from "../../components/ui/Checkbox";
+import { TextField } from "../../components/ui/TextField";
 import { useAuth } from "../../features/auth/AuthContext";
+import { ROLE_OPTIONS } from "../../lib/roles";
 import { setProfileRoles, updateProfile } from "../../services/profileService";
 import type { AppRole } from "../../types/database";
-
-const roleOptions: { value: AppRole; label: string }[] = [
-  { value: "vendor", label: "Creative vendor" },
-  { value: "host", label: "Space vendor" },
-  { value: "organizer", label: "Event planner/coordinator" },
-];
 
 export function ProfilePage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -60,32 +57,28 @@ export function ProfilePage() {
       <p className="mt-1 text-neutral-600 text-sm">{user?.email}</p>
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="displayName" className="block font-medium text-midnight text-sm">
-            Display name
-          </label>
-          <input
+        <div className="max-w-md">
+          <TextField
             id="displayName"
+            label="Display name"
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="mt-1 w-full max-w-md rounded-xl border border-neutral-200 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
 
         <fieldset className="border-none p-0">
           <legend className="mb-2 font-medium text-midnight text-sm">Roles</legend>
-          <div className="space-y-2">
-            {roleOptions.map((opt) => (
-              <label key={opt.value} className="flex cursor-pointer items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={roles.includes(opt.value)}
-                  onChange={() => toggleRole(opt.value)}
-                  className="accent-primary"
-                />
+          <div className="space-y-3">
+            {ROLE_OPTIONS.map((opt) => (
+              <Checkbox
+                key={opt.value}
+                id={`role-${opt.value}`}
+                checked={roles.includes(opt.value)}
+                onChange={() => toggleRole(opt.value)}
+              >
                 {opt.label}
-              </label>
+              </Checkbox>
             ))}
           </div>
         </fieldset>

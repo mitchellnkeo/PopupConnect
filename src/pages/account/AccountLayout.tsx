@@ -3,16 +3,7 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { LogoMark } from "../../components/discovery/icons";
-
-const navItems = [
-  { to: "/account", label: "My business" },
-  { to: "/account/settings/profile", label: "My profile" },
-  { to: "/account/settings/vendor", label: "Vendor profile" },
-  { to: "/account/settings/events", label: "My events" },
-  { to: "/account/settings/privacy", label: "Privacy and security" },
-  { to: "/account/settings/messages", label: "Messages" },
-  { to: "/account/settings/docs", label: "My docs" },
-] as const;
+import { formatRoleList, getAccountNavItems } from "../../lib/roles";
 
 function navClassName({ isActive }: { isActive: boolean }) {
   return [
@@ -58,13 +49,11 @@ export function AccountLayout() {
             {profile?.display_name ?? user?.email ?? "Account"}
           </p>
           {profile?.roles.length ? (
-            <p className="mt-1 text-neutral-500 text-xs capitalize">
-              {profile.roles.join(" · ")}
-            </p>
+            <p className="mt-1 text-neutral-500 text-xs">{formatRoleList(profile.roles)}</p>
           ) : null}
 
           <nav className="mt-6 flex flex-col gap-1" aria-label="Account">
-            {navItems.map((item) => (
+            {getAccountNavItems(profile?.roles ?? []).map((item) => (
               <NavLink key={item.to} to={item.to} className={navClassName}>
                 {item.label}
               </NavLink>

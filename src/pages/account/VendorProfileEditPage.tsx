@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { authInputClass, authLabelClass } from "../../components/auth/authStyles";
 import { Button } from "../../components/ui/Button";
+import { Switch } from "../../components/ui/Switch";
 import { useAuth } from "../../features/auth/AuthContext";
 import { slugify } from "../../lib/slugify";
 import { invalidateVendorCatalog } from "../../lib/vendorCatalog";
@@ -337,15 +338,12 @@ export function VendorProfileEditPage() {
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-3 text-sm">
-          <input
-            type="checkbox"
-            checked={published}
-            onChange={(e) => setPublished(e.target.checked)}
-            className="accent-primary"
-          />
-          <span className="text-midnight">Publish my vendor profile publicly</span>
-        </label>
+        <Switch
+          id="publish-vendor"
+          checked={published}
+          onChange={setPublished}
+          label="Publish my vendor profile publicly"
+        />
 
         <div>
           <div className="flex items-center justify-between gap-4">

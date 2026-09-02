@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-09-02 | Phase A: shared UI primitives, auth polish, forgot/reset password, role-based `/account` home. |
 | 2026-08-19 | Email confirmation links + Google SSO on sign-in/sign-up; `/auth/callback` exchanges the auth code. Turn off Vercel Authentication on production. |
 | 2026-07-15 | Explore + vendor detail + quote pages wired to published Supabase `vendor_profiles` via `vendorCatalog` (mock fallback). |
 | 2026-07-15 | P1: vendor package popout, Leaflet explore map, `vendor_profiles` migration + edit UI at `/account/settings/vendor`. |
@@ -101,11 +102,13 @@ Image assets:
 | `/vendor/:vendorId` | `VendorDetailPage` | Full vendor profile (mock data) |
 | `/booking/quote` | `QuoteRequestPage` | **Protected** — requires sign-in; `?vendor=` query param |
 | `/booking/confirm` | `QuoteConfirmationPage` | **Protected** — requires sign-in |
-| `/sign-in` | `SignInPage` | Split layout; page title says **"Log in"** |
-| `/sign-up` | `SignUpPage` | First/last name, email, passwords, terms |
+| `/sign-in` | `SignInPage` | Split layout; email + Google; forgot-password link |
+| `/sign-up` | `SignUpPage` | First/last name, email, passwords, terms, Google |
+| `/forgot-password` | `ForgotPasswordPage` | Sends recovery email; generic success copy |
+| `/reset-password` | `ResetPasswordPage` | Consumes recovery session; sets new password then signs out |
 | `/auth/callback` | `AuthCallbackPage` | Email confirm + Google OAuth return; exchanges code then routes to welcome/return URL |
 | `/welcome` | `WelcomePage` | Post-auth onboarding; role radio → `/explore` |
-| `/account` | `VendorAccountPage` | Protected; demo vendor account UI (mock vendor) |
+| `/account` | `AccountHomePage` | Vendor dashboard if vendor role; planner/host home otherwise |
 | `/account/settings/vendor` | `VendorProfileEditPage` | Protected; vendor role; Supabase CRUD |
 | `/account/settings/*` | `AccountLayout` | Protected; profile + placeholder sub-pages |
 

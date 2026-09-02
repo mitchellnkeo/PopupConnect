@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthChrome } from "../../components/auth/AuthChrome";
-import { authCardClass, authLabelClass } from "../../components/auth/authStyles";
+import { authCardClass } from "../../components/auth/authStyles";
 import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { Button } from "../../components/ui/Button";
+import { RadioGroup } from "../../components/ui/RadioGroup";
 import { useAuth } from "../../features/auth/AuthContext";
 import { getFirstName } from "../../lib/authRouting";
+import { ROLE_OPTIONS } from "../../lib/roles";
 import { setProfileRoles, updateProfile } from "../../services/profileService";
 import type { AppRole } from "../../types/database";
-
-const roleOptions: { value: AppRole; label: string }[] = [
-  { value: "vendor", label: "Creative vendor" },
-  { value: "host", label: "Space vendor" },
-  { value: "organizer", label: "Event planner/coordinator" },
-];
 
 function WelcomeContent() {
   const navigate = useNavigate();
@@ -79,25 +75,14 @@ function WelcomeContent() {
 
         <form className="mt-8" onSubmit={handleStartBooking}>
           <h2 className="font-semibold text-lg text-midnight">Profile info</h2>
-          <p className={`mt-4 ${authLabelClass}`}>I am a</p>
-
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-6">
-            {roleOptions.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex cursor-pointer items-center gap-2 text-midnight text-sm"
-              >
-                <input
-                  type="radio"
-                  name="onboarding-role"
-                  value={opt.value}
-                  checked={role === opt.value}
-                  onChange={() => setRole(opt.value)}
-                  className="accent-primary"
-                />
-                {opt.label}
-              </label>
-            ))}
+          <div className="mt-4">
+            <RadioGroup
+              name="onboarding-role"
+              legend="I am a"
+              value={role}
+              onChange={setRole}
+              options={ROLE_OPTIONS}
+            />
           </div>
 
           {error ? (

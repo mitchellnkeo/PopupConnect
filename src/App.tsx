@@ -3,11 +3,15 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AppShell } from "./components/AppShell";
 import { PageShell } from "./components/PageShell";
 import { AccountLayout } from "./pages/account/AccountLayout";
+import { VendorRoute } from "./components/auth/VendorRoute";
+import { AccountHomePage } from "./pages/account/AccountHomePage";
 import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
+import { PrivacySettingsPage } from "./pages/account/PrivacySettingsPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
-import { VendorAccountPage } from "./pages/account/VendorAccountPage";
 import { VendorProfileEditPage } from "./pages/account/VendorProfileEditPage";
 import { AuthCallbackPage } from "./pages/auth/AuthCallbackPage";
+import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
+import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 import { SignInPage } from "./pages/auth/SignInPage";
 import { SignUpPage } from "./pages/auth/SignUpPage";
 import { WelcomePage } from "./pages/auth/WelcomePage";
@@ -43,6 +47,8 @@ export function App() {
 
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
+      <Route path="forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="reset-password" element={<ResetPasswordPage />} />
       <Route path="auth/callback" element={<AuthCallbackPage />} />
       <Route path="welcome" element={<WelcomePage />} />
 
@@ -50,7 +56,7 @@ export function App() {
         path="account"
         element={
           <ProtectedRoute>
-            <VendorAccountPage />
+            <AccountHomePage />
           </ProtectedRoute>
         }
       />
@@ -65,7 +71,14 @@ export function App() {
       >
         <Route index element={<Navigate to="profile" replace />} />
         <Route path="profile" element={<ProfilePage />} />
-        <Route path="vendor" element={<VendorProfileEditPage />} />
+        <Route
+          path="vendor"
+          element={
+            <VendorRoute>
+              <VendorProfileEditPage />
+            </VendorRoute>
+          }
+        />
         <Route
           path="events"
           element={
@@ -75,15 +88,7 @@ export function App() {
             />
           }
         />
-        <Route
-          path="privacy"
-          element={
-            <AccountPlaceholderPage
-              title="Privacy and security"
-              description="Password reset, email preferences, and data export will be managed here."
-            />
-          }
-        />
+        <Route path="privacy" element={<PrivacySettingsPage />} />
         <Route
           path="messages"
           element={

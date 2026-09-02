@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { mapAuthError } from "../../lib/authErrors";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { getAuthCallbackUrl } from "../../lib/authRedirects";
 
@@ -37,6 +39,8 @@ export function GoogleAuthButton({
   onBeforeStart,
   onError,
 }: GoogleAuthButtonProps) {
+  const [busy, setBusy] = useState(false);
+
   async function handleClick() {
     if (onBeforeStart && !onBeforeStart()) {
       return;
@@ -47,6 +51,7 @@ export function GoogleAuthButton({
       return;
     }
 
+    setBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -59,7 +64,8 @@ export function GoogleAuthButton({
     });
 
     if (error) {
-      onError(error.message);
+      setBusy(false);
+      onError(mapAuthError(error));
     }
   }
 
@@ -67,11 +73,11 @@ export function GoogleAuthButton({
     <button
       type="button"
       onClick={() => void handleClick()}
-      disabled={disabled}
+      disabled={disabled || busy}
       className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-neutral-300 bg-white px-5 py-2.5 font-medium text-midnight text-sm transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
     >
       <GoogleMark />
-      Continue with Google
+      {busy ? "Redirecting…" : "Continue with Google"}
     </button>
   );
 }

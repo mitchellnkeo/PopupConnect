@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthChrome } from "../../components/auth/AuthChrome";
 import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
-import { authCardClass, authInputClass, authLabelClass } from "../../components/auth/authStyles";
+import { authCardClass } from "../../components/auth/authStyles";
 import { Button } from "../../components/ui/Button";
+import { TextField } from "../../components/ui/TextField";
+import { mapAuthError } from "../../lib/authErrors";
 import { getPostAuthPath } from "../../lib/authRouting";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { fetchProfile } from "../../services/profileService";
@@ -12,6 +14,7 @@ export function SignInPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? "/explore";
+  const justReset = Boolean((location.state as { reset?: boolean } | null)?.reset);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +38,7 @@ export function SignInPage() {
     setSubmitting(false);
 
     if (signInError) {
-      setError(signInError.message);
+      setError(mapAuthError(signInError));
       return;
     }
 
@@ -70,6 +73,12 @@ export function SignInPage() {
         <div className={authCardClass}>
           <h1 className="font-semibold text-3xl text-midnight tracking-tight">Log in</h1>
 
+          {justReset ? (
+            <p className="mt-3 text-midnight text-sm" role="status">
+              Password updated. Sign in with your new password.
+            </p>
+          ) : null}
+
           <div className="mt-8">
             <GoogleAuthButton nextPath={from} disabled={submitting} onError={setError} />
           </div>
@@ -81,34 +90,32 @@ export function SignInPage() {
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="email" className={authLabelClass}>
-                Username
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="username email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={authInputClass}
-              />
-            </div>
+            <TextField
+              id="email"
+              label="Email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
             <div>
-              <label htmlFor="password" className={authLabelClass}>
-                Password
-              </label>
-              <input
+              <TextField
                 id="password"
+                label="Password"
                 type="password"
                 autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={authInputClass}
               />
+              <Link
+                to="/forgot-password"
+                className="mt-2 inline-block text-primary text-sm hover:underline"
+              >
+                Forgot password?
+              </Link>
             </div>
 
             {error ? (
@@ -118,7 +125,7 @@ export function SignInPage() {
             ) : null}
 
             <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? "Submitting…" : "Submit"}
+              {submitting ? "Signing in…" : "Sign in"}
             </Button>
           </form>
 
@@ -128,14 +135,6 @@ export function SignInPage() {
               Create account
             </Link>
           </p>
-
-          <Link
-            to="/sign-up"
-            state={{ from }}
-            className="mt-4 inline-flex w-full items-center justify-center rounded-full border-2 border-primary bg-white px-5 py-2.5 font-medium text-primary text-sm transition hover:bg-starlight/50"
-          >
-            Create account
-          </Link>
         </div>
       </div>
     </AuthChrome>

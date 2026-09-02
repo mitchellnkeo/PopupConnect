@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-07-15 (explore wired to Supabase)
+**Last updated:** 2026-09-02 (Phase A auth/account iteration)
 
 ---
 
