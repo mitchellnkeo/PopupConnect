@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-09-02 (Phase C settings + refine + map area)
+**Last updated:** 2026-09-02 (server filters, clusters, email change)
 
 ---
 
@@ -61,6 +61,9 @@ Captured from team review of v1.0.0 prototype.
 | Sort / multi-category / price filters | **Done** | `ExploreRefineBar`; URL `sort`, `categories`, `price` |
 | Map search this area | **Done** | Button after panning ~1.5 miles from the search origin |
 | Mobile list / map tabs | **Done** | Tabs on small screens; desktop list + map unchanged |
+| Server-side explore filters | **Done** | Category / text / bbox / price pushed into `vendor_profiles` query |
+| Map marker clustering | **Done** | `react-leaflet-cluster` with brand cluster icons |
+| Production email / domain | **Blocked** | App email-change form is ready; needs domain + Resend SMTP |
 
 ### Plan mode / calendar (MVP 1 — larger feature)
 

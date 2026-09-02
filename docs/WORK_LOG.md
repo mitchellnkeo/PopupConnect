@@ -6,6 +6,23 @@
 
 ---
 
+## 2026-09-02 — Leftovers: filters, clusters, email
+
+**Who:** Mitchell + AI session  
+**Focus:** The three leftovers after Phase C.
+
+### Done
+
+- Explore loads published vendors through a filtered Supabase query (categories, text, lat/lng bbox, price, sort). Client still applies exact radius and merges mocks.
+- Map markers cluster with brand-colored count badges; they split apart by zoom 16.
+- Privacy settings can request an email change. Confirmation still depends on custom SMTP.
+
+### Still needs you
+
+Buy a sending domain, add Resend (or other SMTP) in Supabase, then turn Confirm email on. Steps are in [SUPABASE.md](./SUPABASE.md). Google security emails will keep showing `*.supabase.co` until a custom Auth domain is set.
+
+---
+
 ## 2026-09-02 — Phase C: settings + refine + map area
 
 **Who:** Mitchell + AI session  
@@ -23,7 +40,7 @@
 
 ### Next up
 
-Domain/email unblocks confirmation and email change. Later: map clustering, server-side catalog filters, account deletion.
+Account deletion and avatar upload are still later. Production email is blocked on a sending domain.
 
 ---
 

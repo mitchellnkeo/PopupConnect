@@ -1,8 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap, useMapEvents } from "react-leaflet";
+import L from "leaflet";
+import { MapContainer, TileLayer, Marker, Tooltip, useMap, useMapEvents } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import type { ExploreResult } from "../../data/exploreResults";
 import { distanceMiles, type GeoPoint } from "../../lib/geo";
 import "leaflet/dist/leaflet.css";
+
+function vendorIcon(active: boolean) {
+  const size = active ? 22 : 16;
+  return L.divIcon({
+    className: active ? "pc-marker pc-marker-active" : "pc-marker",
+    html: "<span></span>",
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  });
+}
+
+function clusterIcon(cluster: { getChildCount: () => number }) {
+  return L.divIcon({
+    html: `<span>${cluster.getChildCount()}</span>`,
+    className: "pc-cluster",
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+  });
+}
 
 type ExploreMapProps = {
   results: ExploreResult[];
@@ -155,30 +176,32 @@ export function ExploreMap({
         <ActiveMarkerFocus result={activeResult} />
         <SearchAreaWatcher origin={searchOrigin} onMoved={handleMoved} />
 
-        {results.map((result) => {
-          const isActive = activeId === result.id;
-          return (
-            <CircleMarker
-              key={result.id}
-              center={[result.lat, result.lng]}
-              radius={isActive ? 11 : 8}
-              pathOptions={{
-                color: "#ffffff",
-                weight: 2,
-                fillColor: isActive ? "#cc3d00" : "#172e50",
-                fillOpacity: 1,
-              }}
-              eventHandlers={{
-                mouseover: () => onMarkerHover(result.id),
-                click: () => onMarkerClick?.(result.id),
-              }}
-            >
-              <Tooltip direction="top" offset={[0, -8]} opacity={0.95}>
-                {result.title}
-              </Tooltip>
-            </CircleMarker>
-          );
-        })}
+        <MarkerClusterGroup
+          chunkedLoading
+          showCoverageOnHover={false}
+          maxClusterRadius={52}
+          disableClusteringAtZoom={16}
+          iconCreateFunction={clusterIcon}
+        >
+          {results.map((result) => {
+            const isActive = activeId === result.id;
+            return (
+              <Marker
+                key={result.id}
+                position={[result.lat, result.lng]}
+                icon={vendorIcon(isActive)}
+                eventHandlers={{
+                  mouseover: () => onMarkerHover(result.id),
+                  click: () => onMarkerClick?.(result.id),
+                }}
+              >
+                <Tooltip direction="top" offset={[0, -8]} opacity={0.95}>
+                  {result.title}
+                </Tooltip>
+              </Marker>
+            );
+          })}
+        </MarkerClusterGroup>
       </MapContainer>
     </div>
   );

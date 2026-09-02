@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-09-02 | Leftovers: server-side explore filters, map marker clustering, email-change form + SMTP/domain docs. |
 | 2026-09-02 | Phase C: settings tabs, explore sort/filters, map search-this-area, mobile list/map tabs. |
 | 2026-09-02 | Phase B: explore radius search, Nominatim location picker, map marker click, vendor geocode on save. |
 | 2026-09-02 | Phase A: shared UI primitives, auth polish, forgot/reset password, role-based `/account` home. |
@@ -262,14 +263,14 @@ Shared search components: `src/components/search/`. Search bars: `HeroSearchNav`
 - **Header:** `AppHeader` with compact `ExploreSearchBar`
 - **Layout:** ~42% results list + ~58% sticky map (desktop); stacked on mobile
 - **Filters:** URL params via `exploreSearch.ts` — `where`, `lat`, `lng`, `when` / `whenStart`+`whenEnd`, `whenMonth`, `whenYear`, `category` / `categories`, `q`, `sort`, `price`
-- **Results:** `filterExploreResults()` over merged catalog — categories, 25-mile radius, text match, price band; sort by distance / price / newest
+- **Results:** Supabase query applies category / text / bbox / price first (`useExploreCatalog`); client still does haversine + mock merge
 - **Location:** Nominatim geocode + curated cities; URL stores `where`, `lat`, `lng`
 - **Dates:** shown in the heading note; do **not** filter availability yet
 - **Data:** Published `vendor_profiles` from Supabase merged with mock vendors in `src/data/vendors.ts` (mock fills gaps; DB wins on slug match)
 - **Interactions:** card hover ↔ map marker; card or marker click → `VendorPreviewModal` → full profile or quote
 - **Refine:** Sort + category checkboxes + price band in `ExploreRefineBar`
 - **Mobile:** List / Map tabs; desktop stays side-by-side
-- **Map:** Leaflet + OpenStreetMap in `ExploreMap` (`ResultsMap`); markers use vendor `lat`/`lng`; bounds refit when results change; **Search this area** after panning away from the origin
+- **Map:** Leaflet + OpenStreetMap in `ExploreMap` (`ResultsMap`); clustered markers; bounds refit when results change; **Search this area** after panning away from the origin
 
 **Known issues (2026-07-15):** ~~location input segment background fill bug~~ — fixed in compact `ExploreSearchBar`.
 
@@ -290,7 +291,7 @@ flowchart LR
 - **Quote request / confirm:** static quote line items; no persistence yet
 - **`/account`:** loads owner's `vendor_profiles` row when present; else demo + setup CTA
 - **`/account/settings/profile`:** display name, roles, avatar placeholder
-- **`/account/settings/privacy`:** password change, email (read-only until sending domain), sign out everywhere
+- **`/account/settings/privacy`:** password change, email change (needs custom SMTP to confirm), sign out everywhere
 - **`/account/settings/vendor`:** vendor profile + packages editor (Supabase); published Switch + Status badge
 
 ### Planned changes (2026-07-15 meeting — see [ROADMAP.md](./ROADMAP.md))

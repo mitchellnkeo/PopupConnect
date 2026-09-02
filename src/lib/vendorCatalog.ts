@@ -1,7 +1,10 @@
 import type { ExploreResult } from "../data/exploreResults";
 import type { VendorProfile } from "../data/vendors";
 import { vendors as mockVendors } from "../data/vendors";
-import { fetchPublishedVendorProfiles } from "../services/vendorService";
+import type { ExploreFilters } from "./exploreSearch";
+import { priceBandToRange, selectedCategoryIds } from "./exploreSearch";
+import { DEFAULT_RADIUS_MILES } from "./geo";
+import { fetchPublishedVendorProfiles, type VendorListQuery } from "../services/vendorService";
 import type { VendorProfileWithProducts } from "../types/database";
 
 const HONOLULU = { lat: 21.3069, lng: -157.8583 };
@@ -145,4 +148,27 @@ export async function loadVendorCatalog(): Promise<VendorProfile[]> {
 
 export function vendorsToExploreResults(vendorList: VendorProfile[]): ExploreResult[] {
   return vendorList.map(vendorToExploreResult);
+}
+
+export function exploreFiltersToListQuery(filters: ExploreFilters): VendorListQuery {
+  const price = priceBandToRange(filters.priceBand);
+  return {
+    categoryIds: selectedCategoryIds(filters),
+    query: filters.query.trim() || undefined,
+    lat: filters.lat,
+    lng: filters.lng,
+    radiusMiles: DEFAULT_RADIUS_MILES,
+    priceMin: price.min,
+    priceMax: price.max,
+    sort: filters.sort,
+  };
+}
+
+export async function searchVendorCatalog(filters: ExploreFilters): Promise<VendorProfile[]> {
+  try {
+    const published = await fetchPublishedVendorProfiles(exploreFiltersToListQuery(filters));
+    return mergeVendorCatalog(published.map(mapDbVendorToProfile));
+  } catch {
+    return mockVendors;
+  }
 }

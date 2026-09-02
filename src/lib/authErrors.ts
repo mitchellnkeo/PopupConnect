@@ -5,6 +5,7 @@ const MESSAGE_MAP: Array<[RegExp, string]> = [
   [/already registered/i, "An account with this email already exists. Sign in instead."],
   [/identity.*already/i, "This email is already linked to another sign-in method."],
   [/rate limit|too many requests|over_email_send_rate_limit/i, "Too many attempts. Try again in a few minutes."],
+  [/error sending|smtp|confirmation email/i, "We could not send a confirmation email. Production email is not set up yet."],
   [/password should be at least/i, "Password must be at least 8 characters."],
   [/same password/i, "Choose a password you have not used before."],
   [/expired|otp_expired|token has expired/i, "This link has expired. Request a new one."],

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { TextField } from "../../components/ui/TextField";
@@ -15,9 +15,17 @@ export function PrivacySettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [nextEmail, setNextEmail] = useState(user?.email ?? "");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailSaved, setEmailSaved] = useState(false);
+  const [emailSaving, setEmailSaving] = useState(false);
 
   const usesPassword =
     !user?.identities || user.identities.some((identity) => identity.provider === "email");
+
+  useEffect(() => {
+    setNextEmail(user?.email ?? "");
+  }, [user?.email]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,6 +61,37 @@ export function PrivacySettingsPage() {
     setSaved(true);
   }
 
+  async function handleEmailChange(e: React.FormEvent) {
+    e.preventDefault();
+    setEmailError(null);
+    setEmailSaved(false);
+
+    const trimmed = nextEmail.trim().toLowerCase();
+    if (!trimmed || !trimmed.includes("@")) {
+      setEmailError("Enter a valid email address.");
+      return;
+    }
+    if (trimmed === user?.email?.toLowerCase()) {
+      setEmailError("That is already this account’s email.");
+      return;
+    }
+    if (!isSupabaseConfigured) {
+      setEmailError("Supabase is not configured.");
+      return;
+    }
+
+    setEmailSaving(true);
+    const { error: updateError } = await supabase.auth.updateUser({ email: trimmed });
+    setEmailSaving(false);
+
+    if (updateError) {
+      setEmailError(mapAuthError(updateError));
+      return;
+    }
+
+    setEmailSaved(true);
+  }
+
   async function handleSignOutEverywhere() {
     setSigningOutEverywhere(true);
     await signOut({ everywhere: true });
@@ -64,20 +103,31 @@ export function PrivacySettingsPage() {
       <h1 className="font-semibold text-2xl text-midnight">Privacy and security</h1>
       <p className="mt-1 text-neutral-600 text-sm">{user?.email}</p>
 
-      <section className="mt-8 max-w-md space-y-3">
+      <form className="mt-8 max-w-md space-y-3" onSubmit={(e) => void handleEmailChange(e)}>
         <h2 className="font-medium text-midnight text-sm">Email</h2>
         <TextField
           id="account-email"
           label="Account email"
           type="email"
-          value={user?.email ?? ""}
-          disabled
+          autoComplete="email"
+          value={nextEmail}
+          onChange={(e) => setNextEmail(e.target.value)}
+          hint="Supabase sends a confirmation link to the new address. That only arrives after custom SMTP is set up."
         />
-        <p className="text-neutral-500 text-xs leading-relaxed">
-          Changing email needs a confirmed sending domain so we can verify the new address. That
-          stays off until production email is set up.
-        </p>
-      </section>
+        {emailError ? (
+          <p className="text-primary text-sm" role="alert">
+            {emailError}
+          </p>
+        ) : null}
+        {emailSaved ? (
+          <p className="text-midnight text-sm" role="status">
+            Check the new inbox to confirm the change. The current email stays active until then.
+          </p>
+        ) : null}
+        <Button type="submit" variant="secondary" disabled={emailSaving}>
+          {emailSaving ? "Sending…" : "Update email"}
+        </Button>
+      </form>
 
       {!usesPassword ? (
         <p className="mt-6 text-body text-sm leading-relaxed">

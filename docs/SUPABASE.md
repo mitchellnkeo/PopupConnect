@@ -113,6 +113,21 @@ Sign-up and Google return to `/auth/callback`. Password reset links return to `/
 
 If confirmation emails never arrive, check **Authentication → Emails** (rate limits on the built-in sender) or add custom SMTP.
 
+**Keep Confirm email off** until custom SMTP is working. The built-in sender is capped at about 2 emails/hour and will block real sign-ups.
+
+### Custom domain + SMTP (unblocks production email)
+
+The app already has forgot/reset password, email change, and `/auth/callback`. Those stay rate-limited or fail until you own a sending domain.
+
+1. Buy a domain (for example `popupconnect.com`) and add it in Vercel **Settings → Domains**.
+2. In [Resend](https://resend.com) (or another SMTP provider), add that domain and copy the DNS records (SPF, DKIM, optional DMARC).
+3. In **Supabase → Authentication → Emails → SMTP settings**, turn on custom SMTP and paste the Resend host, port, user, and API key.
+4. Set the sender to something like `noreply@your-domain.com`.
+5. Add a **custom Auth domain** (or at least the app domain) so Google security emails and confirm links do not show `*.supabase.co`.
+6. After a test message succeeds, turn **Confirm email** on.
+
+Google OAuth consent-screen branding also uses this domain — the security email will keep showing the Supabase project host until the custom Auth domain is live.
+
 ### Google SSO
 
 1. In [Google Cloud Console](https://console.cloud.google.com/) create an OAuth client (Web application).

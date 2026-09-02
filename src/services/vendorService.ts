@@ -1,3 +1,4 @@
+import { boundingBox, DEFAULT_RADIUS_MILES } from "../lib/geo";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import type {
   VendorProductInput,
@@ -6,6 +7,21 @@ import type {
   VendorProfileRow,
   VendorProfileWithProducts,
 } from "../types/database";
+
+export type VendorListQuery = {
+  categoryIds?: string[];
+  query?: string;
+  lat?: number | null;
+  lng?: number | null;
+  radiusMiles?: number;
+  priceMin?: number;
+  priceMax?: number;
+  sort?: "distance" | "price" | "newest";
+};
+
+function sanitizeIlike(value: string) {
+  return value.replace(/[%_,.()]/g, " ").replace(/\s+/g, " ").trim();
+}
 
 function parseCategoryIds(value: unknown): string[] {
   if (!Array.isArray(value)) return ["matcha-bar"];
@@ -102,17 +118,7 @@ export async function fetchPublishedVendorBySlug(
   return { ...profile, products };
 }
 
-export async function fetchPublishedVendorProfiles(): Promise<VendorProfileWithProducts[]> {
-  if (!isSupabaseConfigured) return [];
-
-  const { data, error } = await supabase
-    .from("vendor_profiles")
-    .select("*, vendor_products(*)")
-    .eq("published", true)
-    .order("title");
-
-  if (error) throw error;
-
+function mapPublishedRows(data: unknown[] | null): VendorProfileWithProducts[] {
   return (data ?? []).map((row) => {
     const profile = mapProfile(row as Record<string, unknown>);
     const nestedProducts = (row as { vendor_products?: Record<string, unknown>[] }).vendor_products ?? [];
@@ -122,6 +128,67 @@ export async function fetchPublishedVendorProfiles(): Promise<VendorProfileWithP
 
     return { ...profile, products };
   });
+}
+
+export async function fetchPublishedVendorProfiles(
+  query?: VendorListQuery,
+): Promise<VendorProfileWithProducts[]> {
+  if (!isSupabaseConfigured) return [];
+
+  try {
+    return await queryPublishedVendorProfiles(query);
+  } catch (error) {
+    if (!query) throw error;
+    return queryPublishedVendorProfiles();
+  }
+}
+
+async function queryPublishedVendorProfiles(
+  query?: VendorListQuery,
+): Promise<VendorProfileWithProducts[]> {
+  let request = supabase.from("vendor_profiles").select("*, vendor_products(*)").eq("published", true);
+
+  const categoryIds = query?.categoryIds?.filter(Boolean) ?? [];
+  if (categoryIds.length === 1) {
+    request = request.contains("category_ids", [categoryIds[0]]);
+  } else if (categoryIds.length > 1) {
+    request = request.or(categoryIds.map((id) => `category_ids.cs.["${id}"]`).join(","));
+  }
+
+  const needle = query?.query ? sanitizeIlike(query.query) : "";
+  if (needle) {
+    request = request.or(
+      `title.ilike.%${needle}%,about.ilike.%${needle}%,city.ilike.%${needle}%,ideal_for.ilike.%${needle}%`,
+    );
+  }
+
+  if (query?.lat != null && query?.lng != null) {
+    const box = boundingBox({ lat: query.lat, lng: query.lng }, query.radiusMiles ?? DEFAULT_RADIUS_MILES);
+    request = request
+      .gte("lat", box.south)
+      .lte("lat", box.north)
+      .gte("lng", box.west)
+      .lte("lng", box.east);
+  }
+
+  if (query?.priceMax != null) {
+    request = request.lt("starting_price", query.priceMax);
+  }
+  if (query?.priceMin != null) {
+    request = request.gte("starting_price", query.priceMin);
+  }
+
+  if (query?.sort === "price") {
+    request = request.order("starting_price", { ascending: true, nullsFirst: false });
+  } else if (query?.sort === "newest") {
+    request = request.order("created_at", { ascending: false });
+  } else {
+    request = request.order("title");
+  }
+
+  const { data, error } = await request;
+  if (error) throw error;
+  return mapPublishedRows(data);
 }
 
 export async function saveVendorProfile(

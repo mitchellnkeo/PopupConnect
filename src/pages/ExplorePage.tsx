@@ -8,7 +8,7 @@ import { ResultsMap } from "../components/explore/ResultsMap";
 import { VendorPreviewModal } from "../components/vendor/VendorPreviewModal";
 import { LandingFooter } from "../components/landing/LandingFooter";
 import { Tabs } from "../components/ui/Tabs";
-import { useVendorCatalog } from "../hooks/useVendorCatalog";
+import { useExploreCatalog } from "../hooks/useExploreCatalog";
 import { reverseGeocode } from "../lib/geocode";
 import type { GeoPoint } from "../lib/geo";
 import { vendorsToExploreResults } from "../lib/vendorCatalog";
@@ -29,7 +29,6 @@ export function ExplorePage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [previewVendorId, setPreviewVendorId] = useState<string | null>(null);
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
-  const { vendors, loading, getVendor } = useVendorCatalog();
 
   useEffect(() => {
     if (!hasExploreSearchParams(searchParams)) {
@@ -38,6 +37,7 @@ export function ExplorePage() {
   }, [searchParams, setSearchParams]);
 
   const filters = useMemo(() => parseExploreFilters(searchParams), [searchParams]);
+  const { vendors, loading, getVendor } = useExploreCatalog(filters);
   const catalogResults = useMemo(() => vendorsToExploreResults(vendors), [vendors]);
   const results = useMemo(
     () => filterExploreResults(catalogResults, filters),

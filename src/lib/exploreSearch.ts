@@ -231,6 +231,13 @@ export function formatPriceBandLabel(band: ExplorePriceBand) {
   return "Any price";
 }
 
+export function priceBandToRange(band: ExplorePriceBand): { min?: number; max?: number } {
+  if (band === "under-150") return { max: 150 };
+  if (band === "under-300") return { max: 300 };
+  if (band === "300-plus") return { min: 300 };
+  return {};
+}
+
 export function exploreEmptyCopy(filters: ExploreFilters) {
   const city = formatLocationLabel(filters.where).split(",")[0]?.trim() ?? "this area";
   const ids = selectedCategoryIds(filters);
