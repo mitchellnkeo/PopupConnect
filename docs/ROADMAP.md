@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-09-02 (admin dashboards)
+**Last updated:** 2026-09-02 (sample vendors and hosts)
 
 ---
 

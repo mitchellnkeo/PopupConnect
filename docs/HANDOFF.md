@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-09-02 | Sample catalog: 8 more vendors + 5 host spaces across Honolulu neighborhoods; Explore defaults to all categories. |
 | 2026-09-02 | Admin allowlist (`mitchellnkeo@gmail.com`, Rad/Amy emails) can open vendor, planner, and host dashboards. |
 | 2026-09-02 | Leftovers: server-side explore filters, map marker clustering, email-change form + SMTP/domain docs. |
 | 2026-09-02 | Phase C: settings tabs, explore sort/filters, map search-this-area, mobile list/map tabs. |
@@ -271,7 +272,7 @@ Shared search components: `src/components/search/`. Search bars: `HeroSearchNav`
 - **Results:** Supabase query applies category / text / bbox / price first (`useExploreCatalog`); client still does haversine + mock merge
 - **Location:** Nominatim geocode + curated cities; URL stores `where`, `lat`, `lng`
 - **Dates:** shown in the heading note; do **not** filter availability yet
-- **Data:** Published `vendor_profiles` from Supabase merged with mock vendors in `src/data/vendors.ts` (mock fills gaps; DB wins on slug match)
+- **Data:** Published `vendor_profiles` from Supabase merged with mock listings in `src/data/vendors.ts` + `src/data/sampleListings.ts` (8 extra vendors + 5 host spaces; DB wins on slug match)
 - **Interactions:** card hover ↔ map marker; card or marker click → `VendorPreviewModal` → full profile or quote
 - **Refine:** Sort + category checkboxes + price band in `ExploreRefineBar`
 - **Mobile:** List / Map tabs; desktop stays side-by-side

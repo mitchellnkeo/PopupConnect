@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ListingKindBadge } from "../discovery/ListingKindBadge";
 import type { ExploreResult } from "../../data/exploreResults";
 
 type ResultCardProps = {
@@ -11,15 +12,18 @@ type ResultCardProps = {
 export function ResultCard({ result, highlighted, onHover, onClick }: ResultCardProps) {
   const content = (
     <>
-      {result.imageSrc ? (
-        <img src={result.imageSrc} alt="" className="aspect-[325/196] w-full object-cover" />
-      ) : (
-        <div
-          className="aspect-[325/196] w-full bg-gradient-to-br from-starlight via-neutral-100 to-neutral-200"
-          role="img"
-          aria-label={`${result.title} placeholder`}
-        />
-      )}
+      <div className="relative">
+        {result.imageSrc ? (
+          <img src={result.imageSrc} alt="" className="aspect-[325/196] w-full object-cover" />
+        ) : (
+          <div
+            className="aspect-[325/196] w-full bg-gradient-to-br from-starlight via-neutral-100 to-neutral-200"
+            role="img"
+            aria-label={`${result.title} placeholder`}
+          />
+        )}
+        <ListingKindBadge kind={result.kind} className="absolute top-2 left-2 shadow-sm" />
+      </div>
       <div className="px-5 py-2.5">
         <h3 className="font-bold text-lg text-midnight leading-snug">{result.title}</h3>
         <p className="text-body/60 text-xs">

@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-09-02 — Sample vendors and hosts
+
+**Who:** Mitchell + AI session  
+**Focus:** A richer catalog the team can browse on Explore.
+
+### Done
+
+- Added 8 creative vendors (crafts, DJ, photo booth, catering, open bar, board games) and 5 host spaces around Honolulu / Waikīkī / Kakaʻako / Mānoa / Kailua.
+- Listings are tagged Vendor or Space. Host profiles use rental options instead of vendor packages.
+- `/explore` now opens with every category so the sample set is visible; pick **spaces / venues** to see hosts only.
+
+---
+
 ## 2026-09-02 — Admin dashboard access
 
 **Who:** Mitchell + AI session  

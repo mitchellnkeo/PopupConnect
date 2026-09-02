@@ -2,8 +2,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { AppHeader } from "../components/layout/AppHeader";
 import { LandingFooter } from "../components/landing/LandingFooter";
+import { ListingKindBadge } from "../components/discovery/ListingKindBadge";
 import { VendorPackageCard } from "../components/vendor/VendorPackageCard";
 import { VendorPackagePopout } from "../components/vendor/VendorPackagePopout";
+import { listingKindOf } from "../data/vendors";
 import { useAuth } from "../features/auth/AuthContext";
 import { useVendorCatalog } from "../hooks/useVendorCatalog";
 import type { VendorPackage } from "../data/vendors";
@@ -59,7 +61,8 @@ export function VendorDetailPage() {
             ) : null}
 
             <section className="rounded-[20px] bg-white p-8 shadow-[0_0_6px_rgba(0,0,0,0.12)]">
-              <h1 className="font-bold text-[length:var(--text-section,28px)] text-midnight">
+              <ListingKindBadge kind={vendor} />
+              <h1 className="mt-2 font-bold text-[length:var(--text-section,28px)] text-midnight">
                 About {vendor.title}
               </h1>
               <p className="mt-1 text-body/60 text-base">{vendor.city}</p>
@@ -189,7 +192,9 @@ export function VendorDetailPage() {
               </div>
 
               <div className="mt-8 space-y-4">
-                <h3 className="font-bold text-[length:var(--text-section,28px)] text-midnight">Packages</h3>
+                <h3 className="font-bold text-[length:var(--text-section,28px)] text-midnight">
+                  {listingKindOf(vendor) === "host" ? "Rental options" : "Packages"}
+                </h3>
                 {vendor.packages.map((pkg) => (
                   <VendorPackageCard key={pkg.id} pkg={pkg} onSelect={setSelectedPackage} />
                 ))}

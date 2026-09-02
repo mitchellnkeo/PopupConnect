@@ -1,3 +1,7 @@
+import { sampleListings } from "./sampleListings";
+
+export type ListingKind = "vendor" | "host";
+
 export type VendorPackage = {
   id: string;
   name: string;
@@ -13,6 +17,7 @@ export type VendorProfile = {
   title: string;
   city: string;
   distance: string;
+  kind?: ListingKind;
   categoryIds: string[];
   imageSrc?: string;
   heroImageSrc?: string;
@@ -297,7 +302,12 @@ export const vendors: VendorProfile[] = [
     lat: 21.3159,
     lng: -157.8553,
   },
+  ...sampleListings,
 ];
+
+export function listingKindOf(vendor: Pick<VendorProfile, "kind">): ListingKind {
+  return vendor.kind ?? "vendor";
+}
 
 export function getVendorById(id: string): VendorProfile | undefined {
   return vendors.find((v) => v.id === id || v.slug === id);

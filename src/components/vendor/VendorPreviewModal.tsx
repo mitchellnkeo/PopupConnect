@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { ListingKindBadge } from "../discovery/ListingKindBadge";
 import type { VendorProfile } from "../../data/vendors";
 import { useAuth } from "../../features/auth/AuthContext";
 import { btnPrimarySm, btnSecondaryOutline } from "../../lib/buttonStyles";
@@ -32,7 +33,8 @@ export function VendorPreviewModal({ vendor, onClose }: VendorPreviewModalProps)
         ) : null}
 
         <div className="p-8">
-          <h2 id="vendor-preview-title" className="font-bold text-[length:var(--text-section,28px)] text-midnight">
+          <ListingKindBadge kind={vendor} />
+          <h2 id="vendor-preview-title" className="mt-2 font-bold text-[length:var(--text-section,28px)] text-midnight">
             {vendor.title}
           </h2>
           <p className="mt-1 text-body/60 text-sm">{vendor.city} · {vendor.distance}</p>

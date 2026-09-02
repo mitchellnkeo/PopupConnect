@@ -5,6 +5,7 @@ export type ExploreResult = {
   title: string;
   city: string;
   locationCity?: string;
+  kind?: "vendor" | "host";
   mapX: number;
   mapY: number;
   lat: number;

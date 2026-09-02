@@ -10,6 +10,7 @@ export function vendorsToExploreResults(): ExploreResult[] {
     title: vendor.title,
     city: vendor.distance,
     locationCity: vendor.city,
+    kind: vendor.kind ?? "vendor",
     mapX: vendor.mapX,
     mapY: vendor.mapY,
     lat: vendor.lat,

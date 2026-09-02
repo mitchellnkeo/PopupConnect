@@ -27,7 +27,7 @@ function triggerClass(active: boolean) {
 
 export function ExploreRefineBar({ filters, onFiltersChange }: ExploreRefineBarProps) {
   const categoryIds = selectedCategoryIds(filters);
-  const filtersActive = categoryIds.length !== 1 || filters.priceBand !== "any";
+  const filtersActive = categoryIds.length > 0 || filters.priceBand !== "any";
 
   function patch(partial: Partial<ExploreFilters>) {
     onFiltersChange({ ...filters, ...partial });

@@ -11,4 +11,5 @@ export const exploreCategories: ExploreCategory[] = [
   { id: "crafts", label: "crafts" },
   { id: "open-bar", label: "open bar" },
   { id: "board-games", label: "board games" },
+  { id: "venues", label: "spaces / venues" },
 ];

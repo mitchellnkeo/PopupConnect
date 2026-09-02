@@ -46,8 +46,8 @@ export const defaultExploreFilters: ExploreFilters = {
   whenMode: "single",
   whenEndDay: 15,
   whenEndMonth: 7,
-  categoryId: "matcha-bar",
-  categoryIds: ["matcha-bar"],
+  categoryId: null,
+  categoryIds: [],
   query: "",
   sort: "distance",
   priceBand: "any",
@@ -197,11 +197,12 @@ export function formatDateLabel(filters: ExploreFilters) {
 }
 
 export function formatCategoryLabel(categoryId: string | null) {
-  if (!categoryId) return "All vendors";
+  if (!categoryId) return "Vendors & spaces";
   const match = exploreCategories.find((c) => c.id === categoryId);
-  if (!match) return "All vendors";
+  if (!match) return "Vendors & spaces";
   if (categoryId === "dj-live-music") return "DJs & Live music";
   if (categoryId === "matcha-bar") return "Matcha Bar";
+  if (categoryId === "venues") return "Spaces";
   return match.label
     .split("/")
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
@@ -277,9 +278,11 @@ export function resultsHeading(filters: ExploreFilters) {
     return `${filters.query.trim()} in ${city}`;
   }
 
+  if (ids.length === 0) return `Vendors & spaces in ${city}`;
   if (ids.length > 1) return `${ids.length} categories in ${city}`;
   if (ids[0] === "dj-live-music") return `DJs in ${city}`;
   if (ids[0] === "matcha-bar") return `Matcha Bars in ${city}`;
+  if (ids[0] === "venues") return `Spaces in ${city}`;
 
   const cat = formatCategoryLabel(ids[0] ?? null);
   return `${cat} in ${city}`;
