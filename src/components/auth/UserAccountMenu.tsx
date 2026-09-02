@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
+import { isAdminUser } from "../../lib/admins";
 import { getReturnPath } from "../../lib/authRouting";
 
 function initials(displayName: string | null | undefined, email: string | undefined) {
@@ -73,8 +74,9 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
     .filter(Boolean)
     .join(" ");
 
+  const admin = isAdminUser(user);
   const panelClass =
-    "absolute top-full right-0 z-50 mt-2 w-52 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg";
+    "absolute top-full right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg";
 
   const itemClass =
     "block w-full px-4 py-2.5 text-left text-midnight text-sm transition hover:bg-starlight/60";
@@ -108,7 +110,44 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
                   {profile?.display_name ?? "Your account"}
                 </p>
                 <p className="truncate text-neutral-500 text-xs">{user.email}</p>
+                {admin ? <p className="mt-1 text-primary text-xs">Admin</p> : null}
               </div>
+              {admin ? (
+                <>
+                  <Link
+                    role="menuitem"
+                    to="/account"
+                    className={itemClass}
+                    onClick={() => setOpen(false)}
+                  >
+                    All dashboards
+                  </Link>
+                  <Link
+                    role="menuitem"
+                    to="/account/vendor"
+                    className={itemClass}
+                    onClick={() => setOpen(false)}
+                  >
+                    Vendor dashboard
+                  </Link>
+                  <Link
+                    role="menuitem"
+                    to="/account/planner"
+                    className={itemClass}
+                    onClick={() => setOpen(false)}
+                  >
+                    Planner dashboard
+                  </Link>
+                  <Link
+                    role="menuitem"
+                    to="/account/host"
+                    className={itemClass}
+                    onClick={() => setOpen(false)}
+                  >
+                    Host dashboard
+                  </Link>
+                </>
+              ) : null}
               <Link
                 role="menuitem"
                 to="/account/settings/profile"
@@ -125,14 +164,16 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
               >
                 My events
               </Link>
-              <Link
-                role="menuitem"
-                to="/account"
-                className={itemClass}
-                onClick={() => setOpen(false)}
-              >
-                Account settings
-              </Link>
+              {admin ? null : (
+                <Link
+                  role="menuitem"
+                  to="/account"
+                  className={itemClass}
+                  onClick={() => setOpen(false)}
+                >
+                  Account settings
+                </Link>
+              )}
               <button type="button" role="menuitem" className={itemClass} onClick={() => void handleSignOut()}>
                 Log out
               </button>

@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-09-02 | Admin allowlist (`mitchellnkeo@gmail.com`, Rad/Amy emails) can open vendor, planner, and host dashboards. |
 | 2026-09-02 | Leftovers: server-side explore filters, map marker clustering, email-change form + SMTP/domain docs. |
 | 2026-09-02 | Phase C: settings tabs, explore sort/filters, map search-this-area, mobile list/map tabs. |
 | 2026-09-02 | Phase B: explore radius search, Nominatim location picker, map marker click, vendor geocode on save. |
@@ -111,8 +112,11 @@ Image assets:
 | `/reset-password` | `ResetPasswordPage` | Consumes recovery session; sets new password then signs out |
 | `/auth/callback` | `AuthCallbackPage` | Email confirm + Google OAuth return; exchanges code then routes to welcome/return URL |
 | `/welcome` | `WelcomePage` | Post-auth onboarding; role radio → `/explore` |
-| `/account` | `AccountHomePage` | Vendor dashboard if vendor role; planner/host home otherwise |
-| `/account/settings/vendor` | `VendorProfileEditPage` | Protected; vendor role; Supabase CRUD |
+| `/account` | `AccountHomePage` | Admin hub if allowlisted; vendor dashboard if vendor role; planner/host home otherwise |
+| `/account/vendor` | `VendorAccountPage` | Protected; vendor role or admin |
+| `/account/planner` | `PlannerAccountPage` | Protected; organizer role or admin |
+| `/account/host` | `PlannerAccountPage` | Protected; host role or admin |
+| `/account/settings/vendor` | `VendorProfileEditPage` | Protected; vendor role or admin; Supabase CRUD |
 | `/account/settings/*` | `AccountLayout` | Protected; sidebar on desktop, tabs on mobile; profile / privacy / vendor / placeholders |
 
 `/booking` redirects to `/booking/quote`.
@@ -151,6 +155,7 @@ flowchart TD
 | `src/features/auth/AuthContext.tsx` | Session, user, profile, `signOut`, `refreshProfile` |
 | `src/services/profileService.ts` | `fetchProfile`, `updateProfile`, `setProfileRoles` |
 | `src/lib/authRouting.ts` | `getPostAuthPath`, `getFirstName` |
+| `src/lib/admins.ts` | Email allowlist for admin dashboard access |
 | `src/components/auth/ProtectedRoute.tsx` | Redirects to `/sign-in` if unauthenticated |
 | `src/components/auth/UserAccountMenu.tsx` | Top-right circle + dropdown |
 | `src/components/auth/AuthChrome.tsx` | Auth pages header + footer |
@@ -289,7 +294,8 @@ flowchart LR
 
 - **Vendor detail:** gallery, packages (click popout with hover fill), highlights, quote CTA
 - **Quote request / confirm:** static quote line items; no persistence yet
-- **`/account`:** loads owner's `vendor_profiles` row when present; else demo + setup CTA
+- **`/account`:** admin hub for allowlisted emails; otherwise vendor dashboard or planner/host home
+- **`/account/vendor`:** loads owner's `vendor_profiles` row when present; else demo + setup CTA
 - **`/account/settings/profile`:** display name, roles, avatar placeholder
 - **`/account/settings/privacy`:** password change, email change (needs custom SMTP to confirm), sign out everywhere
 - **`/account/settings/vendor`:** vendor profile + packages editor (Supabase); published Switch + Status badge

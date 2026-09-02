@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AdminDashboardBanner } from "../../components/account/AdminDashboardBanner";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
 import { StatusBadge } from "../../components/ui/StatusBadge";
+import { isAdminUser } from "../../lib/admins";
 import { btnPrimaryFull, btnSecondaryOutline } from "../../lib/buttonStyles";
 import { useAuth } from "../../features/auth/AuthContext";
 import { fetchVendorProfileByOwner } from "../../services/vendorService";
@@ -47,13 +49,14 @@ export function VendorAccountPage() {
   const displayAbout = vendorProfile?.about ?? demoVendor.about;
   const publicSlug = vendorProfile?.slug;
   const isOwnProfile = Boolean(vendorProfile);
-  const isVendorRole = profile?.roles.includes("vendor");
+  const isVendorRole = Boolean(profile?.roles.includes("vendor")) || isAdminUser(user);
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
       <AppHeader />
 
       <main className="mx-auto w-full max-w-[1600px] px-4 py-8 md:px-[60px]">
+        <AdminDashboardBanner current="vendor" />
         {!loading && !authLoading && !isOwnProfile && isVendorRole ? (
           <div className="mb-6 rounded-xl border border-primary/20 bg-starlight/40 px-4 py-3 text-body text-sm">
             You have not set up your vendor page yet.{" "}

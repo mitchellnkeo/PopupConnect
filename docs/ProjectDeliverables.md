@@ -24,7 +24,7 @@ Branding is clear and reflected in design
 
 | Deliverable | Status | Notes |
 |-------------|--------|-------|
-| User personas & onboarding | **Partial** | Auth + welcome shipped; logged-in/out UI branching shipped |
+| User personas & onboarding | **Partial** | Auth + welcome shipped; logged-in/out UI branching shipped; admin allowlist can preview all role dashboards |
 | Gallery / explore vendors | **Partial** | Radius, text, sort, multi-category, and price filters shipped; gallery/highlights still thin |
 | Vendor profile (public) | **Partial** | Detail page resolves from catalog (Supabase + mock); package popout shipped |
 | Vendor profile (owner edit) | **Partial** | `/account/settings/vendor` + migration shipped |

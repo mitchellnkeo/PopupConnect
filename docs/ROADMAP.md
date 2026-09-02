@@ -2,7 +2,7 @@
 
 **Living document** — update this file when priorities shift, work starts, or items ship. For day-to-day progress and troubleshooting, see [WORK_LOG.md](./WORK_LOG.md).
 
-**Last updated:** 2026-09-02 (server filters, clusters, email change)
+**Last updated:** 2026-09-02 (admin dashboards)
 
 ---
 
@@ -40,6 +40,7 @@ Captured from team review of v1.0.0 prototype.
 | Distinct **logged-in** vs **not logged-in** flows | **Done** | Explore banner, landing CTAs, vendor CTAs, header nav, account menu return URLs |
 | **Login required** before proceeding with quote | **Done** | `ProtectedRoute` on `/booking/quote` + `/booking/confirm`; return URL with `?vendor=` |
 | Quote flow after login | **Done** | Return URL preserved through sign-in → welcome → quote |
+| Admin accounts can open every role dashboard | **Done** | Allowlist in `src/lib/admins.ts`; `/account`, `/account/vendor`, `/account/planner`, `/account/host` |
 
 ### Vendor profiles (medium-term)
 

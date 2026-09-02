@@ -21,13 +21,24 @@ export type AccountNavItem = {
   label: string;
 };
 
-export function getAccountNavItems(roles: AppRole[]): AccountNavItem[] {
-  const items: AccountNavItem[] = [
-    { to: "/account", label: roles.includes("vendor") ? "My business" : "My account" },
-    { to: "/account/settings/profile", label: "My profile" },
-  ];
+export function getAccountNavItems(
+  roles: AppRole[],
+  options?: { isAdmin?: boolean },
+): AccountNavItem[] {
+  const items: AccountNavItem[] = options?.isAdmin
+    ? [
+        { to: "/account", label: "All dashboards" },
+        { to: "/account/vendor", label: "Vendor dashboard" },
+        { to: "/account/planner", label: "Planner dashboard" },
+        { to: "/account/host", label: "Host dashboard" },
+        { to: "/account/settings/profile", label: "My profile" },
+      ]
+    : [
+        { to: "/account", label: roles.includes("vendor") ? "My business" : "My account" },
+        { to: "/account/settings/profile", label: "My profile" },
+      ];
 
-  if (roles.includes("vendor")) {
+  if (options?.isAdmin || roles.includes("vendor")) {
     items.push({ to: "/account/settings/vendor", label: "Vendor profile" });
   }
 
@@ -50,8 +61,11 @@ const SETTINGS_SHORT_LABELS: Record<string, string> = {
   "/account/settings/docs": "Docs",
 };
 
-export function getSettingsTabItems(roles: AppRole[]): { id: string; label: string }[] {
-  return getAccountNavItems(roles)
+export function getSettingsTabItems(
+  roles: AppRole[],
+  options?: { isAdmin?: boolean },
+): { id: string; label: string }[] {
+  return getAccountNavItems(roles, options)
     .filter((item) => item.to.startsWith("/account/settings/"))
     .map((item) => ({
       id: item.to,

@@ -3,8 +3,11 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AppShell } from "./components/AppShell";
 import { PageShell } from "./components/PageShell";
 import { AccountLayout } from "./pages/account/AccountLayout";
+import { RoleDashboardRoute } from "./components/auth/RoleDashboardRoute";
 import { VendorRoute } from "./components/auth/VendorRoute";
 import { AccountHomePage } from "./pages/account/AccountHomePage";
+import { PlannerAccountPage } from "./pages/account/PlannerAccountPage";
+import { VendorAccountPage } from "./pages/account/VendorAccountPage";
 import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
 import { PrivacySettingsPage } from "./pages/account/PrivacySettingsPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
@@ -57,6 +60,36 @@ export function App() {
         element={
           <ProtectedRoute>
             <AccountHomePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="account/vendor"
+        element={
+          <ProtectedRoute>
+            <RoleDashboardRoute role="vendor">
+              <VendorAccountPage />
+            </RoleDashboardRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="account/planner"
+        element={
+          <ProtectedRoute>
+            <RoleDashboardRoute role="organizer">
+              <PlannerAccountPage previewRole="organizer" />
+            </RoleDashboardRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="account/host"
+        element={
+          <ProtectedRoute>
+            <RoleDashboardRoute role="host">
+              <PlannerAccountPage previewRole="host" />
+            </RoleDashboardRoute>
           </ProtectedRoute>
         }
       />

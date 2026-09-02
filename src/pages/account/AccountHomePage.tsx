@@ -1,10 +1,12 @@
+import { AdminAccountPage } from "./AdminAccountPage";
 import { PlannerAccountPage } from "./PlannerAccountPage";
 import { VendorAccountPage } from "./VendorAccountPage";
 import { useAuth } from "../../features/auth/AuthContext";
+import { isAdminUser } from "../../lib/admins";
 import { hasRole } from "../../lib/roles";
 
 export function AccountHomePage() {
-  const { profile, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
 
   if (loading) {
     return (
@@ -12,6 +14,10 @@ export function AccountHomePage() {
         <p className="text-neutral-500 text-sm">Loading account…</p>
       </div>
     );
+  }
+
+  if (isAdminUser(user)) {
+    return <AdminAccountPage />;
   }
 
   if (hasRole(profile, "vendor")) {

@@ -6,6 +6,23 @@
 
 ---
 
+## 2026-09-02 — Admin dashboard access
+
+**Who:** Mitchell + AI session  
+**Focus:** Let Mitchell, Rad, and Amy open every role dashboard from one login.
+
+### Done
+
+- `src/lib/admins.ts` allowlists `mitchellnkeo@gmail.com` and emails whose local-part token is `rad` or `amy` (e.g. `rad@`, `amy.chen@`). Extra addresses via `VITE_ADMIN_EMAILS`.
+- Admins land on `/account` (hub) and can open `/account/vendor`, `/account/planner`, and `/account/host`. Vendor editor is unlocked for them.
+- Account menu and settings sidebar show the dashboard switcher for admins.
+
+### Still needs you
+
+If Rad or Amy sign in with an address that does not contain `rad` or `amy` in the local part, add the exact email to `VITE_ADMIN_EMAILS` (comma-separated) on Vercel and locally. These routes are live on production only after this change is deployed.
+
+---
+
 ## 2026-09-02 — Leftovers: filters, clusters, email
 
 **Who:** Mitchell + AI session  

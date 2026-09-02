@@ -4,6 +4,7 @@ import { useAuth } from "../../features/auth/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { Tabs } from "../../components/ui/Tabs";
 import { LogoMark } from "../../components/discovery/icons";
+import { isAdminUser } from "../../lib/admins";
 import { formatRoleList, getAccountNavItems, getSettingsTabItems } from "../../lib/roles";
 
 function navClassName({ isActive }: { isActive: boolean }) {
@@ -18,7 +19,8 @@ export function AccountLayout() {
   const location = useLocation();
   const { user, profile, signOut, loading } = useAuth();
   const roles = profile?.roles ?? [];
-  const settingsTabs = getSettingsTabItems(roles);
+  const admin = isAdminUser(user);
+  const settingsTabs = getSettingsTabItems(roles, { isAdmin: admin });
   const activeTab =
     settingsTabs.find((tab) => location.pathname.startsWith(tab.id))?.id ?? settingsTabs[0]?.id ?? "";
 
@@ -54,12 +56,14 @@ export function AccountLayout() {
           <p className="font-medium text-midnight text-sm">
             {profile?.display_name ?? user?.email ?? "Account"}
           </p>
-          {profile?.roles.length ? (
+          {admin ? (
+            <p className="mt-1 text-neutral-500 text-xs">Admin</p>
+          ) : profile?.roles.length ? (
             <p className="mt-1 text-neutral-500 text-xs">{formatRoleList(profile.roles)}</p>
           ) : null}
 
           <nav className="mt-6 flex flex-col gap-1" aria-label="Account">
-            {getAccountNavItems(roles).map((item) => (
+            {getAccountNavItems(roles, { isAdmin: admin }).map((item) => (
               <NavLink key={item.to} to={item.to} className={navClassName}>
                 {item.label}
               </NavLink>
@@ -73,7 +77,7 @@ export function AccountLayout() {
               {profile?.display_name ?? user?.email ?? "Account"}
             </p>
             <Link to="/account" className="mt-1 inline-block text-primary text-xs hover:underline">
-              {roles.includes("vendor") ? "Back to my business" : "Back to my account"}
+              {admin ? "Back to dashboards" : roles.includes("vendor") ? "Back to my business" : "Back to my account"}
             </Link>
             {settingsTabs.length ? (
               <div className="mt-4 overflow-x-auto">

@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
+import { isAdminUser } from "../../lib/admins";
 import { hasRole } from "../../lib/roles";
 
 export function VendorRoute({ children }: { children: React.ReactNode }) {
-  const { loading, profile } = useAuth();
+  const { loading, user, profile } = useAuth();
 
   if (loading) {
     return (
@@ -13,7 +14,7 @@ export function VendorRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!hasRole(profile, "vendor")) {
+  if (!isAdminUser(user) && !hasRole(profile, "vendor")) {
     return (
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <h1 className="font-semibold text-2xl text-midnight">Vendor tools</h1>

@@ -55,6 +55,8 @@ Set in `.env.local`:
 ```
 VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
+# Optional. Extra admin emails (comma-separated). mitchellnkeo@gmail.com and rad/amy local-parts are already allowlisted.
+# VITE_ADMIN_EMAILS=rad@example.com,amy@example.com
 
 # Required for `npm run db:push` — NOT the anon key, NOT your GitHub password.
 # Supabase Dashboard → Project Settings → Database → Database password
