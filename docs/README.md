@@ -1,4 +1,4 @@
-# PopupConnect documentation
+# frqnt documentation
 
 Central location for project sources of truth. **New AI sessions:** start with [HANDOFF.md](./HANDOFF.md).
 

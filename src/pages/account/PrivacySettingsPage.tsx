@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { TextField } from "../../components/ui/TextField";
 import { useAuth } from "../../features/auth/AuthContext";
+import { BRAND_NAME } from "../../config/brand";
 import { mapAuthError } from "../../lib/authErrors";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 
@@ -177,7 +178,7 @@ export function PrivacySettingsPage() {
       <section className="mt-10 max-w-md space-y-3 border-neutral-200 border-t pt-8">
         <h2 className="font-medium text-midnight text-sm">Sessions</h2>
         <p className="text-neutral-600 text-sm leading-relaxed">
-          Sign out of PopupConnect on this browser and every other device using this account.
+          Sign out of {BRAND_NAME} on this browser and every other device using this account.
         </p>
         <Button
           type="button"

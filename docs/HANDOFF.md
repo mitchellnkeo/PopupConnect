@@ -1,4 +1,4 @@
-# PopupConnect — Agent Handoff
+# frqnt — Agent Handoff
 
 **Living document** — update this file when the codebase, architecture, or team priorities change. It summarizes **what exists**, **how it works**, and **where to look next**.
 
@@ -20,6 +20,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 | Date | Change |
 |------|--------|
+| 2026-09-23 | Rebrand to **frqnt**; production URL is `https://frqnt.club`. |
 | 2026-09-02 | Sample catalog: 8 more vendors + 5 host spaces across Honolulu neighborhoods; Explore defaults to all categories. |
 | 2026-09-02 | Admin allowlist (`mitchellnkeo@gmail.com`, Rad/Amy emails) can open vendor, planner, and host dashboards. |
 | 2026-09-02 | Leftovers: server-side explore filters, map marker clustering, email-change form + SMTP/domain docs. |
@@ -42,9 +43,9 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 
 ## 1. Product summary
 
-**PopupConnect** connects local enterprises (vendors/artists) with venues (hosts) so communities can discover, book, and run pop-up experiences.
+**frqnt** connects local enterprises (vendors/artists) with venues (hosts) so communities can discover, book, and run pop-up experiences.
 
-- **Brand name in code:** PopupConnect (UI mockups sometimes say "CATALYST" — use PopupConnect unless the user asks to rebrand).
+- **Brand name in code:** `frqnt` (lowercase). Domain: `https://frqnt.club`. Constants live in `src/config/brand.ts`.
 - **Personas:** Creative vendor (`vendor`), space vendor/host (`host`), event planner (`organizer`).
 - **Quality bar:** Full happy-path walkthrough, no dead ends, branching states covered — see [ProjectDeliverables.md](./ProjectDeliverables.md).
 
@@ -57,7 +58,7 @@ All project documentation lives in **`docs/`** — see [docs/README.md](./README
 | Frontend | React 19, TypeScript, Vite 6, React Router 7 |
 | Styling | Tailwind CSS v4 (`@theme` in `src/index.css`) |
 | Font | Mona Sans (`@fontsource-variable/mona-sans`) |
-| Hosting | Vercel (SPA rewrites in `vercel.json`) |
+| Hosting | Vercel — production at [https://frqnt.club](https://frqnt.club) (SPA rewrites in `vercel.json`) |
 | Backend | Supabase — Auth + Postgres + RLS (+ Storage planned) |
 | Client SDK | `@supabase/supabase-js` |
 
@@ -233,7 +234,7 @@ See [SUPABASE.md](./SUPABASE.md) for full setup (CLI install options, auth dashb
 
 ### Auth dashboard settings (important for prod)
 
-- **Authentication → URL configuration:** Site URL = production origin; Redirect URLs include `http://localhost:5173/**`, `http://localhost:5174/**`, and `https://<prod-domain>/**`
+- **Authentication → URL configuration:** Site URL = `https://frqnt.club`; Redirect URLs include `http://localhost:5173/**`, `http://localhost:5174/**`, `https://frqnt.club/**`, and `https://popup-connect.vercel.app/**`
 - **Email:** Confirm email **on** — confirmation links return to `/auth/callback`
 - **Google:** enable provider with Google Cloud OAuth client (see [SUPABASE.md](./SUPABASE.md) §5)
 - **Do not** use Vercel Deployment Protection / Vercel Authentication on production — that is team SSO, not user signup

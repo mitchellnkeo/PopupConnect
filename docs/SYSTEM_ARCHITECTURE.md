@@ -1,10 +1,10 @@
-# PopupConnect — System Architecture
+# frqnt — System Architecture
 
-This document describes how PopupConnect is structured and how **Supabase** provides authentication, account data, and the primary backend for the product. Update this file when auth, database schema, or deployment patterns change.
+This document describes how frqnt is structured and how **Supabase** provides authentication, account data, and the primary backend for the product. Update this file when auth, database schema, or deployment patterns change.
 
 ## Product summary
 
-PopupConnect connects **local enterprises (vendors)** with **venues (hosts)** so organizers and communities can discover, book, and run pop-up experiences. The web app is a **Vite + React + TypeScript** SPA deployed on **Vercel**. Business data and accounts live in **Supabase** (Postgres + Auth).
+**frqnt** (`https://frqnt.club`) connects **local enterprises (vendors)** with **venues (hosts)** so organizers and communities can discover, book, and run pop-up experiences. The web app is a **Vite + React + TypeScript** SPA deployed on **Vercel**. Business data and accounts live in **Supabase** (Postgres + Auth).
 
 ## High-level architecture
 

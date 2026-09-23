@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { BrandWordmark } from "../brand/BrandWordmark";
 import { LandingFooter } from "../landing/LandingFooter";
 import { IconCalendar } from "../landing/icons";
 import { LogoMarkPrimary } from "../explore/icons";
@@ -17,9 +18,7 @@ export function AuthChrome({ children, layout = "centered" }: AuthChromeProps) {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 md:px-6">
           <Link to="/" className="flex items-center gap-2">
             <LogoMarkPrimary className="h-7 w-11" />
-            <span className="font-semibold text-primary text-sm uppercase tracking-widest">
-              PopupConnect
-            </span>
+            <BrandWordmark className="font-semibold text-primary text-sm tracking-widest" />
           </Link>
           <div className="flex items-center gap-2">
             <Link

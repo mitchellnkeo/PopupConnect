@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { BrandWordmark } from "../brand/BrandWordmark";
 import { UserAccountMenu } from "../auth/UserAccountMenu";
 import { LogoMarkPrimary } from "../explore/icons";
 import type { ExploreFilters } from "../../lib/exploreSearch";
@@ -17,9 +18,7 @@ export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppH
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-5 md:px-[60px]">
         <Link to="/" className="flex shrink-0 items-center gap-3">
           <LogoMarkPrimary className="size-8" />
-          <span className="font-bold text-[length:var(--text-logo,28px)] text-primary uppercase tracking-wide">
-            PopupConnect
-          </span>
+          <BrandWordmark className="font-bold text-[length:var(--text-logo,28px)] text-primary tracking-wide" />
         </Link>
 
         {showSearch && filters && onFiltersChange ? (

@@ -1,4 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { BrandWordmark } from "./brand/BrandWordmark";
+import { BRAND_NAME } from "../config/brand";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -25,7 +27,7 @@ export function AppShell() {
       <header className="border-neutral-200 border-b bg-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
           <NavLink to="/" className="font-semibold text-midnight text-lg tracking-tight">
-            PopupConnect
+            <BrandWordmark />
           </NavLink>
           <nav className="flex flex-wrap gap-1">
             {navItems.map((item) => (
@@ -43,7 +45,7 @@ export function AppShell() {
 
       <footer className="border-neutral-200 border-t bg-white py-6 text-neutral-500 text-sm">
         <div className="mx-auto max-w-6xl px-4">
-          PopupConnect — connecting enterprises with host venues.
+          {BRAND_NAME} — connecting enterprises with host venues.
         </div>
       </footer>
     </div>

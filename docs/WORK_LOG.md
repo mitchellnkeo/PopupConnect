@@ -1,8 +1,24 @@
-# PopupConnect — Work Log
+# frqnt — Work Log
 
 **Living document** — append entries as work happens. Captures progression, decisions, and troubleshooting so future sessions (human or AI) can pick up context quickly.
 
 **Format:** newest entries first.
+
+---
+
+## 2026-09-23 — Rebrand to frqnt
+
+**Who:** Mitchell + AI session  
+**Focus:** Product name and production domain.
+
+### Done
+
+- UI wordmark, page title, and docs now say **frqnt**. Brand constants live in `src/config/brand.ts`.
+- Production URL is **https://frqnt.club**. `www.frqnt.club` redirects there. The old `popup-connect.vercel.app` alias still works.
+
+### Still needs you
+
+In Supabase **Authentication → URL configuration**, set Site URL to `https://frqnt.club` and add `https://frqnt.club/**` to Redirect URLs so auth emails and Google return to the new domain.
 
 ---
 

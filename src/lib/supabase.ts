@@ -7,7 +7,7 @@ export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 if (!isSupabaseConfigured) {
   console.warn(
-    "[PopupConnect] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. Auth will not work until .env.local is configured.",
+    "[frqnt] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. Auth will not work until .env.local is configured.",
   );
 }
 

@@ -10,7 +10,7 @@ function contact(handle: string, phone: string) {
     website: `${handle}.example`,
     instagram: handle,
     tiktok: handle,
-    email: `${handle}@popupconnect.example`,
+    email: `${handle}@frqnt.example`,
     phone,
   };
 }

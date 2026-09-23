@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { BrandWordmark } from "../brand/BrandWordmark";
 import { APP_VERSION } from "../../config/version";
 import { LogoMarkLight } from "./icons";
 
@@ -13,9 +14,7 @@ export function LandingFooter() {
       <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-3 text-center">
         <Link to="/" className="flex items-center gap-1">
           <LogoMarkLight className="size-[18px]" />
-          <span className="font-bold text-[length:var(--text-footer-logo,18px)] uppercase">
-            PopupConnect
-          </span>
+          <BrandWordmark className="font-bold text-[length:var(--text-footer-logo,18px)]" />
         </Link>
 
         <nav aria-label="Footer" className="flex flex-col gap-3">

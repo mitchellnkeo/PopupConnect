@@ -1,4 +1,4 @@
-# PopupConnect
+# frqnt
 
 **Version 1.0.0**
 
@@ -96,7 +96,7 @@ npx vercel env add VITE_SUPABASE_ANON_KEY
 ### CLI workflow (from project root)
 
 ```bash
-cd /path/to/PopupConnect
+cd /path/to/frqnt
 vercel login
 vercel link          # pick existing Vercel project if prompted
 vercel env add VITE_SUPABASE_URL    # select Production + Preview only

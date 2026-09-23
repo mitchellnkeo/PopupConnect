@@ -142,7 +142,7 @@ Use interfaces/abstractions to enable mocking
 Code Organization
 Project Structure
 
-PopupConnect system architecture (Supabase Auth, Postgres, RLS) is defined in **[SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)** in `docs/`. Read it before implementing accounts, profiles, or bookings.
+frqnt system architecture (Supabase Auth, Postgres, RLS) is defined in **[SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)** in `docs/`. Read it before implementing accounts, profiles, or bookings.
 
 /src
   /components      # Reusable UI components

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { BrandWordmark } from "../brand/BrandWordmark";
 import { UserAccountMenu } from "../auth/UserAccountMenu";
 import { LogoMarkLight } from "./icons";
 import { HeroSearchNav } from "./HeroSearchNav";
@@ -21,9 +22,7 @@ export function LandingHeader({ overlay = true }: LandingHeaderProps) {
           <LogoMarkLight
             className={`size-8 ${overlay ? "" : "[&_circle]:stroke-midnight [&_circle]:fill-midnight/10"}`}
           />
-          <span className="font-bold text-[length:var(--text-logo,28px)] uppercase tracking-wide">
-            PopupConnect
-          </span>
+          <BrandWordmark className="font-bold text-[length:var(--text-logo,28px)] tracking-wide" />
         </Link>
 
         <div className="hidden flex-1 justify-center lg:flex">

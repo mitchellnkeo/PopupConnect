@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import { useAuth } from "../../features/auth/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { Tabs } from "../../components/ui/Tabs";
+import { BrandWordmark } from "../../components/brand/BrandWordmark";
 import { LogoMark } from "../../components/discovery/icons";
 import { isAdminUser } from "../../lib/admins";
 import { formatRoleList, getAccountNavItems, getSettingsTabItems } from "../../lib/roles";
@@ -36,9 +37,7 @@ export function AccountLayout() {
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
           <Link to="/" className="flex items-center gap-2">
             <LogoMark className="h-7 w-11" />
-            <span className="font-semibold text-midnight text-sm uppercase tracking-wide">
-              PopupConnect
-            </span>
+            <BrandWordmark className="font-semibold text-midnight text-sm tracking-wide" />
           </Link>
           <div className="flex items-center gap-3">
             <Link to="/explore" className="text-midnight text-sm hover:text-primary">
