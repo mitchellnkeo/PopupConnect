@@ -108,8 +108,8 @@ In **Authentication → URL configuration**:
 
 | Setting | Value |
 |---------|--------|
-| Site URL | `https://frqnt.club` |
-| Redirect URLs | `http://localhost:5173/**`, `http://localhost:5174/**`, `https://frqnt.club/**`, `https://popup-connect.vercel.app/**` |
+| Site URL | `https://freqnt.club` |
+| Redirect URLs | `http://localhost:5173/**`, `http://localhost:5174/**`, `https://freqnt.club/**`, `https://frqnt.club/**`, `https://popup-connect.vercel.app/**` |
 
 Sign-up and Google return to `/auth/callback`. Password reset links return to `/reset-password`. Both must be covered by the Redirect URLs allowlist.
 
@@ -121,10 +121,10 @@ If confirmation emails never arrive, check **Authentication → Emails** (rate l
 
 The app already has forgot/reset password, email change, and `/auth/callback`. Those stay rate-limited or fail until you own a sending domain.
 
-1. The app domain is **`frqnt.club`** (already attached on the Vercel project). Use it for sending email too.
-2. In [Resend](https://resend.com) (or another SMTP provider), add `frqnt.club` and copy the DNS records (SPF, DKIM, optional DMARC).
+1. The app domain is **`freqnt.club`** (attach it on the Vercel project). Use it for sending email too.
+2. In [Resend](https://resend.com) (or another SMTP provider), add `freqnt.club` and copy the DNS records (SPF, DKIM, optional DMARC).
 3. In **Supabase → Authentication → Emails → SMTP settings**, turn on custom SMTP and paste the Resend host, port, user, and API key.
-4. Set the sender to something like `noreply@frqnt.club`.
+4. Set the sender to something like `noreply@freqnt.club`.
 5. Add a **custom Auth domain** (or at least the app domain) so Google security emails and confirm links do not show `*.supabase.co`.
 6. After a test message succeeds, turn **Confirm email** on.
 

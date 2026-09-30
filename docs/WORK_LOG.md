@@ -1,8 +1,44 @@
-# frqnt — Work Log
+# freqnt — Work Log
 
 **Living document** — append entries as work happens. Captures progression, decisions, and troubleshooting so future sessions (human or AI) can pick up context quickly.
 
 **Format:** newest entries first.
+
+---
+
+## 2026-09-30 — Product name is freqnt
+
+**Who:** Mitchell + AI session  
+**Focus:** UI wordmark and production URL spelling.
+
+### Done
+
+- Brand constants: name **freqnt**, domain **freqnt.club**.
+- Wordmark, page title, package name, and current docs titles say **freqnt**.
+- Hosted Supabase Auth Site URL is `https://freqnt.club` (redirect allowlist includes `https://freqnt.club/**`; old `https://frqnt.club/**` kept). Local `supabase/config.toml` still uses `http://127.0.0.1:3000`.
+
+---
+
+## 2026-09-30 — Domain is freqnt.club
+
+**Who:** Mitchell + AI session  
+**Focus:** Production URL spelling.
+
+### Done
+
+- Brand domain constant is now `freqnt.club`.
+- Docs and Supabase URL notes point at `https://freqnt.club`.
+
+### Still needs you
+
+In Porkbun DNS for **freqnt.club**, use the same records that worked for the old domain:
+
+| Type | Host | Value |
+|------|------|--------|
+| ALIAS | `freqnt.club` or `@` | `cname.vercel-dns.com` |
+| CNAME | `www` | `cname.vercel-dns.com` |
+
+In Supabase **Authentication → URL configuration**, set Site URL to `https://freqnt.club` and add `https://freqnt.club/**` to Redirect URLs.
 
 ---
 

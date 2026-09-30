@@ -1,4 +1,4 @@
-# frqnt documentation
+# freqnt documentation
 
 Central location for project sources of truth. **New AI sessions:** start with [HANDOFF.md](./HANDOFF.md).
 
