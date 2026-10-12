@@ -102,6 +102,8 @@ export function vendorToExploreResult(vendor: VendorProfile): ExploreResult {
     searchText: [vendor.title, vendor.city, vendor.about, vendor.idealFor, ...vendor.tags].join(" "),
     startingPrice: vendor.startingPrice,
     createdAt: vendor.createdAt ?? fallbackCreatedAt(vendor.id),
+    about: vendor.about,
+    tags: vendor.tags,
   };
 }
 

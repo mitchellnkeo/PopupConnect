@@ -85,8 +85,8 @@ export function ExplorePage() {
         >
           <ExploreAuthBanner />
 
-          <p className="mt-5 font-bold text-body/60 text-sm">Results</p>
-          <h1 className="mt-2.5 font-bold text-[length:var(--text-section,28px)] text-midnight">
+          <p className="mt-5 text-base text-body/60">Results</p>
+          <h1 className="mt-2 font-normal text-[28px] text-midnight leading-none">
             {heading}
           </h1>
           <p className="mt-2 text-body/55 text-sm">
@@ -96,8 +96,8 @@ export function ExplorePage() {
           <ExploreRefineBar filters={filters} onFiltersChange={handleFiltersChange} />
 
           <ul className="mt-5 grid max-h-[calc(100vh-12rem)] grid-cols-1 gap-6 overflow-y-auto pb-5 sm:grid-cols-2">
-            {loading ? (
-              <li className="col-span-full py-8 text-body/60 text-sm">Loading vendors…</li>
+            {loading && results.length === 0 ? (
+              <li className="col-span-full py-8 text-body/60 text-sm">Loading listings…</li>
             ) : null}
             {!loading && results.length === 0 ? (
               <li className="col-span-full py-8">

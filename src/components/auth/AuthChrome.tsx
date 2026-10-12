@@ -1,5 +1,6 @@
 import { BrandLogo } from "../brand/BrandLogo";
 import { LandingFooter } from "../landing/LandingFooter";
+import { GuestNavLinks } from "../layout/GuestNavLinks";
 import { HeaderAuthActions } from "../layout/HeaderAuthActions";
 
 type AuthChromeProps = {
@@ -11,9 +12,10 @@ type AuthChromeProps = {
 export function AuthChrome({ children, layout = "centered" }: AuthChromeProps) {
   return (
     <div className="flex min-h-dvh flex-col bg-white">
-      <header className="border-border border-b bg-white">
+      <header className="border-gray-300 border-b bg-white">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3.5 md:px-[60px]">
           <BrandLogo />
+          <GuestNavLinks />
           <HeaderAuthActions />
         </div>
       </header>

@@ -56,7 +56,7 @@ export function VendorDetailPage() {
               <img
                 src={vendor.heroImageSrc ?? vendor.imageSrc}
                 alt={vendor.title}
-                className="aspect-[16/7] w-full rounded-[20px] object-cover"
+                className="aspect-[16/7] w-full rounded-[18px] object-cover"
               />
             ) : null}
 

@@ -26,7 +26,7 @@ export function VendorPreviewModal({ vendor, onClose }: VendorPreviewModalProps)
       <div
         role="dialog"
         aria-labelledby="vendor-preview-title"
-        className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[20px] bg-white shadow-xl"
+        className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[18px] bg-white shadow-xl"
       >
         {vendor.imageSrc ? (
           <img src={vendor.imageSrc} alt="" className="aspect-[16/9] w-full object-cover" />

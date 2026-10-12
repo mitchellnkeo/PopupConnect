@@ -8,27 +8,22 @@ type LandingHeaderProps = {
   overlay?: boolean;
 };
 
-export function LandingHeader({ overlay = true }: LandingHeaderProps) {
+export function LandingHeader({ overlay = false }: LandingHeaderProps) {
   const { session, loading } = useAuth();
   const loggedIn = !loading && Boolean(session);
   const variant = overlay ? "overlay" : "default";
 
   return (
     <header
-      className={`absolute inset-x-0 top-0 z-20 ${
+      className={
         overlay
-          ? "border-white/40 border-b bg-body/40"
-          : "border-neutral-200 border-b bg-white"
-      }`}
+          ? "absolute inset-x-0 top-0 z-30 border-white/40 border-b bg-body/40"
+          : "sticky top-0 z-30 border-gray-300 border-b bg-white"
+      }
     >
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3.5 md:px-[60px]">
-        <div className="flex min-w-0 items-center gap-8 md:gap-12">
-          <BrandLogo variant={overlay ? "onDark" : "primary"} />
-          {loggedIn ? <AudienceToggle variant={variant} /> : null}
-        </div>
-
-        {!loggedIn ? <GuestNavLinks variant={variant} /> : <div className="hidden flex-1 lg:block" />}
-
+        <BrandLogo variant={overlay ? "onDark" : "primary"} />
+        {loggedIn ? <AudienceToggle variant={variant} /> : <GuestNavLinks variant={variant} />}
         <HeaderAuthActions variant={variant} />
       </div>
     </header>

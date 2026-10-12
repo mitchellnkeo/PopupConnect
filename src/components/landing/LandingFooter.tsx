@@ -46,7 +46,7 @@ function LegalBar() {
   return (
     <div className="flex flex-col gap-3 border-border border-t py-[18px] text-center text-body text-lg sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <span>2026 Freqnt co</span>
+        <span>2026 freqnt.club</span>
         <span aria-hidden>·</span>
         <Link to="/about" className="hover:text-primary">
           Privacy

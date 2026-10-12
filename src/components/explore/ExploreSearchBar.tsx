@@ -6,6 +6,7 @@ import {
   formatExploreQueryLabel,
   formatLocationLabel,
 } from "../../lib/exploreSearch";
+import { btnPrimary } from "../../lib/buttonStyles";
 import { DatePickerPopover } from "../search/DatePickerPopover";
 import { ExploreDropdown } from "../search/ExploreDropdown";
 import { LocationDropdown } from "../search/LocationDropdown";
@@ -15,7 +16,10 @@ type Panel = "none" | "where" | "when" | "explore";
 type ExploreSearchBarProps = {
   filters: ExploreFilters;
   onFiltersChange: (next: ExploreFilters) => void;
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "discovery";
+  ctaLabel?: string;
+  onSubmit?: () => void;
+  placeholders?: boolean;
 };
 
 type SegmentButtonProps = {
@@ -24,6 +28,7 @@ type SegmentButtonProps = {
   active: boolean;
   onClick: () => void;
   compact?: boolean;
+  discovery?: boolean;
   segmentPosition?: "first" | "middle" | "last";
 };
 
@@ -40,9 +45,26 @@ function SegmentButton({
   active,
   onClick,
   compact,
+  discovery,
   segmentPosition,
 }: SegmentButtonProps) {
   const corners = segmentCornerClass(compact, segmentPosition);
+
+  if (discovery) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-expanded={active}
+        className={`flex min-w-0 flex-1 flex-col gap-1 rounded px-2 py-1.5 text-left ${
+          active ? "bg-surface" : "hover:bg-surface"
+        }`}
+      >
+        <span className="font-medium text-body text-sm">{label}</span>
+        <span className="w-full truncate text-[18px] text-body/60">{value}</span>
+      </button>
+    );
+  }
 
   if (compact) {
     return (
@@ -51,7 +73,7 @@ function SegmentButton({
         onClick={onClick}
         aria-expanded={active}
         title={value}
-        className={`h-full w-full truncate px-3 py-2.5 text-body text-base transition sm:px-5 sm:text-lg ${corners} ${
+        className={`h-full min-w-0 flex-1 truncate px-3 py-2.5 text-body text-base transition sm:px-5 sm:text-lg ${corners} ${
           active ? "bg-starlight/60" : "bg-white hover:bg-starlight/30"
         }`}
       >
@@ -81,13 +103,27 @@ const PANEL_ALIGN: Record<Exclude<Panel, "none">, string> = {
   explore: "right-0",
 };
 
+const DISCOVERY_PANEL_ALIGN: Record<Exclude<Panel, "none">, string> = {
+  when: "left-0",
+  where: "left-1/2 -translate-x-1/2",
+  explore: "right-0",
+};
+
 export function ExploreSearchBar({
   filters,
   onFiltersChange,
   variant = "default",
+  ctaLabel = "Search vendors",
+  onSubmit,
+  placeholders = false,
 }: ExploreSearchBarProps) {
   const [panel, setPanel] = useState<Panel>("none");
   const [locationQuery, setLocationQuery] = useState("");
+  const [filled, setFilled] = useState({
+    when: !placeholders,
+    where: !placeholders,
+    type: !placeholders && Boolean(filters.query.trim() || filters.categoryId),
+  });
 
   const [dateMode, setDateMode] = useState(filters.whenMode);
   const [singleDay, setSingleDay] = useState(filters.whenDay);
@@ -106,6 +142,7 @@ export function ExploreSearchBar({
   }, [filters]);
 
   const compact = variant === "compact";
+  const discovery = variant === "discovery";
 
   function close() {
     setPanel("none");
@@ -119,13 +156,19 @@ export function ExploreSearchBar({
     onFiltersChange({ ...filters, ...partial });
   }
 
-  const locationDisplay = formatLocationLabel(filters.where);
-  const dateDisplay = formatDateLabel(filters);
-  const exploreDisplay = formatExploreQueryLabel(filters);
+  const locationDisplay =
+    placeholders && !filled.where ? "Search location" : formatLocationLabel(filters.where);
+  const dateDisplay = placeholders && !filled.when ? "Search date" : formatDateLabel(filters);
+  const exploreDisplay =
+    placeholders && !filled.type ? "Search for vendor types" : formatExploreQueryLabel(filters);
 
-  const barClass = compact
-    ? "relative z-50 flex h-[42px] max-w-full items-stretch overflow-hidden rounded-full border border-border bg-white"
-    : "relative z-50 flex max-w-full rounded-full border border-neutral-200 bg-white shadow-sm";
+  const barClass = discovery
+    ? "relative z-50 flex w-full items-center gap-4 overflow-visible rounded-2xl border border-gray-300 bg-white px-[18px] py-3.5"
+    : compact
+      ? "relative z-50 flex h-[42px] max-w-full items-stretch overflow-hidden rounded-full border border-border bg-white"
+      : "relative z-50 flex max-w-full rounded-full border border-neutral-200 bg-white shadow-sm";
+
+  const panelAlign = discovery ? DISCOVERY_PANEL_ALIGN : PANEL_ALIGN;
 
   const panelContent =
     panel === "where" ? (
@@ -134,6 +177,7 @@ export function ExploreSearchBar({
         onQueryChange={setLocationQuery}
         onPick={(place) => {
           patch({ where: place.label, lat: place.lat, lng: place.lng });
+          setFilled((current) => ({ ...current, where: true }));
           close();
         }}
       />
@@ -168,6 +212,7 @@ export function ExploreSearchBar({
             whenMonth: defaultExploreFilters.whenMonth,
             whenEndMonth: defaultExploreFilters.whenEndMonth,
           });
+          setFilled((current) => ({ ...current, when: false }));
         }}
         onApply={() => {
           if (dateMode === "range") {
@@ -187,20 +232,34 @@ export function ExploreSearchBar({
               whenEndMonth: monthIndex,
             });
           }
+          setFilled((current) => ({ ...current, when: true }));
           close();
         }}
       />
     ) : panel === "explore" ? (
       <ExploreDropdown
-        areaLabel={`popular in the ${locationDisplay} area`}
+        areaLabel={`popular in the ${formatLocationLabel(filters.where)} area`}
         initialQuery={filters.query}
         initialCategoryId={filters.categoryId}
         onSearch={(query, categoryId) => {
           patch({ query, categoryId, categoryIds: categoryId ? [categoryId] : [] });
+          setFilled((current) => ({ ...current, type: true }));
           close();
         }}
       />
     ) : null;
+
+  const fields = discovery
+    ? ([
+        { panel: "when" as const, label: "When", value: dateDisplay },
+        { panel: "where" as const, label: "Where", value: locationDisplay },
+        { panel: "explore" as const, label: "Type", value: exploreDisplay },
+      ] as const)
+    : ([
+        { panel: "where" as const, label: "Location", value: locationDisplay },
+        { panel: "when" as const, label: "Date", value: dateDisplay },
+        { panel: "explore" as const, label: "Search", value: exploreDisplay },
+      ] as const);
 
   return (
     <div className="relative max-w-full">
@@ -214,47 +273,40 @@ export function ExploreSearchBar({
       ) : null}
 
       <div className={barClass}>
-        <div className={`relative flex h-full min-w-0 flex-1 ${compact ? "" : "border-neutral-200 border-r"}`}>
-          <SegmentButton
-            label="Location"
-            value={locationDisplay}
-            active={panel === "where"}
-            onClick={() => toggle("where")}
-            compact={compact}
-            segmentPosition={compact ? "first" : undefined}
-          />
+        <div className={`relative flex min-w-0 flex-1 ${discovery ? "gap-3" : ""}`}>
+          {fields.map((field, index) => (
+            <div
+              key={field.panel}
+              className={`relative flex h-full min-w-0 flex-1 ${
+                compact || discovery ? "" : "border-neutral-200 border-r last:border-r-0"
+              }`}
+            >
+              {compact && index > 0 ? <div className="w-px shrink-0 self-stretch bg-border" /> : null}
+              <SegmentButton
+                label={field.label}
+                value={field.value}
+                active={panel === field.panel}
+                onClick={() => toggle(field.panel)}
+                compact={compact}
+                discovery={discovery}
+                segmentPosition={compact ? (index === 0 ? "first" : index === 2 ? "last" : "middle") : undefined}
+              />
+            </div>
+          ))}
         </div>
 
-        {compact ? <div className="w-px shrink-0 self-stretch bg-border" /> : null}
-
-        <div className={`relative flex h-full min-w-0 flex-1 ${compact ? "" : "border-neutral-200 border-r"}`}>
-          <SegmentButton
-            label="Date"
-            value={dateDisplay}
-            active={panel === "when"}
-            onClick={() => toggle("when")}
-            compact={compact}
-            segmentPosition={compact ? "middle" : undefined}
-          />
-        </div>
-
-        {compact ? <div className="w-px shrink-0 self-stretch bg-border" /> : null}
-
-        <div className="relative flex h-full min-w-0 flex-1">
-          <SegmentButton
-            label="Search"
-            value={exploreDisplay}
-            active={panel === "explore"}
-            onClick={() => toggle("explore")}
-            compact={compact}
-            segmentPosition={compact ? "last" : undefined}
-          />
-        </div>
+        {discovery && onSubmit ? (
+          <div className="flex shrink-0 items-center pl-6">
+            <button type="button" onClick={onSubmit} className={`${btnPrimary} min-h-11 px-5 py-2`}>
+              {ctaLabel}
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {panel !== "none" && panelContent ? (
         <div
-          className={`absolute top-[calc(100%+0.5rem)] z-[60] ${PANEL_ALIGN[panel]} max-w-[calc(100vw-2rem)]`}
+          className={`absolute top-[calc(100%+0.5rem)] z-[60] ${panelAlign[panel]} max-w-[calc(100vw-2rem)]`}
           onClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >

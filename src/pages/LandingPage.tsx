@@ -1,16 +1,20 @@
-import { BuiltForCollectiveSection } from "../components/landing/BuiltForCollectiveSection";
-import { CommunityWaitingSection } from "../components/landing/CommunityWaitingSection";
-import { HeroSection } from "../components/landing/HeroSection";
+import { BelongSection } from "../components/landing/BelongSection";
+import { DiscoveryHero } from "../components/landing/DiscoveryHero";
+import { LandingFaq } from "../components/landing/LandingFaq";
 import { LandingFooter } from "../components/landing/LandingFooter";
-import { WeHelpConnectSection } from "../components/landing/WeHelpConnectSection";
+import { LandingHeader } from "../components/landing/LandingHeader";
+import { NeighborhoodSpaces } from "../components/landing/NeighborhoodSpaces";
+import { UpcomingPopups } from "../components/landing/UpcomingPopups";
 
 export function LandingPage() {
   return (
     <div className="bg-white">
-      <HeroSection />
-      <WeHelpConnectSection />
-      <BuiltForCollectiveSection />
-      <CommunityWaitingSection />
+      <LandingHeader />
+      <DiscoveryHero />
+      <NeighborhoodSpaces />
+      <UpcomingPopups />
+      <LandingFaq />
+      <BelongSection />
       <LandingFooter />
     </div>
   );

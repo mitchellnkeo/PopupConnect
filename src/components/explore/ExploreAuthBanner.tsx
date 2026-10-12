@@ -15,7 +15,7 @@ export function ExploreAuthBanner() {
     const firstName = getFirstName(profile, user?.user_metadata);
 
     return (
-      <div className="rounded-xl bg-cream px-4 py-3 md:px-5">
+      <div className="rounded-xl bg-teal-100 px-4 py-3 md:px-5">
         <p className="text-body text-sm md:text-base">
           Welcome back, <span className="font-semibold text-midnight">{firstName}</span>.{" "}
           <Link
@@ -30,7 +30,7 @@ export function ExploreAuthBanner() {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-surface px-4 py-3 md:px-5">
+    <div className="rounded-xl border border-divider bg-surface px-4 py-3 md:px-5">
       <p className="text-body text-sm md:text-base">
         Browsing as a guest.{" "}
         <Link

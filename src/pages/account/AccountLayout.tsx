@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
-import { Button } from "../../components/ui/Button";
 import { Tabs } from "../../components/ui/Tabs";
-import { BrandLogo } from "../../components/brand/BrandLogo";
+import { AppHeader } from "../../components/layout/AppHeader";
 import { isAdminUser } from "../../lib/admins";
 import { formatRoleList, getAccountNavItems, getSettingsTabItems } from "../../lib/roles";
 
@@ -17,7 +16,7 @@ function navClassName({ isActive }: { isActive: boolean }) {
 export function AccountLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, profile, signOut, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const roles = profile?.roles ?? [];
   const admin = isAdminUser(user);
   const settingsTabs = getSettingsTabItems(roles, { isAdmin: admin });
@@ -31,20 +30,8 @@ export function AccountLayout() {
   }, [loading, profile, navigate]);
 
   return (
-    <div className="min-h-dvh bg-neutral-50">
-      <header className="border-neutral-200 border-b bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
-          <BrandLogo />
-          <div className="flex items-center gap-3">
-            <Link to="/explore" className="text-midnight text-sm hover:text-primary">
-              Explore
-            </Link>
-            <Button type="button" variant="secondary" onClick={() => void signOut()}>
-              Sign out
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-dvh bg-white">
+      <AppHeader />
 
       <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-[220px_1fr]">
         <aside className="hidden md:block">

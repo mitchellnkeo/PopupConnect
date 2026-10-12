@@ -12,3 +12,6 @@ export const btnPrimaryPill = `rounded bg-primary px-5 py-2 text-sm font-medium 
 
 export const btnSecondaryOutline =
   "rounded border-2 border-primary bg-white px-5 py-2.5 font-semibold text-primary transition hover:bg-starlight/50";
+
+export const btnTertiary =
+  "inline-flex min-h-10 items-center gap-2.5 rounded px-3 py-[5.5px] text-[19px] text-primary transition hover:bg-teal-100";

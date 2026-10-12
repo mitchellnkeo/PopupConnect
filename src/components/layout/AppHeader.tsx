@@ -1,6 +1,9 @@
+import { useAuth } from "../../features/auth/AuthContext";
 import { BrandLogo } from "../brand/BrandLogo";
 import type { ExploreFilters } from "../../lib/exploreSearch";
 import { ExploreSearchBar } from "../explore/ExploreSearchBar";
+import { AudienceToggle } from "./AudienceToggle";
+import { GuestNavLinks } from "./GuestNavLinks";
 import { HeaderAuthActions } from "./HeaderAuthActions";
 
 type AppHeaderProps = {
@@ -11,9 +14,11 @@ type AppHeaderProps = {
 
 export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppHeaderProps) {
   const search = showSearch && filters && onFiltersChange;
+  const { session, loading } = useAuth();
+  const loggedIn = !loading && Boolean(session);
 
   return (
-    <header className="sticky top-0 z-30 overflow-visible border-border border-b bg-white">
+    <header className="sticky top-0 z-30 overflow-visible border-gray-300 border-b bg-white">
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3.5 md:px-[60px]">
         <BrandLogo />
 
@@ -21,8 +26,10 @@ export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppH
           <div className="hidden min-w-0 flex-1 justify-center overflow-visible lg:flex">
             <ExploreSearchBar filters={filters} onFiltersChange={onFiltersChange} variant="compact" />
           </div>
+        ) : loggedIn ? (
+          <AudienceToggle />
         ) : (
-          <div className="hidden flex-1 lg:block" />
+          <GuestNavLinks />
         )}
 
         <HeaderAuthActions />

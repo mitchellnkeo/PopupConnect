@@ -20,6 +20,8 @@ export function vendorsToExploreResults(): ExploreResult[] {
     searchText: [vendor.title, vendor.city, vendor.about, vendor.idealFor, ...vendor.tags].join(" "),
     startingPrice: vendor.startingPrice,
     createdAt: vendor.createdAt,
+    about: vendor.about,
+    tags: vendor.tags,
   }));
 }
 

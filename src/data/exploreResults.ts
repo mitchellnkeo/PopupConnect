@@ -16,6 +16,8 @@ export type ExploreResult = {
   distanceMiles?: number;
   startingPrice?: number;
   createdAt?: string;
+  about?: string;
+  tags?: string[];
 };
 
 export const exploreResults: ExploreResult[] = vendorsToExploreResults();

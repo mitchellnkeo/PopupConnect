@@ -8,6 +8,7 @@ import { TextField } from "../../components/ui/TextField";
 import { mapAuthError } from "../../lib/authErrors";
 import { getPostAuthPath } from "../../lib/authRouting";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
+import { landingImages } from "../../config/landingImages";
 import { fetchProfile } from "../../services/profileService";
 
 export function SignInPage() {
@@ -64,10 +65,10 @@ export function SignInPage() {
   return (
     <AuthChrome layout="full">
       <div className="grid flex-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-        <div
-          className="hidden min-h-[420px] rounded-2xl bg-gradient-to-br from-starlight via-primary/20 to-midnight/30 lg:block"
-          role="img"
-          aria-label="Community illustration placeholder"
+        <img
+          src={landingImages.communityGathering}
+          alt="People gathering in a neighborhood space"
+          className="hidden min-h-[420px] w-full rounded-[18px] object-cover lg:block"
         />
 
         <div className={authCardClass}>
