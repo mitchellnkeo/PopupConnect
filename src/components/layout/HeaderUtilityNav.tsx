@@ -21,10 +21,10 @@ export function HeaderUtilityNav({ variant = "default" }: HeaderUtilityNavProps)
   return (
     <>
       <Link to="/messages" className={linkClass} aria-label="Messages">
-        <IconComment className="size-[18px]" />
+        <IconComment className="size-6" />
       </Link>
       <Link to="/when" className={linkClass} aria-label="Calendar">
-        <IconCalendar className="size-[18px]" />
+        <IconCalendar className="size-6" />
       </Link>
     </>
   );

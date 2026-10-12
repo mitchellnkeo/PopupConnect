@@ -18,7 +18,7 @@ const audienceRows = [
 
 export function BuiltForCollectiveSection() {
   return (
-    <section className="bg-white pt-10">
+    <section id="how-it-works" className="scroll-mt-24 bg-white pt-10">
       <div className="flex min-h-[600px] flex-col gap-12 bg-cream px-6 py-16 md:flex-row md:gap-[100px] md:px-[120px] md:py-[120px]">
         <div className="shrink-0">
           <h2 className="font-extrabold text-[length:var(--text-collective,72px)] text-accent leading-[1.08] tracking-[-0.02em]">

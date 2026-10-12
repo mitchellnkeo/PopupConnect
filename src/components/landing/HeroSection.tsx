@@ -12,7 +12,7 @@ export function HeroSection() {
         alt="Community marketplace hero"
         className="min-h-[min(85vh,738px)]"
         imageClassName="left-0 w-full h-[120%] -top-[10%] object-cover object-[center_40%]"
-        overlayClassName="bg-gradient-to-b from-midnight/30 via-midnight/10 to-midnight/55"
+        overlayClassName="bg-gradient-to-b from-body/40 via-body/10 to-body/45"
       >
         <LandingHeader overlay />
 

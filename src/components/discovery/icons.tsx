@@ -24,11 +24,6 @@ export function IconPin(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function LogoMark(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 40 24" fill="none" aria-hidden {...props}>
-      <circle cx="12" cy="12" r="9" fill="#172E50" fillOpacity="0.15" stroke="#172E50" strokeWidth="1.5" />
-      <circle cx="18" cy="12" r="9" fill="#CC3D00" fillOpacity="0.2" stroke="#CC3D00" strokeWidth="1.5" />
-    </svg>
-  );
+export function LogoMark({ className = "size-8" }: { className?: string }) {
+  return <img src="/images/brand/logo-mark.svg" alt="" width={32} height={32} className={className} />;
 }

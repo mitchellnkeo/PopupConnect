@@ -4,8 +4,11 @@
 @theme {
   --font-sans: "Mona Sans Variable", "Mona Sans", ui-sans-serif, system-ui, sans-serif;
 
-  --color-primary: #cc3d00;
-  --color-primary-hover: #a83300;
+  --color-primary: #009c9f;
+  --color-primary-hover: #00787a;
+  --color-teal-100: #ecf8f9;
+  --color-teal-600: #00787a;
+  --color-teal-800: #003233;
   --color-midnight: #172e50;
   --color-starlight: #ffdfa6;
   --color-cream: #f5ede0;
@@ -61,7 +64,7 @@
 }
 
 .pc-marker-active span {
-  background: #cc3d00;
+  background: #009c9f;
 }
 
 .pc-cluster {
@@ -70,7 +73,7 @@
   justify-content: center;
   border: 2px solid #fff;
   border-radius: 9999px;
-  background: #cc3d00;
+  background: #009c9f;
   color: #fff;
   font-weight: 700;
   font-size: 13px;

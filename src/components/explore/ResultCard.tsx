@@ -35,7 +35,7 @@ export function ResultCard({ result, highlighted, onHover, onClick }: ResultCard
     </>
   );
 
-  const className = `block w-full overflow-hidden rounded-[10px] bg-white text-left shadow-[0_0_20px_8px_rgba(0,0,0,0.25)] transition ${
+  const className = `block w-full overflow-hidden rounded-[10px] bg-white text-left shadow-[0_8px_24px_rgba(16,36,64,0.12)] transition ${
     highlighted ? "ring-2 ring-primary" : ""
   }`;
 

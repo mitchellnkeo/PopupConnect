@@ -1,9 +1,6 @@
-import { Link } from "react-router-dom";
-import { BrandWordmark } from "../brand/BrandWordmark";
+import { BrandLogo } from "../brand/BrandLogo";
 import { LandingFooter } from "../landing/LandingFooter";
-import { IconCalendar } from "../landing/icons";
-import { LogoMarkPrimary } from "../explore/icons";
-import { UserAccountMenu } from "./UserAccountMenu";
+import { HeaderAuthActions } from "../layout/HeaderAuthActions";
 
 type AuthChromeProps = {
   children: React.ReactNode;
@@ -14,29 +11,10 @@ type AuthChromeProps = {
 export function AuthChrome({ children, layout = "centered" }: AuthChromeProps) {
   return (
     <div className="flex min-h-dvh flex-col bg-white">
-      <header className="border-neutral-100 border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 md:px-6">
-          <Link to="/" className="flex items-center gap-2">
-            <LogoMarkPrimary className="h-7 w-11" />
-            <BrandWordmark className="font-semibold text-primary text-sm tracking-widest" />
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link
-              to="/about"
-              className="rounded-full p-2 text-midnight transition hover:bg-neutral-100"
-              aria-label="About"
-            >
-              <span className="block size-5 rounded border-2 border-midnight border-dashed" />
-            </Link>
-            <Link
-              to="/when"
-              className="rounded-full p-2 text-midnight transition hover:bg-neutral-100"
-              aria-label="Calendar"
-            >
-              <IconCalendar className="size-5" />
-            </Link>
-            <UserAccountMenu />
-          </div>
+      <header className="border-border border-b bg-white">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3.5 md:px-[60px]">
+          <BrandLogo />
+          <HeaderAuthActions />
         </div>
       </header>
 
