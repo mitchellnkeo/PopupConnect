@@ -1,15 +1,22 @@
 import { Link } from "react-router-dom";
 import { upcomingPopups } from "../../data/upcomingPopups";
+import { discoveryHomes, type DiscoveryAudience } from "../../lib/discoveryHome";
 import { btnTertiary } from "../../lib/buttonStyles";
 import { landingIcons } from "../../config/landingImages";
 
-export function UpcomingPopups() {
+type UpcomingPopupsProps = {
+  audience: DiscoveryAudience;
+};
+
+export function UpcomingPopups({ audience }: UpcomingPopupsProps) {
+  const copy = discoveryHomes[audience];
+
   return (
     <section className="flex flex-col gap-8 bg-teal-600/5 px-4 py-16 md:px-[60px]">
       <div className="flex flex-col gap-2">
-        <p className="text-base text-body/60">Checkout events around your area</p>
+        <p className="text-base text-body/60">{copy.eventsEyebrow}</p>
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="font-normal text-[40px] text-midnight leading-none">See a space come to life</h2>
+          <h2 className="font-normal text-[40px] text-midnight leading-none">{copy.eventsTitle}</h2>
           <Link to="/explore" className={btnTertiary}>
             Explore all events
             <img src={landingIcons.arrowRight} alt="" width={18} height={18} />

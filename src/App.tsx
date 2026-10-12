@@ -28,6 +28,7 @@ export function App() {
   return (
     <Routes>
       <Route index element={<LandingPage />} />
+      <Route path="vendors" element={<LandingPage />} />
       <Route path="explore" element={<ExplorePage />} />
       <Route path="vendor/:vendorId" element={<VendorDetailPage />} />
 

@@ -20,7 +20,7 @@ export function HeaderAuthActions({ variant = "default" }: HeaderAuthActionsProp
 
   if (session) {
     return (
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-1">
         <HeaderUtilityNav variant={variant} />
         <UserAccountMenu variant={variant} />
       </div>

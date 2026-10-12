@@ -65,7 +65,7 @@ export function UserAccountMenu({ variant = "default", className = "" }: UserAcc
 
   const triggerClass = [
     "flex items-center justify-center rounded-full font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
-    isOverlay ? "size-12 text-[22px]" : "size-12 font-semibold text-[22px]",
+    isOverlay ? "size-10 text-base" : "size-10 font-semibold text-base",
     isOverlay
       ? "bg-midnight text-white hover:bg-midnight/90 focus-visible:outline-white"
       : "bg-midnight text-white hover:bg-midnight/90 focus-visible:outline-primary",

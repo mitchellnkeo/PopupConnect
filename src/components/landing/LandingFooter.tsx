@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { BrandLogo } from "../brand/BrandLogo";
 
 const discover = [
-  { to: "/explore?category=venues", label: "Spaces" },
-  { to: "/explore", label: "Vendors & artists" },
+  { to: "/", label: "Spaces" },
+  { to: "/vendors", label: "Vendors & artists" },
   { to: "/explore", label: "Pop-ups & events" },
 ] as const;
 

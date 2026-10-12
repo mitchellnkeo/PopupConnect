@@ -5,23 +5,44 @@ import {
   filtersToSearchParams,
   type ExploreFilters,
 } from "../../lib/exploreSearch";
+import { discoveryHomes, type DiscoveryAudience } from "../../lib/discoveryHome";
 import { ExploreSearchBar } from "../explore/ExploreSearchBar";
 
-export function HeroSearchNav() {
+type HeroSearchNavProps = {
+  audience: DiscoveryAudience;
+};
+
+export function HeroSearchNav({ audience }: HeroSearchNavProps) {
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<ExploreFilters>(defaultExploreFilters);
+  const copy = discoveryHomes[audience];
+  const [filters, setFilters] = useState<ExploreFilters>(() => ({
+    ...defaultExploreFilters,
+    categoryId: copy.searchCategoryId,
+    categoryIds: copy.searchCategoryId ? [copy.searchCategoryId] : [],
+  }));
 
   function submit() {
-    navigate(`/explore?${filtersToSearchParams(filters).toString()}`);
+    const next = {
+      ...filters,
+      categoryId: filters.categoryId ?? copy.searchCategoryId,
+      categoryIds:
+        filters.categoryIds.length > 0
+          ? filters.categoryIds
+          : copy.searchCategoryId
+            ? [copy.searchCategoryId]
+            : [],
+    };
+    navigate(`/explore?${filtersToSearchParams(next).toString()}`);
   }
 
   return (
     <ExploreSearchBar
+      key={audience}
       filters={filters}
       onFiltersChange={setFilters}
       variant="discovery"
       placeholders
-      ctaLabel="Search vendors"
+      ctaLabel={copy.searchCta}
       onSubmit={submit}
     />
   );

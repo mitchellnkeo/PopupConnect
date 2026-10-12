@@ -2,81 +2,87 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { landingIcons, landingImages } from "../../config/landingImages";
 import { getVendorById } from "../../data/vendors";
+import { discoveryHomes, type DiscoveryAudience } from "../../lib/discoveryHome";
 import { HeroSearchNav } from "./HeroSearchNav";
 
-const popularSpaces = [
-  {
-    title: "Storefronts",
-    subtitle: "Meet the neighbors",
-    to: "/explore?category=venues&q=storefront",
-  },
-  {
-    title: "Outdoor spaces",
-    subtitle: "Gather in open air",
-    to: "/explore?category=venues&q=garden",
-  },
-  {
-    title: "Cafés & community",
-    subtitle: "Make yourself at home",
-    to: "/explore?category=venues&q=studio",
-  },
-  {
-    title: "Large spaces",
-    subtitle: "Endless potential",
-    to: "/explore?category=venues&q=warehouse",
-  },
-] as const;
-
-const hostSlides = [
+const venueSlides = [
   { id: "salt-yard", fallbackName: "Salt Yard Studio" },
   { id: "lanai-loft", fallbackName: "The Lānai Loft" },
   { id: "hale-mauka", fallbackName: "Hale Mauka Garden" },
   { id: "pier-38", fallbackName: "Pier 38 Warehouse" },
 ] as const;
 
-const slides = [
-  {
-    src: landingImages.communityGathering,
-    name: "Mixed Pantry",
-    location: "Downtown Seattle",
-    to: "/explore?category=venues",
-  },
-  ...hostSlides.map((host) => {
-    const vendor = getVendorById(host.id);
+const vendorSlides = [
+  { id: "lei-thread", fallbackName: "Lei & Thread Studio" },
+  { id: "snap-lei", fallbackName: "Snap Lei Photo" },
+  { id: "hearth-leaf", fallbackName: "Hearth & Leaf" },
+  { id: "clay-tide", fallbackName: "Clay & Tide" },
+] as const;
+
+function slidesFor(audience: DiscoveryAudience) {
+  const featured =
+    audience === "venues"
+      ? {
+          src: landingImages.communityGathering,
+          name: "Mixed Pantry",
+          location: "Downtown Seattle",
+          to: "/explore?category=venues",
+        }
+      : {
+          src: landingImages.communityGathering,
+          name: "Aki's Mobile Matcha Bar",
+          location: "Honolulu, HI",
+          to: "/vendor/aki-matcha",
+        };
+
+  const listingSlides = (audience === "venues" ? venueSlides : vendorSlides).map((item) => {
+    const vendor = getVendorById(item.id);
     return {
       src: vendor?.heroImageSrc ?? vendor?.imageSrc ?? landingImages.daylightStudio,
-      name: vendor?.title ?? host.fallbackName,
-      location: vendor?.city ?? "Honolulu",
-      to: `/vendor/${host.id}`,
+      name: vendor?.title ?? item.fallbackName,
+      location: vendor?.city ?? "Honolulu, HI",
+      to: `/vendor/${item.id}`,
     };
-  }),
-];
+  });
 
-export function DiscoveryHero() {
+  return [featured, ...listingSlides];
+}
+
+type DiscoveryHeroProps = {
+  audience: DiscoveryAudience;
+};
+
+export function DiscoveryHero({ audience }: DiscoveryHeroProps) {
+  const copy = discoveryHomes[audience];
+  const slides = slidesFor(audience);
   const [slide, setSlide] = useState(0);
   const current = slides[slide] ?? slides[0];
+
+  useEffect(() => {
+    setSlide(0);
+  }, [audience]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
       setSlide((index) => (index + 1) % slides.length);
     }, 7000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [slides.length, audience]);
 
   return (
     <section className="flex flex-col gap-12 px-4 pt-16 pb-8 md:px-[60px]">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h1 className="font-normal text-[40px] text-midnight leading-none">Find a place to gather</h1>
-          <p className="text-base text-body/60">Search venues, compare options, and book in minutes.</p>
+          <h1 className="font-normal text-[40px] text-midnight leading-none">{copy.headline}</h1>
+          <p className="text-base text-body/60">{copy.subhead}</p>
         </div>
-        <HeroSearchNav />
+        <HeroSearchNav key={audience} audience={audience} />
       </div>
 
       <div className="flex flex-col gap-[18px]">
         <p className="font-semibold text-lg text-midnight">Popular</p>
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {popularSpaces.map((space) => (
+          {copy.popular.map((space) => (
             <Link
               key={space.title}
               to={space.to}
