@@ -18,6 +18,11 @@ export type ExploreResult = {
   createdAt?: string;
   about?: string;
   tags?: string[];
+  minPartySize?: number;
+  maxGuests?: number;
+  deposit?: number;
+  avgRating?: number;
+  bookingsThisYear?: number;
 };
 
 export const exploreResults: ExploreResult[] = vendorsToExploreResults();

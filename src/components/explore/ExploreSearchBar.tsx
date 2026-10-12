@@ -73,8 +73,8 @@ function SegmentButton({
         onClick={onClick}
         aria-expanded={active}
         title={value}
-        className={`h-full min-w-0 flex-1 truncate px-3 py-2.5 text-body text-base transition sm:px-5 sm:text-lg ${corners} ${
-          active ? "bg-starlight/60" : "bg-white hover:bg-starlight/30"
+        className={`h-full min-w-0 flex-1 truncate px-3 py-2.5 text-center font-medium text-base text-body transition sm:min-w-[160px] sm:px-5 sm:text-lg ${corners} ${
+          active ? "bg-surface" : "bg-white hover:bg-surface"
         }`}
       >
         {value}
@@ -158,14 +158,15 @@ export function ExploreSearchBar({
 
   const locationDisplay =
     placeholders && !filled.where ? "Search location" : formatLocationLabel(filters.where);
-  const dateDisplay = placeholders && !filled.when ? "Search date" : formatDateLabel(filters);
+  const dateDisplay =
+    placeholders && !filled.when ? "Search date" : formatDateLabel(filters, { short: compact });
   const exploreDisplay =
     placeholders && !filled.type ? "Search for vendor types" : formatExploreQueryLabel(filters);
 
   const barClass = discovery
     ? "relative z-50 flex w-full items-center gap-4 overflow-visible rounded-2xl border border-gray-300 bg-white px-[18px] py-3.5"
     : compact
-      ? "relative z-50 flex h-[42px] max-w-full items-stretch overflow-hidden rounded-full border border-border bg-white"
+      ? "relative z-50 flex h-12 max-w-full items-stretch overflow-hidden rounded-full border border-gray-300 bg-white"
       : "relative z-50 flex max-w-full rounded-full border border-neutral-200 bg-white shadow-sm";
 
   const panelAlign = discovery ? DISCOVERY_PANEL_ALIGN : PANEL_ALIGN;
@@ -255,11 +256,17 @@ export function ExploreSearchBar({
         { panel: "where" as const, label: "Where", value: locationDisplay },
         { panel: "explore" as const, label: "Type", value: exploreDisplay },
       ] as const)
-    : ([
-        { panel: "where" as const, label: "Location", value: locationDisplay },
-        { panel: "when" as const, label: "Date", value: dateDisplay },
-        { panel: "explore" as const, label: "Search", value: exploreDisplay },
-      ] as const);
+    : compact
+      ? ([
+          { panel: "when" as const, label: "Date", value: dateDisplay },
+          { panel: "where" as const, label: "Location", value: locationDisplay },
+          { panel: "explore" as const, label: "Search", value: exploreDisplay },
+        ] as const)
+      : ([
+          { panel: "where" as const, label: "Location", value: locationDisplay },
+          { panel: "when" as const, label: "Date", value: dateDisplay },
+          { panel: "explore" as const, label: "Search", value: exploreDisplay },
+        ] as const);
 
   return (
     <div className="relative max-w-full">

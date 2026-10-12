@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppHeader } from "../components/layout/AppHeader";
 import { ExploreAuthBanner } from "../components/explore/ExploreAuthBanner";
-import { ExploreRefineBar } from "../components/explore/ExploreRefineBar";
+import { ExploreFilterPicker } from "../components/explore/ExploreFilterPicker";
 import { ResultCard } from "../components/explore/ResultCard";
 import { ResultsMap } from "../components/explore/ResultsMap";
 import { VendorPreviewModal } from "../components/vendor/VendorPreviewModal";
@@ -16,7 +16,6 @@ import { filterExploreResults } from "../lib/vendorResults";
 import {
   defaultExploreFilters,
   exploreEmptyCopy,
-  formatDateLabel,
   filtersToSearchParams,
   hasExploreSearchParams,
   parseExploreFilters,
@@ -29,6 +28,7 @@ export function ExplorePage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [previewVendorId, setPreviewVendorId] = useState<string | null>(null);
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
+  const [cardLayout, setCardLayout] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
     if (!hasExploreSearchParams(searchParams)) {
@@ -67,7 +67,21 @@ export function ExplorePage() {
     <div className="flex min-h-dvh flex-col bg-white">
       <AppHeader showSearch filters={filters} onFiltersChange={handleFiltersChange} />
 
-      <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col gap-5 px-4 pt-10 pb-6 md:px-[60px] lg:flex-row lg:gap-5">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col gap-6 px-4 pt-12 pb-6 md:px-[60px]">
+        <ExploreAuthBanner />
+
+        <div className="flex flex-col gap-2">
+          <p className="font-medium text-body/60 text-sm">Results</p>
+          <h1 className="font-normal text-[28px] text-midnight leading-none">{heading}</h1>
+        </div>
+
+        <ExploreFilterPicker
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          cardLayout={cardLayout}
+          onCardLayoutChange={setCardLayout}
+        />
+
         <div className="lg:hidden">
           <Tabs
             aria-label="Results view"
@@ -80,70 +94,62 @@ export function ExplorePage() {
           />
         </div>
 
-        <section
-          className={`min-w-0 flex-col lg:flex lg:w-[42%] ${mobileView === "list" ? "flex" : "hidden lg:flex"}`}
-        >
-          <ExploreAuthBanner />
-
-          <p className="mt-5 text-base text-body/60">Results</p>
-          <h1 className="mt-2 font-normal text-[28px] text-midnight leading-none">
-            {heading}
-          </h1>
-          <p className="mt-2 text-body/55 text-sm">
-            Planning for {formatDateLabel(filters)}. Dates don&apos;t filter availability yet.
-          </p>
-
-          <ExploreRefineBar filters={filters} onFiltersChange={handleFiltersChange} />
-
-          <ul className="mt-5 grid max-h-[calc(100vh-12rem)] grid-cols-1 gap-6 overflow-y-auto pb-5 sm:grid-cols-2">
-            {loading && results.length === 0 ? (
-              <li className="col-span-full py-8 text-body/60 text-sm">Loading listings…</li>
-            ) : null}
-            {!loading && results.length === 0 ? (
-              <li className="col-span-full py-8">
-                <p className="font-medium text-midnight text-sm">{emptyCopy.title}</p>
-                <p className="mt-1 text-body/60 text-sm">{emptyCopy.hint}</p>
-                <button
-                  type="button"
-                  onClick={() => handleFiltersChange(defaultExploreFilters)}
-                  className="mt-3 font-medium text-primary text-sm hover:underline"
-                >
-                  Clear filters
-                </button>
-              </li>
-            ) : null}
-            {results.map((result) => (
-              <li key={result.id}>
-                <ResultCard
-                  result={result}
-                  highlighted={activeId === result.id}
-                  onHover={() => setActiveId(result.id)}
-                  onClick={() => setPreviewVendorId(result.id)}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section
-          className={`min-w-0 lg:w-[58%] ${mobileView === "map" ? "block" : "hidden lg:block"}`}
-        >
-          <div
-            className={`${
-              mobileView === "map" ? "h-[calc(100dvh-14rem)]" : "h-[320px]"
-            } lg:sticky lg:top-28 lg:h-[calc(100vh-12rem)]`}
+        <div className="flex flex-col gap-5 lg:flex-row">
+          <section
+            className={`min-w-0 flex-1 flex-col ${mobileView === "list" ? "flex" : "hidden lg:flex"}`}
           >
-            <ResultsMap
-              results={results}
-              activeId={activeId}
-              onMarkerHover={setActiveId}
-              onMarkerClick={setPreviewVendorId}
-              searchOrigin={searchOrigin}
-              onSearchArea={(center) => void handleSearchArea(center)}
-              layoutKey={mobileView}
-            />
-          </div>
-        </section>
+            <ul
+              className={`grid gap-6 ${cardLayout === "list" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}
+            >
+              {loading && results.length === 0 ? (
+                <li className="col-span-full py-8 text-body/60 text-sm">Loading listings…</li>
+              ) : null}
+              {!loading && results.length === 0 ? (
+                <li className="col-span-full py-8">
+                  <p className="font-medium text-midnight text-sm">{emptyCopy.title}</p>
+                  <p className="mt-1 text-body/60 text-sm">{emptyCopy.hint}</p>
+                  <button
+                    type="button"
+                    onClick={() => handleFiltersChange(defaultExploreFilters)}
+                    className="mt-3 font-medium text-primary text-sm hover:underline"
+                  >
+                    Clear filters
+                  </button>
+                </li>
+              ) : null}
+              {results.map((result) => (
+                <li key={result.id}>
+                  <ResultCard
+                    result={result}
+                    highlighted={activeId === result.id}
+                    onHover={() => setActiveId(result.id)}
+                    onClick={() => setPreviewVendorId(result.id)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section
+            className={`min-w-0 lg:w-[38%] lg:min-w-[420px] ${mobileView === "map" ? "block" : "hidden lg:block"}`}
+          >
+            <div
+              className={`overflow-hidden rounded-[20px] ${
+                mobileView === "map" ? "h-[calc(100dvh-14rem)]" : "h-[320px]"
+              } lg:sticky lg:top-28 lg:h-[calc(100vh-10rem)]`}
+            >
+              <ResultsMap
+                results={results}
+                activeId={activeId}
+                onMarkerHover={setActiveId}
+                onMarkerClick={setPreviewVendorId}
+                searchOrigin={searchOrigin}
+                onSearchArea={(center) => void handleSearchArea(center)}
+                layoutKey={mobileView}
+              />
+            </div>
+          </section>
+        </div>
       </div>
 
       <LandingFooter />

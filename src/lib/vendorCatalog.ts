@@ -104,7 +104,19 @@ export function vendorToExploreResult(vendor: VendorProfile): ExploreResult {
     createdAt: vendor.createdAt ?? fallbackCreatedAt(vendor.id),
     about: vendor.about,
     tags: vendor.tags,
+    minPartySize: vendor.minPartySize,
+    maxGuests: maxGuestsFromVendor(vendor),
+    deposit: vendor.deposit,
+    avgRating: vendor.highlights.avgRating,
+    bookingsThisYear: vendor.highlights.bookingsThisYear,
   };
+}
+
+function maxGuestsFromVendor(vendor: VendorProfile): number {
+  const tagged = vendor.tags.find((tag) => /\d+\s*guests?/i.test(tag));
+  const fromTag = tagged?.match(/(\d+)/)?.[1];
+  if (fromTag) return Number(fromTag);
+  return Math.max(vendor.minPartySize, 10);
 }
 
 export function mergeVendorCatalog(dbVendors: VendorProfile[]): VendorProfile[] {

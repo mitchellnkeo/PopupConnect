@@ -34,6 +34,7 @@ export type ExploreFilters = {
   query: string;
   sort: ExploreSort;
   priceBand: ExplorePriceBand;
+  facets: string[];
 };
 
 export const defaultExploreFilters: ExploreFilters = {
@@ -51,6 +52,7 @@ export const defaultExploreFilters: ExploreFilters = {
   query: "",
   sort: "distance",
   priceBand: "any",
+  facets: [],
 };
 
 function parseMonth(value: string | null, fallback: number) {
@@ -85,6 +87,14 @@ function parsePriceBand(value: string | null): ExplorePriceBand {
   return PRICE_BANDS.includes(value as ExplorePriceBand)
     ? (value as ExplorePriceBand)
     : defaultExploreFilters.priceBand;
+}
+
+function parseFacetIds(value: string | null): string[] {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
 }
 
 function parseCategoryIds(params: URLSearchParams): string[] {
@@ -141,6 +151,7 @@ export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
       query,
       sort,
       priceBand,
+      facets: parseFacetIds(params.get("facets")),
       whenMode: "range",
       whenDay,
       whenEndDay,
@@ -162,6 +173,7 @@ export function parseExploreFilters(params: URLSearchParams): ExploreFilters {
     query,
     sort,
     priceBand,
+    facets: parseFacetIds(params.get("facets")),
     whenMode: "single",
     whenDay,
     whenEndDay: whenDay,
@@ -184,10 +196,12 @@ export function formatLocationLabel(where: string) {
     .join(", ");
 }
 
-export function formatDateLabel(filters: ExploreFilters) {
+export function formatDateLabel(filters: ExploreFilters, options?: { short?: boolean }) {
   const { whenDay, whenMonth, whenYear, whenMode, whenEndDay, whenEndMonth } = filters;
-  const startMonth = MONTH_NAMES[whenMonth] ?? "August";
-  const endMonth = MONTH_NAMES[whenEndMonth] ?? startMonth;
+  const startName = MONTH_NAMES[whenMonth] ?? "August";
+  const endName = MONTH_NAMES[whenEndMonth] ?? startName;
+  const startMonth = options?.short ? startName.slice(0, 3) : startName;
+  const endMonth = options?.short ? endName.slice(0, 3) : endName;
 
   if (whenMode === "range" && (whenEndDay !== whenDay || whenEndMonth !== whenMonth)) {
     return `${startMonth} ${whenDay} – ${endMonth} ${whenEndDay}, ${whenYear}`;
@@ -302,6 +316,7 @@ export function filtersToSearchParams(filters: ExploreFilters) {
   }
   if (filters.sort !== "distance") params.set("sort", filters.sort);
   if (filters.priceBand !== "any") params.set("price", filters.priceBand);
+  if (filters.facets.length > 0) params.set("facets", filters.facets.join(","));
   params.set("whenYear", String(filters.whenYear));
 
   if (filters.whenMode === "range") {
@@ -328,6 +343,7 @@ export function hasExploreSearchParams(params: URLSearchParams) {
     params.has("categories") ||
     params.has("sort") ||
     params.has("price") ||
+    params.has("facets") ||
     params.has("q")
   );
 }

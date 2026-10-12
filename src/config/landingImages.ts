@@ -16,4 +16,5 @@ export const landingIcons = {
   palette: "/images/icons/palette.svg",
   arrowRight: "/images/icons/arrow-right.svg",
   arrowUpRight: "/images/icons/arrow-up-right.svg",
+  crossSmall: "/images/icons/cross-small.svg",
 } as const;

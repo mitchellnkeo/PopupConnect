@@ -1,5 +1,6 @@
 import type { ExploreResult } from "../data/exploreResults";
 import { vendors } from "../data/vendors";
+import { matchesExploreFacet, selectedFacets, sortExploreResults } from "./exploreFacets";
 import type { ExploreFilters, ExplorePriceBand } from "./exploreSearch";
 import { selectedCategoryIds } from "./exploreSearch";
 import { DEFAULT_RADIUS_MILES, distanceMiles, normalizeSearchText } from "./geo";
@@ -22,6 +23,10 @@ export function vendorsToExploreResults(): ExploreResult[] {
     createdAt: vendor.createdAt,
     about: vendor.about,
     tags: vendor.tags,
+    minPartySize: vendor.minPartySize,
+    deposit: vendor.deposit,
+    avgRating: vendor.highlights.avgRating,
+    bookingsThisYear: vendor.highlights.bookingsThisYear,
   }));
 }
 
@@ -90,6 +95,16 @@ export function filterExploreResults(results: ExploreResult[], filters: ExploreF
 
   if (filters.priceBand !== "any") {
     filtered = filtered.filter((result) => matchesPrice(result.startingPrice ?? 0, filters.priceBand));
+  }
+
+  const facets = selectedFacets(filters);
+  if (facets.length > 0) {
+    filtered = filtered.filter((result) => facets.every((facet) => matchesExploreFacet(result, facet)));
+  }
+
+  const faceted = sortExploreResults(filtered, filters);
+  if (faceted !== filtered || facets.includes("lowest-price") || facets.includes("popular") || facets.includes("top-rated")) {
+    return faceted;
   }
 
   if (filters.sort === "price") {

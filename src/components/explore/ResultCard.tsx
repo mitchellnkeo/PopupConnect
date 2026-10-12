@@ -10,10 +10,11 @@ type ResultCardProps = {
 };
 
 export function ResultCard({ result, highlighted, onHover, onClick }: ResultCardProps) {
-  const meta =
-    result.distanceMiles != null
-      ? `${result.distanceMiles < 10 ? result.distanceMiles.toFixed(1) : Math.round(result.distanceMiles)} mi · ${result.locationCity ?? result.city}`
-      : listingMetaLine({ city: result.locationCity ?? result.city, tags: result.tags ?? [] });
+  const meta = listingMetaLine({
+    city: result.locationCity ?? result.city,
+    tags: result.tags ?? [],
+    maxGuests: result.maxGuests,
+  });
 
   return (
     <MarketplaceCard
@@ -21,6 +22,7 @@ export function ResultCard({ result, highlighted, onHover, onClick }: ResultCard
       meta={meta}
       description={result.about ?? result.city}
       imageSrc={result.imageSrc}
+      tags={result.tags}
       highlighted={highlighted}
       onClick={onClick}
       onHover={onHover}

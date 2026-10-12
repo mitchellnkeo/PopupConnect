@@ -6,6 +6,7 @@ type MarketplaceCardProps = {
   meta: string;
   description: string;
   imageSrc?: string;
+  tags?: string[];
   to?: string;
   highlighted?: boolean;
   onClick?: () => void;
@@ -17,6 +18,7 @@ export function MarketplaceCard({
   meta,
   description,
   imageSrc,
+  tags,
   to,
   highlighted,
   onClick,
@@ -35,12 +37,29 @@ export function MarketplaceCard({
           <img src={landingImages.daylightStudio} alt="" className="size-full object-cover" />
         )}
       </div>
-      <div className="flex flex-col gap-2.5 p-5">
+      <div className="flex flex-col gap-4 p-5">
         <div className="flex flex-col gap-1">
           <h3 className="font-semibold text-[22px] text-midnight leading-none">{title}</h3>
           <p className="text-body text-xs">{meta}</p>
         </div>
-        <p className="text-base text-body leading-normal">{description}</p>
+        <p className="line-clamp-3 text-base text-body leading-normal">{description}</p>
+        {tags && tags.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex h-6 items-center rounded border border-border px-2.5 text-body/80 text-xs"
+              >
+                {tag}
+              </span>
+            ))}
+            {tags.length > 3 ? (
+              <span className="inline-flex h-6 items-center rounded border border-border px-2.5 text-body/80 text-xs">
+                ...
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </>
   );
