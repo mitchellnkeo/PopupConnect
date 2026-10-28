@@ -28,6 +28,7 @@ import {
 import { slugify } from "../../lib/slugify";
 import { setProfileRoles, updateProfile } from "../../services/profileService";
 import { fetchVendorProfileByOwner, saveVendorProfile } from "../../services/vendorService";
+import type { AppRole } from "../../types/database";
 
 type PhoneDraft = {
   id: string;
@@ -93,9 +94,12 @@ function WelcomeContent({ preview = false }: { preview?: boolean }) {
     setError(null);
 
     try {
-      const role = audience === "vendor" ? "vendor" : "host";
-      const nextRoles = admin
-        ? [...new Set([...(profile?.roles ?? []), role])]
+      const role: AppRole = audience === "vendor" ? "vendor" : "host";
+      const existingRoles: AppRole[] = profile?.roles ?? [];
+      const nextRoles: AppRole[] = admin
+        ? existingRoles.includes(role)
+          ? existingRoles
+          : [...existingRoles, role]
         : [role];
       await setProfileRoles(user.id, nextRoles);
 
