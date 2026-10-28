@@ -12,6 +12,7 @@ Central location for project sources of truth. **New AI sessions:** start with [
 | [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md) | Supabase model, auth, RLS, deployment phases, decision log | Yes (on arch changes) |
 | [CodingFundamentals.md](./CodingFundamentals.md) | Team coding standards and Supabase rules | Yes |
 | [SUPABASE.md](./SUPABASE.md) | Supabase CLI setup, migrations, auth dashboard settings | Yes |
+| [CLI_INVENTORY.md](./CLI_INVENTORY.md) | Which CLIs/accounts this machine is logged into (no secrets) | Yes |
 
 **Current release:** `1.0.0` (see root [VERSION](../VERSION) and [CHANGELOG.md](./CHANGELOG.md)).
 

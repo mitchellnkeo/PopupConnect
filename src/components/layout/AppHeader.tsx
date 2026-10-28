@@ -8,17 +8,24 @@ type AppHeaderProps = {
   showSearch?: boolean;
   filters?: ExploreFilters;
   onFiltersChange?: (next: ExploreFilters) => void;
+  /** Logo + account actions only — used on onboarding. */
+  simple?: boolean;
 };
 
-export function AppHeader({ showSearch = false, filters, onFiltersChange }: AppHeaderProps) {
-  const search = showSearch && filters && onFiltersChange;
+export function AppHeader({
+  showSearch = false,
+  filters,
+  onFiltersChange,
+  simple = false,
+}: AppHeaderProps) {
+  const search = !simple && showSearch && filters && onFiltersChange;
 
   return (
     <header className="sticky top-0 z-30 overflow-visible border-gray-300 border-b bg-white">
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3.5 md:px-[60px]">
         <BrandLogo />
 
-        {search ? (
+        {simple ? null : search ? (
           <div className="hidden min-w-0 flex-1 justify-center overflow-visible lg:flex">
             <ExploreSearchBar filters={filters} onFiltersChange={onFiltersChange} variant="compact" />
           </div>
