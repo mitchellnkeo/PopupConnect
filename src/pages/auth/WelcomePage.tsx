@@ -11,6 +11,7 @@ import {
 } from "../../components/onboarding/OnboardingFields";
 import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { useAuth } from "../../features/auth/AuthContext";
+import { isAdminUser } from "../../lib/admins";
 import { getFirstName } from "../../lib/authRouting";
 import {
   BUSINESS_ROLES,
@@ -43,6 +44,7 @@ function WelcomeContent({ preview = false }: { preview?: boolean }) {
   const location = useLocation();
   const returnTo = (location.state as { from?: string } | null)?.from ?? "/explore";
   const { user, profile, loading, refreshProfile } = useAuth();
+  const admin = isAdminUser(user);
 
   const [step, setStep] = useState<OnboardingStep>("audience");
   const [audience, setAudience] = useState<OnboardingAudience | null>(null);
@@ -58,10 +60,10 @@ function WelcomeContent({ preview = false }: { preview?: boolean }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!preview && !loading && profile?.onboarding_completed) {
+    if (!preview && !loading && !admin && profile?.onboarding_completed) {
       navigate(returnTo, { replace: true });
     }
-  }, [preview, loading, profile?.onboarding_completed, navigate, returnTo]);
+  }, [preview, loading, admin, profile?.onboarding_completed, navigate, returnTo]);
 
   useEffect(() => {
     if (profile?.roles.includes("vendor")) setAudience("vendor");
@@ -92,7 +94,10 @@ function WelcomeContent({ preview = false }: { preview?: boolean }) {
 
     try {
       const role = audience === "vendor" ? "vendor" : "host";
-      await setProfileRoles(user.id, [role]);
+      const nextRoles = admin
+        ? [...new Set([...(profile?.roles ?? []), role])]
+        : [role];
+      await setProfileRoles(user.id, nextRoles);
 
       if (audience === "vendor" && businessName.trim()) {
         const existing = await fetchVendorProfileByOwner(user.id);
