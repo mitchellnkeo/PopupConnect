@@ -1,31 +1,37 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  EventsDayPanel,
+  EventsExportButton,
+  EventsListTable,
+  EventsMonthBoard,
+  EventsWeekBoard,
+  UpcomingEventCards,
+  type EventsView,
+} from "../../components/account/EventsCalendar";
 import { StatusBadge } from "../../components/ui/StatusBadge";
+import { Tabs } from "../../components/ui/Tabs";
 import { useAuth } from "../../features/auth/AuthContext";
 import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
-import { formatMoney } from "../../lib/quoteSnapshot";
+import {
+  addMonths,
+  demoReservations,
+  downloadCsv,
+  groupReservationsByDay,
+  reservationsToCsv,
+  reservationStatusLabel,
+  reservationStatusTone,
+  shiftIso,
+  todayIso,
+} from "../../lib/eventCalendar";
+import { formatMoney, formatQuoteDate } from "../../lib/quoteSnapshot";
 import {
   fetchReservationsForGuest,
   fetchReservationsForVendor,
   updateReservationStatus,
 } from "../../services/reservationService";
 import { fetchVendorProfileByOwner } from "../../services/vendorService";
-import type { Reservation, ReservationStatus } from "../../types/database";
-
-function statusTone(status: ReservationStatus): "success" | "neutral" | "warning" | "danger" {
-  if (status === "confirmed") return "success";
-  if (status === "cancelled") return "danger";
-  if (status === "draft") return "neutral";
-  return "warning";
-}
-
-function statusLabel(status: ReservationStatus) {
-  if (status === "draft") return "Saved";
-  if (status === "submitted") return "Under review";
-  if (status === "under_review") return "Under review";
-  if (status === "confirmed") return "Confirmed";
-  return "Cancelled";
-}
+import type { Reservation } from "../../types/database";
 
 function ReservationCard({
   reservation,
@@ -44,11 +50,14 @@ function ReservationCard({
         <div>
           <h2 className="font-semibold text-lg text-midnight">{reservation.vendor_title}</h2>
           <p className="mt-1 text-neutral-600 text-sm">
-            {reservation.event_date ?? "Date to be confirmed"}
+            {reservation.event_date ? formatQuoteDate(reservation.event_date) : "Date to be confirmed"}
             {reservation.location ? ` · ${reservation.location}` : ""}
           </p>
         </div>
-        <StatusBadge label={statusLabel(reservation.status)} tone={statusTone(reservation.status)} />
+        <StatusBadge
+          label={reservationStatusLabel(reservation.status)}
+          tone={reservationStatusTone(reservation.status)}
+        />
       </div>
 
       <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
@@ -108,14 +117,28 @@ function ReservationCard({
 export function EventsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const preview = import.meta.env.DEV && params.get("preview") === "1";
   const [mine, setMine] = useState<Reservation[]>([]);
   const [incoming, setIncoming] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submittingId, setSubmittingId] = useState<string | null>(null);
+  const [view, setView] = useState<EventsView>("month");
+  const [cursor, setCursor] = useState(() => {
+    const date = new Date();
+    return { year: date.getFullYear(), monthIndex: date.getMonth() };
+  });
+  const [selectedIso, setSelectedIso] = useState(todayIso());
 
   useEffect(() => {
     if (!user) {
+      if (preview) {
+        setMine(demoReservations());
+        setIncoming([]);
+        setLoading(false);
+        return;
+      }
       setMine([]);
       setIncoming([]);
       setLoading(false);
@@ -149,9 +172,33 @@ export function EventsPage() {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, preview]);
+
+  const incomingIds = useMemo(() => new Set(incoming.map((row) => row.id)), [incoming]);
+  const all = useMemo(() => {
+    const seen = new Set<string>();
+    return [...mine, ...incoming].filter((row) => {
+      if (seen.has(row.id)) return false;
+      seen.add(row.id);
+      return true;
+    });
+  }, [mine, incoming]);
+  const byDay = useMemo(() => groupReservationsByDay(all), [all]);
+  const counts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const [iso, rows] of byDay) map.set(iso, rows.length);
+    return map;
+  }, [byDay]);
+  const selectedEvents = byDay.get(selectedIso) ?? [];
+
+  function selectDay(iso: string) {
+    setSelectedIso(iso);
+    const date = new Date(`${iso}T00:00:00`);
+    setCursor({ year: date.getFullYear(), monthIndex: date.getMonth() });
+  }
 
   async function submitDraft(id: string) {
+    if (preview && !user) return;
     setSubmittingId(id);
     setError(null);
     try {
@@ -165,50 +212,124 @@ export function EventsPage() {
     }
   }
 
+  function exportCsv() {
+    downloadCsv("freqnt-events.csv", reservationsToCsv(all));
+  }
+
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-semibold text-2xl text-midnight">My events</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="font-semibold text-2xl text-midnight">My events</h1>
+          <EventsExportButton disabled={all.length === 0} onClick={exportCsv} />
+        </div>
         <p className="mt-2 text-neutral-600 text-sm leading-relaxed">
-          Saved and submitted quotes live here. Messaging and payments will attach to these events next.
+          Quotes land on this calendar as you save them. Export a CSV to share dates offline.
         </p>
       </div>
 
       {error ? <p className="text-primary text-sm">{error}</p> : null}
       {loading ? <p className="text-neutral-600 text-sm">Loading events…</p> : null}
 
-      {!loading && mine.length === 0 ? (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <p className="text-midnight text-sm">You have not saved any quotes yet.</p>
-          <Link to="/explore" className={`mt-4 inline-flex ${btnPrimary}`}>
-            Find a vendor
-          </Link>
-        </div>
-      ) : null}
+      {!loading ? (
+        <>
+          <UpcomingEventCards reservations={all} onSelect={selectDay} />
 
-      {mine.length > 0 ? (
-        <section className="space-y-4">
-          <h2 className="font-medium text-midnight text-sm uppercase tracking-wide">Your quotes</h2>
-          {mine.map((reservation) => (
-            <ReservationCard
-              key={reservation.id}
-              reservation={reservation}
-              onSubmitDraft={(id) => void submitDraft(id)}
-              submittingId={submittingId}
-            />
-          ))}
-        </section>
-      ) : null}
+          <Tabs
+            aria-label="Calendar view"
+            grow={false}
+            tabs={[
+              { id: "month", label: "Month" },
+              { id: "week", label: "Week" },
+              { id: "list", label: "List" },
+            ]}
+            value={view}
+            onChange={(id) => setView(id as EventsView)}
+          />
 
-      {incoming.length > 0 ? (
-        <section className="space-y-4">
-          <h2 className="font-medium text-midnight text-sm uppercase tracking-wide">
-            Incoming requests
-          </h2>
-          {incoming.map((reservation) => (
-            <ReservationCard key={reservation.id} reservation={reservation} incoming />
-          ))}
-        </section>
+          {view === "month" ? (
+            <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
+              <div className="order-2 lg:order-1">
+                <EventsDayPanel
+                  selectedIso={selectedIso}
+                  reservations={selectedEvents}
+                  incomingIds={incomingIds}
+                />
+              </div>
+              <div className="order-1 lg:order-2 min-w-0">
+                <EventsMonthBoard
+                  year={cursor.year}
+                  monthIndex={cursor.monthIndex}
+                  selectedIso={selectedIso}
+                  counts={counts}
+                  onSelect={selectDay}
+                  onShiftMonth={(delta) =>
+                    setCursor((current) => addMonths(current.year, current.monthIndex, delta))
+                  }
+                />
+              </div>
+            </div>
+          ) : null}
+
+          {view === "week" ? (
+            <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
+              <div className="order-2 lg:order-1">
+                <EventsDayPanel
+                  selectedIso={selectedIso}
+                  reservations={selectedEvents}
+                  incomingIds={incomingIds}
+                />
+              </div>
+              <div className="order-1 lg:order-2 min-w-0">
+                <EventsWeekBoard
+                  selectedIso={selectedIso}
+                  byDay={byDay}
+                  onSelect={selectDay}
+                  onShiftWeek={(delta) => selectDay(shiftIso(selectedIso, delta))}
+                />
+              </div>
+            </div>
+          ) : null}
+
+          {view === "list" ? (
+            <>
+              <EventsListTable reservations={all} incomingIds={incomingIds} />
+              {all.length === 0 ? (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+                  <p className="text-midnight text-sm">You have not saved any quotes yet.</p>
+                  <Link to="/explore" className={`mt-4 inline-flex ${btnPrimary}`}>
+                    Find a vendor
+                  </Link>
+                </div>
+              ) : null}
+            </>
+          ) : null}
+
+          {view === "list" && mine.length > 0 ? (
+            <section className="space-y-4">
+              <h2 className="font-medium text-midnight text-sm uppercase tracking-wide">Your quotes</h2>
+              {mine.map((reservation) => (
+                <ReservationCard
+                  key={reservation.id}
+                  reservation={reservation}
+                  onSubmitDraft={(id) => void submitDraft(id)}
+                  submittingId={submittingId}
+                />
+              ))}
+            </section>
+          ) : null}
+
+          {view === "list" && incoming.length > 0 ? (
+            <section className="space-y-4">
+              <h2 className="font-medium text-midnight text-sm uppercase tracking-wide">
+                Incoming requests
+              </h2>
+              {incoming.map((reservation) => (
+                <ReservationCard key={reservation.id} reservation={reservation} incoming />
+              ))}
+            </section>
+          ) : null}
+        </>
       ) : null}
     </div>
   );

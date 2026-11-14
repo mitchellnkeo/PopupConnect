@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useSearchParams } from "react-router-dom";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AppShell } from "./components/AppShell";
 import { PageShell } from "./components/PageShell";
@@ -24,6 +24,21 @@ import { QuoteRequestPage } from "./pages/booking/QuoteRequestPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { LandingPage } from "./pages/LandingPage";
 import { VendorDetailPage } from "./pages/VendorDetailPage";
+
+function AccountSettingsGate() {
+  const [params] = useSearchParams();
+  const { pathname } = useLocation();
+  const preview =
+    import.meta.env.DEV &&
+    params.get("preview") === "1" &&
+    pathname.startsWith("/account/settings/events");
+  if (preview) return <AccountLayout />;
+  return (
+    <ProtectedRoute>
+      <AccountLayout />
+    </ProtectedRoute>
+  );
+}
 
 export function App() {
   return (
@@ -89,14 +104,7 @@ export function App() {
         }
       />
 
-      <Route
-        path="account/settings"
-        element={
-          <ProtectedRoute>
-            <AccountLayout />
-          </ProtectedRoute>
-        }
-      >
+      <Route path="account/settings" element={<AccountSettingsGate />}>
         <Route index element={<Navigate to="profile" replace />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route

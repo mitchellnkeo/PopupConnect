@@ -33,7 +33,7 @@ export function AccountLayout() {
     <div className="min-h-dvh bg-white">
       <AppHeader />
 
-      <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-[220px_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-[220px_1fr]">
         <aside className="hidden md:block">
           <p className="font-medium text-midnight text-sm">
             {profile?.display_name ?? user?.email ?? "Account"}
