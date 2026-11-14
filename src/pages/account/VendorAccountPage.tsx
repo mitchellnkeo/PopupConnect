@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ListingShareDialog } from "../../components/listing/ListingShareDialog";
 import { AdminDashboardBanner } from "../../components/account/AdminDashboardBanner";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
@@ -7,6 +8,7 @@ import { StatusBadge } from "../../components/ui/StatusBadge";
 import { isAdminUser } from "../../lib/admins";
 import { btnPrimaryFull, btnSecondaryOutline } from "../../lib/buttonStyles";
 import { useAuth } from "../../features/auth/AuthContext";
+import { listingUrl } from "../../lib/listingContent";
 import { fetchVendorProfileByOwner } from "../../services/vendorService";
 import type { VendorProfileWithProducts } from "../../types/database";
 import { vendors } from "../../data/vendors";
@@ -15,6 +17,7 @@ export function VendorAccountPage() {
   const { user, profile, loading: authLoading } = useAuth();
   const [vendorProfile, setVendorProfile] = useState<VendorProfileWithProducts | null>(null);
   const [loading, setLoading] = useState(true);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const demoVendor = vendors[0];
 
@@ -102,12 +105,21 @@ export function VendorAccountPage() {
                   {isOwnProfile ? "Edit vendor profile" : "Set up vendor profile"}
                 </Link>
                 {publicSlug && vendorProfile?.published ? (
-                  <Link
-                    to={`/vendor/${publicSlug}`}
-                    className={`inline-flex items-center justify-center ${btnPrimaryFull}`}
-                  >
-                    View public profile
-                  </Link>
+                  <>
+                    <Link
+                      to={`/vendor/${publicSlug}`}
+                      className={`inline-flex items-center justify-center ${btnPrimaryFull}`}
+                    >
+                      View public profile
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setShareOpen(true)}
+                      className={`w-full ${btnSecondaryOutline}`}
+                    >
+                      Share listing QR
+                    </button>
+                  </>
                 ) : (
                   <Link
                     to={`/vendor/${demoVendor.id}`}
@@ -179,6 +191,14 @@ export function VendorAccountPage() {
       </main>
 
       <LandingFooter />
+
+      {shareOpen && publicSlug ? (
+        <ListingShareDialog
+          title={displayTitle}
+          url={listingUrl({ id: publicSlug, slug: publicSlug })}
+          onClose={() => setShareOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }
