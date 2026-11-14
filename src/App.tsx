@@ -10,6 +10,7 @@ import { PlannerAccountPage } from "./pages/account/PlannerAccountPage";
 import { VendorAccountPage } from "./pages/account/VendorAccountPage";
 import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
 import { EventsPage } from "./pages/account/EventsPage";
+import { MessagesPage } from "./pages/account/MessagesPage";
 import { PrivacySettingsPage } from "./pages/account/PrivacySettingsPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
 import { VendorProfileEditPage } from "./pages/account/VendorProfileEditPage";
@@ -31,7 +32,8 @@ function AccountSettingsGate() {
   const preview =
     import.meta.env.DEV &&
     params.get("preview") === "1" &&
-    pathname.startsWith("/account/settings/events");
+    (pathname.startsWith("/account/settings/events") ||
+      pathname.startsWith("/account/settings/messages"));
   if (preview) return <AccountLayout />;
   return (
     <ProtectedRoute>
@@ -117,15 +119,7 @@ export function App() {
         />
         <Route path="events" element={<EventsPage />} />
         <Route path="privacy" element={<PrivacySettingsPage />} />
-        <Route
-          path="messages"
-          element={
-            <AccountPlaceholderPage
-              title="Messages"
-              description="Inbox and chat threads will sync here when messaging is implemented."
-            />
-          }
-        />
+        <Route path="messages" element={<MessagesPage />} />
         <Route
           path="docs"
           element={

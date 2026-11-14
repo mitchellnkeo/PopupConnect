@@ -24,6 +24,7 @@ import {
   shiftIso,
   todayIso,
 } from "../../lib/eventCalendar";
+import { messagesHref } from "../../lib/messageThreads";
 import { formatMoney, formatQuoteDate } from "../../lib/quoteSnapshot";
 import {
   fetchReservationsForGuest,
@@ -81,35 +82,41 @@ function ReservationCard({
         </div>
       </dl>
 
-      {incoming ? null : (
-        <div className="mt-4 flex flex-wrap gap-3">
-          {reservation.status === "draft" ? (
-            <>
-              <Link
-                to={`/booking/quote?id=${reservation.id}&vendor=${reservation.vendor_slug}`}
-                className={btnSecondaryOutline}
-              >
-                Continue building
-              </Link>
-              <button
-                type="button"
-                className={btnPrimary}
-                disabled={submittingId === reservation.id}
-                onClick={() => onSubmitDraft?.(reservation.id)}
-              >
-                {submittingId === reservation.id ? "Submitting…" : "Submit quote"}
-              </button>
-            </>
-          ) : (
-            <Link to={`/booking/confirm?id=${reservation.id}`} className={btnSecondaryOutline}>
-              View quote
+      <div className="mt-4 flex flex-wrap gap-3">
+        {!incoming && reservation.status === "draft" ? (
+          <>
+            <Link
+              to={`/booking/quote?id=${reservation.id}&vendor=${reservation.vendor_slug}`}
+              className={btnSecondaryOutline}
+            >
+              Continue building
             </Link>
-          )}
+            <button
+              type="button"
+              className={btnPrimary}
+              disabled={submittingId === reservation.id}
+              onClick={() => onSubmitDraft?.(reservation.id)}
+            >
+              {submittingId === reservation.id ? "Submitting…" : "Submit quote"}
+            </button>
+          </>
+        ) : (
+          <Link to={`/booking/confirm?id=${reservation.id}`} className={btnSecondaryOutline}>
+            View quote
+          </Link>
+        )}
+        <Link
+          to={messagesHref({ reservationId: reservation.id })}
+          className="text-primary text-sm hover:underline"
+        >
+          Message
+        </Link>
+        {incoming ? null : (
           <Link to={`/vendor/${reservation.vendor_slug}`} className="text-primary text-sm hover:underline">
             Vendor page
           </Link>
-        </div>
-      )}
+        )}
+      </div>
     </article>
   );
 }

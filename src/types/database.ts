@@ -113,6 +113,15 @@ export type Reservation = {
   updated_at: string;
 };
 
+export type ReservationMessage = {
+  id: string;
+  reservation_id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
+  sender_name: string | null;
+};
+
 export type ReservationInput = {
   vendorSlug: string;
   vendorTitle: string;

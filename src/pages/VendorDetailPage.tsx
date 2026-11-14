@@ -17,6 +17,7 @@ import {
   listingIncludedItems,
   listingUrl,
 } from "../lib/listingContent";
+import { messagesHref } from "../lib/messageThreads";
 import { formatMoney } from "../lib/quoteSnapshot";
 
 export function VendorDetailPage() {
@@ -204,7 +205,7 @@ export function VendorDetailPage() {
               <div className="mt-6 space-y-3">
                 {session ? (
                   <Link
-                    to="/account/settings/messages"
+                    to={messagesHref({ vendorSlug: vendor.id })}
                     className={`inline-flex w-full items-center justify-center ${btnSecondaryOutline}`}
                   >
                     Message {vendorShortName}
@@ -212,7 +213,7 @@ export function VendorDetailPage() {
                 ) : (
                   <Link
                     to="/sign-in"
-                    state={{ from: "/account/settings/messages" }}
+                    state={{ from: messagesHref({ vendorSlug: vendor.id }) }}
                     className={`inline-flex w-full items-center justify-center ${btnSecondaryOutline}`}
                   >
                     Sign in to message

@@ -4,6 +4,7 @@ import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
 import { useVendorCatalog } from "../../hooks/useVendorCatalog";
 import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
+import { messagesHref } from "../../lib/messageThreads";
 import { formatMoney, quoteSnapshotFromVendor, vendorShortName } from "../../lib/quoteSnapshot";
 import { fetchReservation } from "../../services/reservationService";
 import type { Reservation } from "../../types/database";
@@ -179,7 +180,13 @@ export function QuoteConfirmationPage() {
             </div>
 
             <div className="flex flex-wrap justify-between gap-4">
-              <Link to="/account/settings/messages" className={btnSecondaryOutline}>
+              <Link
+                to={messagesHref({
+                  reservationId,
+                  vendorSlug: reservation?.vendor_slug ?? vendorId,
+                })}
+                className={btnSecondaryOutline}
+              >
                 Message {messageName}
               </Link>
               <div className="flex flex-wrap gap-3">
