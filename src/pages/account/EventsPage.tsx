@@ -23,6 +23,7 @@ import {
   reservationStatusTone,
   shiftIso,
   todayIso,
+  vendorCanDecide,
 } from "../../lib/eventCalendar";
 import { messagesHref } from "../../lib/messageThreads";
 import { formatMoney, formatQuoteDate } from "../../lib/quoteSnapshot";
@@ -38,11 +39,15 @@ function ReservationCard({
   reservation,
   incoming,
   onSubmitDraft,
+  onConfirm,
+  onDecline,
   submittingId,
 }: {
   reservation: Reservation;
   incoming?: boolean;
   onSubmitDraft?: (id: string) => void;
+  onConfirm?: (id: string) => void;
+  onDecline?: (id: string) => void;
   submittingId?: string | null;
 }) {
   return (
@@ -83,7 +88,26 @@ function ReservationCard({
       </dl>
 
       <div className="mt-4 flex flex-wrap gap-3">
-        {!incoming && reservation.status === "draft" ? (
+        {incoming && vendorCanDecide(reservation.status) ? (
+          <>
+            <button
+              type="button"
+              className={btnPrimary}
+              disabled={submittingId === reservation.id}
+              onClick={() => onConfirm?.(reservation.id)}
+            >
+              {submittingId === reservation.id ? "Saving…" : "Confirm"}
+            </button>
+            <button
+              type="button"
+              className={btnSecondaryOutline}
+              disabled={submittingId === reservation.id}
+              onClick={() => onDecline?.(reservation.id)}
+            >
+              Decline
+            </button>
+          </>
+        ) : !incoming && reservation.status === "draft" ? (
           <>
             <Link
               to={`/booking/quote?id=${reservation.id}&vendor=${reservation.vendor_slug}`}
@@ -202,6 +226,23 @@ export function EventsPage() {
     setSelectedIso(iso);
     const date = new Date(`${iso}T00:00:00`);
     setCursor({ year: date.getFullYear(), monthIndex: date.getMonth() });
+  }
+
+  async function decideIncoming(id: string, status: "confirmed" | "cancelled") {
+    if (preview && !user) {
+      setIncoming((current) => current.map((row) => (row.id === id ? { ...row, status } : row)));
+      return;
+    }
+    setSubmittingId(id);
+    setError(null);
+    try {
+      const updated = await updateReservationStatus(id, status);
+      setIncoming((current) => current.map((row) => (row.id === updated.id ? updated : row)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not update this quote.");
+    } finally {
+      setSubmittingId(null);
+    }
   }
 
   async function submitDraft(id: string) {
@@ -332,7 +373,14 @@ export function EventsPage() {
                 Incoming requests
               </h2>
               {incoming.map((reservation) => (
-                <ReservationCard key={reservation.id} reservation={reservation} incoming />
+                <ReservationCard
+                  key={reservation.id}
+                  reservation={reservation}
+                  incoming
+                  submittingId={submittingId}
+                  onConfirm={(id) => void decideIncoming(id, "confirmed")}
+                  onDecline={(id) => void decideIncoming(id, "cancelled")}
+                />
               ))}
             </section>
           ) : null}

@@ -1,29 +1,51 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ListingShareDialog } from "../../components/listing/ListingShareDialog";
 import { AdminDashboardBanner } from "../../components/account/AdminDashboardBanner";
+import { DashboardQuoteList } from "../../components/account/DashboardQuotes";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { isAdminUser } from "../../lib/admins";
 import { btnPrimaryFull, btnSecondaryOutline } from "../../lib/buttonStyles";
+import { demoIncomingReservations, vendorCanDecide } from "../../lib/eventCalendar";
 import { useAuth } from "../../features/auth/AuthContext";
 import { listingUrl } from "../../lib/listingContent";
+import { fetchProfileNames } from "../../services/messageService";
+import {
+  fetchReservationsForVendor,
+  updateReservationStatus,
+} from "../../services/reservationService";
 import { fetchVendorProfileByOwner } from "../../services/vendorService";
-import type { VendorProfileWithProducts } from "../../types/database";
+import type { Reservation, VendorProfileWithProducts } from "../../types/database";
 import { vendors } from "../../data/vendors";
 
 export function VendorAccountPage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const [params] = useSearchParams();
+  const preview = import.meta.env.DEV && params.get("preview") === "1";
   const [vendorProfile, setVendorProfile] = useState<VendorProfileWithProducts | null>(null);
+  const [incoming, setIncoming] = useState<Reservation[]>([]);
+  const [guestNames, setGuestNames] = useState<Map<string, string | null>>(new Map());
   const [loading, setLoading] = useState(true);
   const [shareOpen, setShareOpen] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const demoVendor = vendors[0];
 
   useEffect(() => {
     if (!user) {
       setVendorProfile(null);
+      setIncoming(preview ? demoIncomingReservations() : []);
+      setGuestNames(
+        preview
+          ? new Map([
+              ["guest-a", "Jordan Lee"],
+              ["guest-b", "Sam Rivera"],
+            ])
+          : new Map(),
+      );
       setLoading(false);
       return;
     }
@@ -31,12 +53,19 @@ export function VendorAccountPage() {
     let mounted = true;
     setLoading(true);
 
-    fetchVendorProfileByOwner(user.id)
-      .then((result) => {
-        if (mounted) setVendorProfile(result);
-      })
+    (async () => {
+      const result = await fetchVendorProfileByOwner(user.id);
+      const rows = result ? await fetchReservationsForVendor(result.id) : [];
+      const names = await fetchProfileNames(rows.map((row) => row.guest_id));
+      if (!mounted) return;
+      setVendorProfile(result);
+      setIncoming(rows);
+      setGuestNames(names);
+    })()
       .catch(() => {
-        if (mounted) setVendorProfile(null);
+        if (!mounted) return;
+        setVendorProfile(null);
+        setIncoming([]);
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -45,7 +74,24 @@ export function VendorAccountPage() {
     return () => {
       mounted = false;
     };
-  }, [user]);
+  }, [user, preview]);
+
+  async function setStatus(id: string, status: "confirmed" | "cancelled") {
+    if (preview && !user) {
+      setIncoming((current) => current.map((row) => (row.id === id ? { ...row, status } : row)));
+      return;
+    }
+    setBusyId(id);
+    setError(null);
+    try {
+      const updated = await updateReservationStatus(id, status);
+      setIncoming((current) => current.map((row) => (row.id === updated.id ? updated : row)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not update that quote.");
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   const displayTitle = vendorProfile?.title ?? demoVendor.title;
   const displayCity = vendorProfile?.city ?? demoVendor.city;
@@ -53,6 +99,8 @@ export function VendorAccountPage() {
   const publicSlug = vendorProfile?.slug;
   const isOwnProfile = Boolean(vendorProfile);
   const isVendorRole = Boolean(profile?.roles.includes("vendor")) || isAdminUser(user);
+  const openRequests = incoming.filter((row) => vendorCanDecide(row.status));
+  const confirmedBookings = incoming.filter((row) => row.status === "confirmed");
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
@@ -139,22 +187,36 @@ export function VendorAccountPage() {
                 <p className="mt-4 text-body text-lg leading-relaxed">{displayAbout}</p>
               </section>
 
-              {isOwnProfile && vendorProfile?.products.length ? (
+              {error ? <p className="text-primary text-sm">{error}</p> : null}
+
+              {!loading ? (
+                <DashboardQuoteList
+                  title="Incoming quotes"
+                  reservations={incoming}
+                  incoming
+                  guestNames={guestNames}
+                  empty="No quote requests yet. Share your listing to get booked."
+                  onConfirm={(id) => void setStatus(id, "confirmed")}
+                  onDecline={(id) => void setStatus(id, "cancelled")}
+                  busyId={busyId}
+                />
+              ) : null}
+
+              {isOwnProfile || preview ? (
                 <section className="rounded-[20px] bg-white p-8 shadow-[0_0_6px_rgba(0,0,0,0.12)]">
                   <h2 className="font-bold text-[length:var(--text-section,28px)] text-midnight">
-                    Your packages
+                    Booking snapshot
                   </h2>
-                  <ul className="mt-4 space-y-3">
-                    {vendorProfile.products.map((product) => (
-                      <li key={product.id} className="rounded-lg border border-border p-4">
-                        <p className="font-bold text-midnight">{product.name}</p>
-                        {product.description ? (
-                          <p className="mt-1 text-body/70 text-sm">{product.description}</p>
-                        ) : null}
-                        <p className="mt-2 font-bold text-primary">${product.price}</p>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-lg bg-orange-100 p-3">
+                      <p className="font-bold text-body text-sm">Open requests</p>
+                      <p className="text-3xl text-midnight">{openRequests.length}</p>
+                    </div>
+                    <div className="rounded-lg bg-blue-100 p-3">
+                      <p className="font-bold text-body text-sm">Confirmed bookings</p>
+                      <p className="text-3xl text-midnight">{confirmedBookings.length}</p>
+                    </div>
+                  </div>
                 </section>
               ) : (
                 <section className="rounded-[20px] bg-white p-8 shadow-[0_0_6px_rgba(0,0,0,0.12)]">
@@ -173,6 +235,25 @@ export function VendorAccountPage() {
                   </div>
                 </section>
               )}
+
+              {isOwnProfile && vendorProfile?.products.length ? (
+                <section className="rounded-[20px] bg-white p-8 shadow-[0_0_6px_rgba(0,0,0,0.12)]">
+                  <h2 className="font-bold text-[length:var(--text-section,28px)] text-midnight">
+                    Your packages
+                  </h2>
+                  <ul className="mt-4 space-y-3">
+                    {vendorProfile.products.map((product) => (
+                      <li key={product.id} className="rounded-lg border border-border p-4">
+                        <p className="font-bold text-midnight">{product.name}</p>
+                        {product.description ? (
+                          <p className="mt-1 text-body/70 text-sm">{product.description}</p>
+                        ) : null}
+                        <p className="mt-2 font-bold text-primary">${product.price}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
 
               <nav className="flex flex-wrap gap-4 text-midnight text-sm">
                 <Link to="/account/settings/profile" className="hover:text-primary">

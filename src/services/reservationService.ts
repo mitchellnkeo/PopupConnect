@@ -74,12 +74,14 @@ export async function updateReservationStatus(
   reservationId: string,
   status: ReservationStatus,
 ): Promise<Reservation> {
-  const { data, error } = await supabase
-    .from("reservations")
-    .update({ status })
-    .eq("id", reservationId)
-    .select("*")
-    .single();
+  if (!isSupabaseConfigured) {
+    throw new Error("Supabase is not configured.");
+  }
+
+  const { data, error } = await supabase.rpc("set_reservation_status", {
+    res_id: reservationId,
+    next_status: status,
+  });
 
   if (error) throw error;
   return mapReservation(data as Record<string, unknown>);

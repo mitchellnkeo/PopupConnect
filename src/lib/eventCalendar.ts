@@ -138,6 +138,10 @@ export function reservationStatusLabel(status: ReservationStatus) {
   return "Cancelled";
 }
 
+export function vendorCanDecide(status: ReservationStatus) {
+  return status === "submitted" || status === "under_review";
+}
+
 export function reservationStatusTone(
   status: ReservationStatus,
 ): "success" | "neutral" | "warning" | "danger" {
@@ -277,6 +281,24 @@ export function demoReservations(): Reservation[] {
       total_amount: 640,
       created_at: now,
       updated_at: now,
+    },
+  ];
+}
+
+export function demoIncomingReservations(): Reservation[] {
+  const [first, second] = demoReservations();
+  return [
+    {
+      ...second,
+      id: "demo-in-1",
+      guest_id: "guest-a",
+      status: "submitted",
+    },
+    {
+      ...first,
+      id: "demo-in-2",
+      guest_id: "guest-b",
+      status: "under_review",
     },
   ];
 }

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation, useSearchParams } from "react-router-dom";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AppShell } from "./components/AppShell";
@@ -25,6 +26,16 @@ import { QuoteRequestPage } from "./pages/booking/QuoteRequestPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { LandingPage } from "./pages/LandingPage";
 import { VendorDetailPage } from "./pages/VendorDetailPage";
+
+function RoleAccountRoute({ role, children }: { role: "vendor" | "host" | "organizer"; children: ReactNode }) {
+  const [params] = useSearchParams();
+  if (import.meta.env.DEV && params.get("preview") === "1") return children;
+  return (
+    <ProtectedRoute>
+      <RoleDashboardRoute role={role}>{children}</RoleDashboardRoute>
+    </ProtectedRoute>
+  );
+}
 
 function AccountSettingsGate() {
   const [params] = useSearchParams();
@@ -78,31 +89,25 @@ export function App() {
       <Route
         path="account/vendor"
         element={
-          <ProtectedRoute>
-            <RoleDashboardRoute role="vendor">
-              <VendorAccountPage />
-            </RoleDashboardRoute>
-          </ProtectedRoute>
+          <RoleAccountRoute role="vendor">
+            <VendorAccountPage />
+          </RoleAccountRoute>
         }
       />
       <Route
         path="account/planner"
         element={
-          <ProtectedRoute>
-            <RoleDashboardRoute role="organizer">
-              <PlannerAccountPage previewRole="organizer" />
-            </RoleDashboardRoute>
-          </ProtectedRoute>
+          <RoleAccountRoute role="organizer">
+            <PlannerAccountPage previewRole="organizer" />
+          </RoleAccountRoute>
         }
       />
       <Route
         path="account/host"
         element={
-          <ProtectedRoute>
-            <RoleDashboardRoute role="host">
-              <PlannerAccountPage previewRole="host" />
-            </RoleDashboardRoute>
-          </ProtectedRoute>
+          <RoleAccountRoute role="host">
+            <PlannerAccountPage previewRole="host" />
+          </RoleAccountRoute>
         }
       />
 
