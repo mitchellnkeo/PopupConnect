@@ -20,6 +20,12 @@ export function VendorDetailPage() {
   const vendor = vendorId ? getVendor(vendorId) : undefined;
 
   const quotePath = vendor ? `/booking/quote?vendor=${vendor.id}` : "/booking/quote";
+  const quotePathForPackage = (pkgId?: string) => {
+    if (!vendor) return "/booking/quote";
+    const params = new URLSearchParams({ vendor: vendor.id });
+    if (pkgId) params.set("package", pkgId);
+    return `/booking/quote?${params.toString()}`;
+  };
   const vendorShortName = vendor?.title.split("'")[0] ?? "vendor";
 
   if (loading) {
@@ -160,13 +166,16 @@ export function VendorDetailPage() {
 
               <div className="mt-6 space-y-3">
                 {session ? (
-                  <button type="button" className={`w-full ${btnSecondaryOutline}`}>
+                  <Link
+                    to="/account/settings/messages"
+                    className={`inline-flex w-full items-center justify-center ${btnSecondaryOutline}`}
+                  >
                     Message {vendorShortName}
-                  </button>
+                  </Link>
                 ) : (
                   <Link
                     to="/sign-in"
-                    state={{ from: `/messages` }}
+                    state={{ from: "/account/settings/messages" }}
                     className={`inline-flex w-full items-center justify-center ${btnSecondaryOutline}`}
                   >
                     Sign in to message
@@ -212,11 +221,12 @@ export function VendorDetailPage() {
           vendorTitle={vendor.title}
           onClose={() => setSelectedPackage(null)}
           onQuote={() => {
+            const next = quotePathForPackage(selectedPackage.id);
             setSelectedPackage(null);
             if (session) {
-              navigate(quotePath);
+              navigate(next);
             } else {
-              navigate("/sign-in", { state: { from: quotePath } });
+              navigate("/sign-in", { state: { from: next } });
             }
           }}
           quoteLabel={session ? "Request quote" : "Sign in to request quote"}

@@ -9,6 +9,7 @@ import { AccountHomePage } from "./pages/account/AccountHomePage";
 import { PlannerAccountPage } from "./pages/account/PlannerAccountPage";
 import { VendorAccountPage } from "./pages/account/VendorAccountPage";
 import { AccountPlaceholderPage } from "./pages/account/AccountPlaceholderPage";
+import { EventsPage } from "./pages/account/EventsPage";
 import { PrivacySettingsPage } from "./pages/account/PrivacySettingsPage";
 import { ProfilePage } from "./pages/account/ProfilePage";
 import { VendorProfileEditPage } from "./pages/account/VendorProfileEditPage";
@@ -32,14 +33,7 @@ export function App() {
       <Route path="explore" element={<ExplorePage />} />
       <Route path="vendor/:vendorId" element={<VendorDetailPage />} />
 
-      <Route
-        path="booking/quote"
-        element={
-          <ProtectedRoute>
-            <QuoteRequestPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="booking/quote" element={<QuoteRequestPage />} />
       <Route
         path="booking/confirm"
         element={
@@ -113,15 +107,7 @@ export function App() {
             </VendorRoute>
           }
         />
-        <Route
-          path="events"
-          element={
-            <AccountPlaceholderPage
-              title="My events"
-              description="Your booked and hosted events will appear here once reservations are connected to Supabase."
-            />
-          }
-        />
+        <Route path="events" element={<EventsPage />} />
         <Route path="privacy" element={<PrivacySettingsPage />} />
         <Route
           path="messages"
@@ -171,8 +157,11 @@ export function App() {
         <Route path="booking/review" element={<PageShell title="Review booking" />} />
         <Route path="booking/payment" element={<PageShell title="Select payment" />} />
 
-        <Route path="messages" element={<PageShell title="Messages" />} />
-        <Route path="messages/:threadId" element={<PageShell title="Individual chat" />} />
+        <Route path="messages" element={<Navigate to="/account/settings/messages" replace />} />
+        <Route
+          path="messages/:threadId"
+          element={<Navigate to="/account/settings/messages" replace />}
+        />
 
         <Route
           path="location/:locationId"

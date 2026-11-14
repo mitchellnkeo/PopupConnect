@@ -87,3 +87,43 @@ export type VendorProductInput = {
   sort_order?: number;
 };
 
+export type ReservationStatus =
+  | "draft"
+  | "submitted"
+  | "under_review"
+  | "confirmed"
+  | "cancelled";
+
+export type Reservation = {
+  id: string;
+  guest_id: string;
+  vendor_profile_id: string | null;
+  vendor_slug: string;
+  vendor_title: string;
+  status: ReservationStatus;
+  event_date: string | null;
+  location: string | null;
+  duration: string | null;
+  guest_count: number | null;
+  package_name: string | null;
+  add_ons: string | null;
+  deposit_amount: number;
+  total_amount: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ReservationInput = {
+  vendorSlug: string;
+  vendorTitle: string;
+  status: ReservationStatus;
+  eventDate: string;
+  location: string;
+  duration: string;
+  guestCount: number;
+  packageName: string;
+  addOns: string;
+  depositAmount: number;
+  totalAmount: number;
+};
+
