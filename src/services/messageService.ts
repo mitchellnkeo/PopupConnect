@@ -1,5 +1,5 @@
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
-import type { ReservationMessage } from "../types/database";
+import type { ReservationMessage, ReservationMessageKind } from "../types/database";
 
 function mapMessage(
   row: Record<string, unknown>,
@@ -11,6 +11,7 @@ function mapMessage(
     reservation_id: row.reservation_id as string,
     sender_id: senderId,
     body: row.body as string,
+    kind: (row.kind as ReservationMessageKind | undefined) ?? "user",
     created_at: row.created_at as string,
     sender_name: names.get(senderId) ?? null,
   };
@@ -35,7 +36,7 @@ export async function fetchReservationMessages(
 
   const { data, error } = await supabase
     .from("reservation_messages")
-    .select("id, reservation_id, sender_id, body, created_at")
+    .select("id, reservation_id, sender_id, body, kind, created_at")
     .in("reservation_id", reservationIds)
     .order("created_at", { ascending: true });
 
@@ -66,7 +67,7 @@ export async function sendReservationMessage(
       sender_id: senderId,
       body: trimmed,
     })
-    .select("id, reservation_id, sender_id, body, created_at")
+    .select("id, reservation_id, sender_id, body, kind, created_at")
     .single();
 
   if (error) throw error;
@@ -77,4 +78,17 @@ export async function sendReservationMessage(
 
 export async function fetchProfileNames(ids: string[]) {
   return displayNamesFor(ids);
+}
+
+export async function markReservationRead(reservationId: string): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  const { error } = await supabase.rpc("mark_reservation_read", { res_id: reservationId });
+  if (error) throw error;
+}
+
+export async function fetchUnreadThreadCount(): Promise<number> {
+  if (!isSupabaseConfigured) return 0;
+  const { data, error } = await supabase.rpc("unread_reservation_thread_count");
+  if (error) throw error;
+  return Number(data ?? 0);
 }

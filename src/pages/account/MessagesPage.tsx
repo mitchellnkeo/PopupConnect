@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { useAuth } from "../../features/auth/AuthContext";
+import { confirmHref, paymentHref } from "../../lib/bookingRoutes";
 import { btnPrimary } from "../../lib/buttonStyles";
 import {
   demoReservations,
@@ -12,13 +13,16 @@ import {
   demoMessages,
   lastMessageByReservation,
   messagesHref,
+  notifyInboxChanged,
   pickThread,
   relativeMessageTime,
+  threadIsUnread,
 } from "../../lib/messageThreads";
 import { formatQuoteDate } from "../../lib/quoteSnapshot";
 import {
   fetchProfileNames,
   fetchReservationMessages,
+  markReservationRead,
   sendReservationMessage,
 } from "../../services/messageService";
 import {
@@ -152,6 +156,38 @@ export function MessagesPage() {
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [selectedMessages.length, selected?.id]);
 
+  useEffect(() => {
+    if (!selected) return;
+    const selectedId = selected.id;
+    const stamp = new Date().toISOString();
+
+    function stampRead(rows: Reservation[], incomingThread: boolean) {
+      if (!rows.some((row) => row.id === selectedId)) return rows;
+      return rows.map((row) =>
+        row.id === selectedId
+          ? {
+              ...row,
+              guest_last_read_at: incomingThread ? row.guest_last_read_at : stamp,
+              vendor_last_read_at: incomingThread ? stamp : row.vendor_last_read_at,
+            }
+          : row,
+      );
+    }
+
+    if (preview && !user) {
+      setMine((current) => stampRead(current, false));
+      return;
+    }
+    if (!user) return;
+
+    setMine((current) => stampRead(current, false));
+    setIncoming((current) => stampRead(current, true));
+
+    void markReservationRead(selectedId)
+      .then(() => notifyInboxChanged())
+      .catch(() => undefined);
+  }, [preview, selected?.id, user]);
+
   async function handleSend(event: React.FormEvent) {
     event.preventDefault();
     if (!selected) return;
@@ -167,6 +203,7 @@ export function MessagesPage() {
           reservation_id: selected.id,
           sender_id: "preview",
           body,
+          kind: "user",
           created_at: new Date().toISOString(),
           sender_name: "You",
         };
@@ -181,6 +218,7 @@ export function MessagesPage() {
       const saved = await sendReservationMessage(selected.id, user.id, body);
       setMessages((current) => [...current, saved]);
       setDraft("");
+      notifyInboxChanged();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not send that message.");
     } finally {
@@ -224,6 +262,12 @@ export function MessagesPage() {
                 const last = latest.get(reservation.id);
                 const incomingThread = incomingIds.has(reservation.id);
                 const active = reservation.id === selected?.id;
+                const unread = threadIsUnread(
+                  reservation,
+                  last,
+                  preview && !user ? "preview" : user?.id,
+                  incomingThread,
+                );
                 return (
                   <li key={reservation.id} className="border-b border-neutral-100 last:border-0">
                     <Link
@@ -234,12 +278,17 @@ export function MessagesPage() {
                       ].join(" ")}
                     >
                       <span className="flex items-start justify-between gap-2">
-                        <span className="font-medium text-midnight text-sm">
-                          {threadTitle(
-                            reservation,
-                            incomingThread,
-                            guestNames.get(reservation.guest_id) ?? null,
-                          )}
+                        <span className="flex min-w-0 items-center gap-2">
+                          {unread ? (
+                            <span className="size-2 shrink-0 rounded-full bg-primary" aria-hidden />
+                          ) : null}
+                          <span className={`truncate text-sm ${unread ? "font-semibold text-midnight" : "font-medium text-midnight"}`}>
+                            {threadTitle(
+                              reservation,
+                              incomingThread,
+                              guestNames.get(reservation.guest_id) ?? null,
+                            )}
+                          </span>
                         </span>
                         {last ? (
                           <span className="shrink-0 text-neutral-400 text-xs">
@@ -290,11 +339,18 @@ export function MessagesPage() {
                     to={
                       selected.status === "draft" && !selectedIncoming
                         ? `/booking/quote?id=${selected.id}&vendor=${selected.vendor_slug}`
-                        : `/booking/confirm?id=${selected.id}`
+                        : (selected.status === "confirmed" || selected.status === "booked") &&
+                            !selectedIncoming
+                          ? paymentHref(selected.id)
+                          : confirmHref(selected.id)
                     }
                     className="text-primary text-sm hover:underline"
                   >
-                    View quote
+                    {selected.status === "booked" && !selectedIncoming
+                      ? "View booking"
+                      : selected.status === "confirmed" && !selectedIncoming
+                        ? "View deposit"
+                        : "View quote"}
                   </Link>
                   <Link
                     to={`/vendor/${selected.vendor_slug}`}
@@ -312,6 +368,16 @@ export function MessagesPage() {
                   </p>
                 ) : (
                   selectedMessages.map((message) => {
+                    if (message.kind === "system") {
+                      return (
+                        <p
+                          key={message.id}
+                          className="mx-auto max-w-[90%] text-center text-neutral-500 text-xs leading-relaxed"
+                        >
+                          {message.body}
+                        </p>
+                      );
+                    }
                     const mineMessage = Boolean(user?.id === message.sender_id || (preview && message.sender_id === "preview"));
                     return (
                       <div

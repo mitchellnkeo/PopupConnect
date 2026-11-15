@@ -18,6 +18,8 @@ function mapReservation(row: Record<string, unknown>): Reservation {
     add_ons: (row.add_ons as string | null) ?? null,
     deposit_amount: Number(row.deposit_amount ?? 0),
     total_amount: Number(row.total_amount ?? 0),
+    guest_last_read_at: (row.guest_last_read_at as string | null) ?? null,
+    vendor_last_read_at: (row.vendor_last_read_at as string | null) ?? null,
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
   };

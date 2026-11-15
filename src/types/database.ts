@@ -92,6 +92,7 @@ export type ReservationStatus =
   | "submitted"
   | "under_review"
   | "confirmed"
+  | "booked"
   | "cancelled";
 
 export type Reservation = {
@@ -109,15 +110,20 @@ export type Reservation = {
   add_ons: string | null;
   deposit_amount: number;
   total_amount: number;
+  guest_last_read_at: string | null;
+  vendor_last_read_at: string | null;
   created_at: string;
   updated_at: string;
 };
+
+export type ReservationMessageKind = "user" | "system";
 
 export type ReservationMessage = {
   id: string;
   reservation_id: string;
   sender_id: string;
   body: string;
+  kind: ReservationMessageKind;
   created_at: string;
   sender_name: string | null;
 };

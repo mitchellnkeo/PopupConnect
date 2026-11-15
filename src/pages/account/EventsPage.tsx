@@ -15,6 +15,7 @@ import { useAuth } from "../../features/auth/AuthContext";
 import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
 import {
   addMonths,
+  canMarkDepositArranged,
   demoReservations,
   downloadCsv,
   groupReservationsByDay,
@@ -25,7 +26,8 @@ import {
   todayIso,
   vendorCanDecide,
 } from "../../lib/eventCalendar";
-import { messagesHref } from "../../lib/messageThreads";
+import { confirmHref, paymentHref } from "../../lib/bookingRoutes";
+import { messagesHref, notifyInboxChanged } from "../../lib/messageThreads";
 import { formatMoney, formatQuoteDate } from "../../lib/quoteSnapshot";
 import {
   fetchReservationsForGuest,
@@ -41,12 +43,14 @@ function ReservationCard({
   onSubmitDraft,
   onConfirm,
   onDecline,
+  onMarkArranged,
   submittingId,
 }: {
   reservation: Reservation;
   incoming?: boolean;
   onSubmitDraft?: (id: string) => void;
   onConfirm?: (id: string) => void;
+  onMarkArranged?: (id: string) => void;
   onDecline?: (id: string) => void;
   submittingId?: string | null;
 }) {
@@ -124,8 +128,21 @@ function ReservationCard({
               {submittingId === reservation.id ? "Submitting…" : "Submit quote"}
             </button>
           </>
+        ) : incoming && canMarkDepositArranged(reservation.status) ? (
+          <button
+            type="button"
+            className={btnPrimary}
+            disabled={submittingId === reservation.id}
+            onClick={() => onMarkArranged?.(reservation.id)}
+          >
+            {submittingId === reservation.id ? "Saving…" : "Mark deposit arranged"}
+          </button>
+        ) : !incoming && (reservation.status === "confirmed" || reservation.status === "booked") ? (
+          <Link to={paymentHref(reservation.id)} className={btnPrimary}>
+            {reservation.status === "booked" ? "View booking" : "View deposit"}
+          </Link>
         ) : (
-          <Link to={`/booking/confirm?id=${reservation.id}`} className={btnSecondaryOutline}>
+          <Link to={confirmHref(reservation.id)} className={btnSecondaryOutline}>
             View quote
           </Link>
         )}
@@ -228,7 +245,7 @@ export function EventsPage() {
     setCursor({ year: date.getFullYear(), monthIndex: date.getMonth() });
   }
 
-  async function decideIncoming(id: string, status: "confirmed" | "cancelled") {
+  async function decideIncoming(id: string, status: "confirmed" | "cancelled" | "booked") {
     if (preview && !user) {
       setIncoming((current) => current.map((row) => (row.id === id ? { ...row, status } : row)));
       return;
@@ -238,6 +255,7 @@ export function EventsPage() {
     try {
       const updated = await updateReservationStatus(id, status);
       setIncoming((current) => current.map((row) => (row.id === updated.id ? updated : row)));
+      notifyInboxChanged();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not update this quote.");
     } finally {
@@ -252,7 +270,7 @@ export function EventsPage() {
     try {
       const updated = await updateReservationStatus(id, "submitted");
       setMine((current) => current.map((row) => (row.id === updated.id ? updated : row)));
-      navigate(`/booking/confirm?id=${updated.id}`);
+      navigate(confirmHref(updated.id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not submit this quote.");
     } finally {
@@ -380,6 +398,7 @@ export function EventsPage() {
                   submittingId={submittingId}
                   onConfirm={(id) => void decideIncoming(id, "confirmed")}
                   onDecline={(id) => void decideIncoming(id, "cancelled")}
+                  onMarkArranged={(id) => void decideIncoming(id, "booked")}
                 />
               ))}
             </section>

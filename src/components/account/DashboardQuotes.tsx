@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import { StatusBadge } from "../ui/StatusBadge";
 import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
 import {
+  canMarkDepositArranged,
   reservationStatusLabel,
   reservationStatusTone,
   vendorCanDecide,
 } from "../../lib/eventCalendar";
+import { confirmHref, paymentHref } from "../../lib/bookingRoutes";
 import { messagesHref } from "../../lib/messageThreads";
 import { formatMoney, formatQuoteDate } from "../../lib/quoteSnapshot";
 import type { Reservation } from "../../types/database";
@@ -16,6 +18,7 @@ export function DashboardQuoteRow({
   incoming,
   onConfirm,
   onDecline,
+  onMarkArranged,
   busy,
 }: {
   reservation: Reservation;
@@ -23,9 +26,11 @@ export function DashboardQuoteRow({
   incoming?: boolean;
   onConfirm?: (id: string) => void;
   onDecline?: (id: string) => void;
+  onMarkArranged?: (id: string) => void;
   busy?: boolean;
 }) {
   const decide = incoming && vendorCanDecide(reservation.status);
+  const markArranged = canMarkDepositArranged(reservation.status);
 
   return (
     <article className="rounded-xl border border-neutral-200 p-4">
@@ -67,8 +72,21 @@ export function DashboardQuoteRow({
               Decline
             </button>
           </>
+        ) : incoming && markArranged ? (
+          <button
+            type="button"
+            className={btnPrimary}
+            disabled={busy}
+            onClick={() => onMarkArranged?.(reservation.id)}
+          >
+            {busy ? "Saving…" : "Mark deposit arranged"}
+          </button>
+        ) : !incoming && (reservation.status === "confirmed" || reservation.status === "booked") ? (
+          <Link to={paymentHref(reservation.id)} className={btnPrimary}>
+            {reservation.status === "booked" ? "View booking" : "View deposit"}
+          </Link>
         ) : (
-          <Link to={`/booking/confirm?id=${reservation.id}`} className={btnSecondaryOutline}>
+          <Link to={confirmHref(reservation.id)} className={btnSecondaryOutline}>
             View quote
           </Link>
         )}
@@ -96,6 +114,7 @@ export function DashboardQuoteList({
   empty,
   onConfirm,
   onDecline,
+  onMarkArranged,
   busyId,
 }: {
   title: string;
@@ -105,6 +124,7 @@ export function DashboardQuoteList({
   empty: string;
   onConfirm?: (id: string) => void;
   onDecline?: (id: string) => void;
+  onMarkArranged?: (id: string) => void;
   busyId?: string | null;
 }) {
   return (
@@ -131,6 +151,7 @@ export function DashboardQuoteList({
               }
               onConfirm={onConfirm}
               onDecline={onDecline}
+              onMarkArranged={onMarkArranged}
               busy={busyId === reservation.id}
             />
           ))}

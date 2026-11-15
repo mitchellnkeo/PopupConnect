@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { IconCalendar } from "../landing/icons";
 import { StatusBadge } from "../ui/StatusBadge";
+import { confirmHref, paymentHref } from "../../lib/bookingRoutes";
 import { btnSecondaryOutline } from "../../lib/buttonStyles";
 import {
   WEEKDAY_SHORT,
@@ -29,7 +30,10 @@ function reservationHref(reservation: Reservation, incoming: boolean) {
   if (reservation.status === "draft") {
     return `/booking/quote?id=${reservation.id}&vendor=${reservation.vendor_slug}`;
   }
-  return `/booking/confirm?id=${reservation.id}`;
+  if (reservation.status === "confirmed" || reservation.status === "booked") {
+    return paymentHref(reservation.id);
+  }
+  return confirmHref(reservation.id);
 }
 
 export function UpcomingEventCards({

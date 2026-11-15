@@ -1,20 +1,45 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { AppHeader } from "../../components/layout/AppHeader";
 import { LandingFooter } from "../../components/landing/LandingFooter";
 import { useVendorCatalog } from "../../hooks/useVendorCatalog";
+import { isBookingPreview, paymentHref } from "../../lib/bookingRoutes";
 import { btnPrimary, btnSecondaryOutline } from "../../lib/buttonStyles";
+import { demoReservations, reservationStatusLabel } from "../../lib/eventCalendar";
 import { messagesHref } from "../../lib/messageThreads";
 import { formatMoney, quoteSnapshotFromVendor, vendorShortName } from "../../lib/quoteSnapshot";
 import { fetchReservation } from "../../services/reservationService";
 import type { Reservation } from "../../types/database";
 
-const nextSteps = [
-  "Vendor reviews your requirements",
-  "You receive a finalized quote",
-  "Approve and pay deposit",
-  "Event details locked in",
-];
+function nextStepsFor(status: Reservation["status"] | undefined) {
+  if (status === "booked") {
+    return [
+      "Deposit is marked as arranged",
+      "This date is booked on My events",
+      "Message the vendor if plans change",
+    ];
+  }
+  if (status === "confirmed") {
+    return [
+      "Vendor confirmed this quote",
+      "Arrange the deposit",
+      "Mark it arranged so the date is booked",
+    ];
+  }
+  if (status === "cancelled") {
+    return ["This quote was declined or cancelled", "Message the vendor if you want to rebook"];
+  }
+  if (status === "draft") {
+    return ["Finish and submit this quote", "Vendor reviews your requirements", "Arrange the deposit after they confirm"];
+  }
+  return [
+    "Vendor reviews your requirements",
+    "You receive a confirmed quote",
+    "Arrange the deposit",
+    "Event details stay on My events",
+  ];
+}
 
 function snapshotFromReservation(reservation: Reservation) {
   return {
@@ -30,9 +55,10 @@ function snapshotFromReservation(reservation: Reservation) {
   };
 }
 
-export function QuoteConfirmationPage() {
+function QuoteConfirmationContent() {
   const [searchParams] = useSearchParams();
   const reservationId = searchParams.get("id");
+  const preview = isBookingPreview(searchParams);
   const vendorId = searchParams.get("vendor") ?? "aki-matcha";
   const { getVendor, loading: vendorLoading } = useVendorCatalog();
   const vendor = getVendor(vendorId);
@@ -45,6 +71,11 @@ export function QuoteConfirmationPage() {
   const [loadingReservation, setLoadingReservation] = useState(Boolean(reservationId));
 
   useEffect(() => {
+    if (preview && reservationId?.startsWith("demo-")) {
+      setReservation(demoReservations().find((row) => row.id === reservationId) ?? null);
+      setLoadingReservation(false);
+      return;
+    }
     if (!reservationId) {
       setLoadingReservation(false);
       return;
@@ -67,7 +98,7 @@ export function QuoteConfirmationPage() {
     return () => {
       cancelled = true;
     };
-  }, [reservationId]);
+  }, [reservationId, preview]);
 
   const snapshot = reservation
     ? snapshotFromReservation(reservation)
@@ -75,12 +106,7 @@ export function QuoteConfirmationPage() {
       ? null
       : fallback;
   const loading = loadingReservation || (vendorLoading && !snapshot);
-  const statusLabel =
-    reservation?.status === "draft"
-      ? "Saved"
-      : reservation?.status === "confirmed"
-        ? "Confirmed"
-        : "Under review";
+  const statusLabel = reservation ? reservationStatusLabel(reservation.status) : "Under review";
 
   const summaryLeft = snapshot
     ? [
@@ -111,14 +137,22 @@ export function QuoteConfirmationPage() {
                 🥂
               </span>
               <h1 className="font-semibold text-4xl text-midnight">
-                {reservation?.status === "draft" ? "Saved!" : "Submitted!"}
+                {reservation?.status === "draft"
+                  ? "Saved!"
+                  : reservation?.status === "booked"
+                    ? "Booked!"
+                    : reservation?.status === "confirmed"
+                      ? "Confirmed!"
+                      : reservation?.status === "cancelled"
+                        ? "Cancelled"
+                        : "Submitted!"}
               </h1>
             </div>
 
             <div className="rounded-[20px] bg-orange-100 p-8 text-orange-800">
               <p className="font-bold text-lg">What happens next?</p>
               <ol className="mt-4 space-y-3 text-sm">
-                {nextSteps.map((step, index) => (
+                {nextStepsFor(reservation?.status).map((step, index) => (
                   <li key={step} className="flex gap-3">
                     <span>{index + 1}.</span>
                     <span>{step}</span>
@@ -190,7 +224,12 @@ export function QuoteConfirmationPage() {
                 Message {messageName}
               </Link>
               <div className="flex flex-wrap gap-3">
-                {reservationId ? (
+                {(reservation?.status === "confirmed" || reservation?.status === "booked") &&
+                reservationId ? (
+                  <Link to={paymentHref(reservationId)} className={btnPrimary}>
+                    {reservation.status === "booked" ? "View booking" : "View deposit"}
+                  </Link>
+                ) : reservationId ? (
                   <Link
                     to={`/booking/quote?id=${reservationId}&vendor=${reservation?.vendor_slug ?? vendorId}`}
                     className={btnSecondaryOutline}
@@ -198,7 +237,14 @@ export function QuoteConfirmationPage() {
                     Edit quote
                   </Link>
                 ) : null}
-                <Link to="/account/settings/events" className={btnPrimary}>
+                <Link
+                  to="/account/settings/events"
+                  className={
+                    reservation?.status === "confirmed" || reservation?.status === "booked"
+                      ? btnSecondaryOutline
+                      : btnPrimary
+                  }
+                >
                   View my events
                 </Link>
               </div>
@@ -209,5 +255,15 @@ export function QuoteConfirmationPage() {
 
       <LandingFooter />
     </div>
+  );
+}
+
+export function QuoteConfirmationPage() {
+  const [params] = useSearchParams();
+  if (isBookingPreview(params)) return <QuoteConfirmationContent />;
+  return (
+    <ProtectedRoute>
+      <QuoteConfirmationContent />
+    </ProtectedRoute>
   );
 }

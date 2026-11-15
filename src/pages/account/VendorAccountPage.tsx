@@ -11,6 +11,7 @@ import { btnPrimaryFull, btnSecondaryOutline } from "../../lib/buttonStyles";
 import { demoIncomingReservations, vendorCanDecide } from "../../lib/eventCalendar";
 import { useAuth } from "../../features/auth/AuthContext";
 import { listingUrl } from "../../lib/listingContent";
+import { notifyInboxChanged } from "../../lib/messageThreads";
 import { fetchProfileNames } from "../../services/messageService";
 import {
   fetchReservationsForVendor,
@@ -43,6 +44,7 @@ export function VendorAccountPage() {
           ? new Map([
               ["guest-a", "Jordan Lee"],
               ["guest-b", "Sam Rivera"],
+              ["guest-c", "Casey Park"],
             ])
           : new Map(),
       );
@@ -76,7 +78,7 @@ export function VendorAccountPage() {
     };
   }, [user, preview]);
 
-  async function setStatus(id: string, status: "confirmed" | "cancelled") {
+  async function setStatus(id: string, status: "confirmed" | "cancelled" | "booked") {
     if (preview && !user) {
       setIncoming((current) => current.map((row) => (row.id === id ? { ...row, status } : row)));
       return;
@@ -86,6 +88,7 @@ export function VendorAccountPage() {
     try {
       const updated = await updateReservationStatus(id, status);
       setIncoming((current) => current.map((row) => (row.id === updated.id ? updated : row)));
+      notifyInboxChanged();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not update that quote.");
     } finally {
@@ -100,7 +103,8 @@ export function VendorAccountPage() {
   const isOwnProfile = Boolean(vendorProfile);
   const isVendorRole = Boolean(profile?.roles.includes("vendor")) || isAdminUser(user);
   const openRequests = incoming.filter((row) => vendorCanDecide(row.status));
-  const confirmedBookings = incoming.filter((row) => row.status === "confirmed");
+  const depositDue = incoming.filter((row) => row.status === "confirmed");
+  const booked = incoming.filter((row) => row.status === "booked");
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
@@ -198,6 +202,7 @@ export function VendorAccountPage() {
                   empty="No quote requests yet. Share your listing to get booked."
                   onConfirm={(id) => void setStatus(id, "confirmed")}
                   onDecline={(id) => void setStatus(id, "cancelled")}
+                  onMarkArranged={(id) => void setStatus(id, "booked")}
                   busyId={busyId}
                 />
               ) : null}
@@ -207,14 +212,18 @@ export function VendorAccountPage() {
                   <h2 className="font-bold text-[length:var(--text-section,28px)] text-midnight">
                     Booking snapshot
                   </h2>
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-6 grid gap-3 sm:grid-cols-3">
                     <div className="rounded-lg bg-orange-100 p-3">
                       <p className="font-bold text-body text-sm">Open requests</p>
                       <p className="text-3xl text-midnight">{openRequests.length}</p>
                     </div>
                     <div className="rounded-lg bg-blue-100 p-3">
-                      <p className="font-bold text-body text-sm">Confirmed bookings</p>
-                      <p className="text-3xl text-midnight">{confirmedBookings.length}</p>
+                      <p className="font-bold text-body text-sm">Deposit due</p>
+                      <p className="text-3xl text-midnight">{depositDue.length}</p>
+                    </div>
+                    <div className="rounded-lg bg-teal-100 p-3">
+                      <p className="font-bold text-body text-sm">Booked</p>
+                      <p className="text-3xl text-midnight">{booked.length}</p>
                     </div>
                   </div>
                 </section>

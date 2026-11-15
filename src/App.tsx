@@ -23,6 +23,7 @@ import { SignUpPage } from "./pages/auth/SignUpPage";
 import { WelcomePage } from "./pages/auth/WelcomePage";
 import { QuoteConfirmationPage } from "./pages/booking/QuoteConfirmationPage";
 import { QuoteRequestPage } from "./pages/booking/QuoteRequestPage";
+import { PaymentPage } from "./pages/booking/PaymentPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { LandingPage } from "./pages/LandingPage";
 import { VendorDetailPage } from "./pages/VendorDetailPage";
@@ -62,14 +63,8 @@ export function App() {
       <Route path="vendor/:vendorId" element={<VendorDetailPage />} />
 
       <Route path="booking/quote" element={<QuoteRequestPage />} />
-      <Route
-        path="booking/confirm"
-        element={
-          <ProtectedRoute>
-            <QuoteConfirmationPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="booking/confirm" element={<QuoteConfirmationPage />} />
+      <Route path="booking/payment" element={<PaymentPage />} />
 
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
@@ -161,8 +156,7 @@ export function App() {
         />
 
         <Route path="booking" element={<Navigate to="/booking/quote" replace />} />
-        <Route path="booking/review" element={<PageShell title="Review booking" />} />
-        <Route path="booking/payment" element={<PageShell title="Select payment" />} />
+        <Route path="booking/review" element={<Navigate to="/booking/quote" replace />} />
 
         <Route path="messages" element={<Navigate to="/account/settings/messages" replace />} />
         <Route

@@ -135,6 +135,7 @@ export function reservationStatusLabel(status: ReservationStatus) {
   if (status === "submitted") return "Under review";
   if (status === "under_review") return "Under review";
   if (status === "confirmed") return "Confirmed";
+  if (status === "booked") return "Booked";
   return "Cancelled";
 }
 
@@ -142,9 +143,14 @@ export function vendorCanDecide(status: ReservationStatus) {
   return status === "submitted" || status === "under_review";
 }
 
+export function canMarkDepositArranged(status: ReservationStatus) {
+  return status === "confirmed";
+}
+
 export function reservationStatusTone(
   status: ReservationStatus,
 ): "success" | "neutral" | "warning" | "danger" {
+  if (status === "booked") return "success";
   if (status === "confirmed") return "success";
   if (status === "cancelled") return "danger";
   if (status === "draft") return "neutral";
@@ -225,6 +231,8 @@ export function demoReservations(): Reservation[] {
       add_ons: null,
       deposit_amount: 200,
       total_amount: 850,
+      guest_last_read_at: null,
+      vendor_last_read_at: null,
       created_at: now,
       updated_at: now,
     },
@@ -243,6 +251,8 @@ export function demoReservations(): Reservation[] {
       add_ons: null,
       deposit_amount: 300,
       total_amount: 1400,
+      guest_last_read_at: now,
+      vendor_last_read_at: null,
       created_at: now,
       updated_at: now,
     },
@@ -261,6 +271,8 @@ export function demoReservations(): Reservation[] {
       add_ons: null,
       deposit_amount: 75,
       total_amount: 420,
+      guest_last_read_at: now,
+      vendor_last_read_at: null,
       created_at: now,
       updated_at: now,
     },
@@ -270,7 +282,7 @@ export function demoReservations(): Reservation[] {
       vendor_profile_id: null,
       vendor_slug: "aki-matcha",
       vendor_title: "Aki Matcha",
-      status: "confirmed",
+      status: "booked",
       event_date: day(21),
       location: "Waikiki",
       duration: "9:00 AM – 12:00 PM (3 hours)",
@@ -279,6 +291,8 @@ export function demoReservations(): Reservation[] {
       add_ons: null,
       deposit_amount: 150,
       total_amount: 640,
+      guest_last_read_at: now,
+      vendor_last_read_at: null,
       created_at: now,
       updated_at: now,
     },
@@ -299,6 +313,14 @@ export function demoIncomingReservations(): Reservation[] {
       id: "demo-in-2",
       guest_id: "guest-b",
       status: "under_review",
+    },
+    {
+      ...first,
+      id: "demo-in-3",
+      guest_id: "guest-c",
+      status: "confirmed",
+      event_date: second.event_date,
+      package_name: "Ceremony tasting",
     },
   ];
 }
